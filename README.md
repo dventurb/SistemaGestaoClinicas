@@ -11,6 +11,11 @@ O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilizaçã
   ```bash
     make
 ```
+4. Executar o projeto utilizando:
+    ```bash
+    ./executavel
+```
+
 ## Tecnologias Utilizadas
 ### Linguagem
 [![ ][C-shield]][C-url]
