@@ -1,4 +1,4 @@
- <h1 align="center">Sistema de Gestão de Clínicas</h1>
+ <h1 align="center"> 🏥 Sistema de Gestão de Clínicas</h1>
  <p style="text-align: center;">
   Aplicação para gestão de clientes, médicos e consultas de uma clínica, implementada em Linguagem C. O projeto utiliza conceitos como vetores estáticos, manipulação de ficheiros e estruturas, apontadores e programação modular, desenvolvido como parte da disciplina de Algoritmia e Programação.
  </p>
@@ -7,7 +7,7 @@
 <img src="https://i.imgur.com/cCbTDD9.gif" alt="script">
 </div>
 
-## Introdução 
+## 🎯 Introdução 
 O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilização e manipulação de dados em clínicas, permitindo realizar operações essenciais de gestão de clientes, médicos e consultas, oferecendo uma interface interativa com validações garantindo integridade nos dados.
 
 ## 🔨 Instalação
