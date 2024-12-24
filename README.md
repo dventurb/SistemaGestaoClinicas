@@ -20,12 +20,10 @@ make
 O projeto foi desenvolvido em Linguagem C e desenvolvido no VS Code.
 
 [![ ][C-shield]][C-url]
-[![VSCode][VSCode-shield]][VSCode-url]
+[![Visual Studio Code](https://custom-icon-badges.demolab.com/badge/Visual%20Studio%20Code-0078d7.svg?logo=vsc&logoColor=white)](#)
 
 ## 📄 Licença
 
 
 [C-shield]: https://img.shields.io/badge/C-00599C?style=for-the-badge&logo=c&logoColor=white
 [C-url]: https://www.cprogramming.com/
-[VSCode-shield]: https://img.shields.io/badge/Editor-VSCode-blue?logo=visual-studio-code&logoColor=white
-[VSCode-url]: https://code.visualstudio.com/
