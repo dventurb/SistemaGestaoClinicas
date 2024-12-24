@@ -11,7 +11,7 @@ O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilizaçã
 - Gestão de Médicos
   Registar, alterar e controlar disponibilidade.
   Listar por especialidade e procurar por nome.
-  - Gestão de Consultas
+- Gestão de Consultas
     Agendar, atualizar e desmarcar consultas.
     Histórico de consultas por cliente.
     Listar de consultas por médico no dia atual.
