@@ -1,5 +1,7 @@
  <h1 align="center">Sistema de Gestão de Clínicas</h1>
-Aplicação para gestão de clientes, médicos e consultas de uma clínica, implementado em Linguagem C. O projeto utiliza conceitos como vetores estáticos, manipulação de ficheiros e estruturas, apontadores e programação modular, desenvolvido como parte da disciplina de Algoritmia e Programação.<br>
+  <p style="text-align: center;">
+    Aplicação para gestão de clientes, médicos e consultas de uma clínica, implementada em Linguagem C. O projeto utiliza conceitos como vetores estáticos, manipulação de ficheiros e estruturas, apontadores e programação modular, desenvolvido como parte da disciplina de Algoritmia e Programação.
+  </p>
 
 <div align="center" style="text-align: center">
 <img src="https://i.imgur.com/cCbTDD9.gif" alt="script">
