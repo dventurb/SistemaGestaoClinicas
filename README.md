@@ -12,4 +12,7 @@ O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilizaçã
 
 
 
-    
+[C-shield]: https://img.shields.io/badge/C-00599C?style=for-the-badge&logo=c&logoColor=white
+[C-url]: https://www.cprogramming.com/
+[VSCode-shield]: https://img.shields.io/badge/Editor-VSCode-blue?logo=visual-studio-code&logoColor=white
+[VSCode-url]: https://code.visualstudio.com/
