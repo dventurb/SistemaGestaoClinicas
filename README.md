@@ -5,7 +5,6 @@
 
 <div align="center" style="text-align: center">
 <img src="https://i.imgur.com/cCbTDD9.gif" alt="script">
-<div style="text-align: center;">
 
 ## Introdução 
 O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilização e manipulação de dados em clínicas, permitindo realizar operações essenciais de gestão de clientes, médicos e consultas, oferecendo uma interface interativa com validações garantindo integridade nos dados.
