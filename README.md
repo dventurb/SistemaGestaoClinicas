@@ -6,7 +6,10 @@ O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilizaçã
 
 ## 🔨 Instalação
 1. Necessário a instalação do ```make``` no sistema.
-2. Aceder ao diretório do projeto.
+2. Clone do repositório do projeto.
+```bash
+git clone https://github.com/dventurb/SistemaGestaoClinicas.git
+```
 3. Compilar o projeto utilizando:
 ```bash
 make
@@ -17,13 +20,10 @@ make
 ```
 
 ## 📦 Tecnologias Utilizadas
-O projeto foi desenvolvido em Linguagem C e desenvolvido no VS Code.
+O projeto foi desenvolvido em Linguagem C e desenvolvido no Visual Studio Code.
 
-[![ ][C-shield]][C-url]
+[![C](https://img.shields.io/badge/C-00599C?logo=c&logoColor=white)](#)
 [![Visual Studio Code](https://custom-icon-badges.demolab.com/badge/Visual%20Studio%20Code-0078d7.svg?logo=vsc&logoColor=white)](#)
 
 ## 📄 Licença
-
-
-[C-shield]: https://img.shields.io/badge/C-00599C?style=for-the-badge&logo=c&logoColor=white
-[C-url]: https://www.cprogramming.com/
+Este projeto está sob a licença MIT - Disponível no documento [LICENSE](./LICENSE) para mais detalhes.
