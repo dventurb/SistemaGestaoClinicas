@@ -13,7 +13,7 @@ O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilizaçã
 ```
 4. Executar o projeto utilizando:
 ```bash
-    ./executavel
+./executavel
 ```
 
 ## 📦 Tecnologias Utilizadas
