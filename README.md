@@ -4,6 +4,13 @@ Aplicação para gestão de clientes, médicos e consultas de uma clínica, impl
 ## Introdução 
 O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilização e manipulação de dados em clínicas, permitindo realizar operações essenciais de gestão de clientes, médicos e consultas, oferecendo uma interface interativa com validações garantindo integridade nos dados.
 
+## Instalação
+1. Necessário a instalação do 'make' no sistema.
+2. Aceder ao diretório do projeto.
+3. Compilar o projeto utilizando:
+  ```bash
+    make
+```
 ## Tecnologias Utilizadas
 ### Linguagem
 [![ ][C-shield]][C-url]
