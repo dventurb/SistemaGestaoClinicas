@@ -8,8 +8,8 @@ O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilizaçã
 1. Necessário a instalação do 'make' no sistema.
 2. Aceder ao diretório do projeto.
 3. Compilar o projeto utilizando:
-  ```bash
-    make
+```bash
+make
 ```
 4. Executar o projeto utilizando:
 ```bash
@@ -18,6 +18,7 @@ O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilizaçã
 
 ## 📦 Tecnologias Utilizadas
 O projeto foi desenvolvido em Linguagem C e desenvolvido no VS Code.
+
 [![ ][C-shield]][C-url]
 [![VSCode][VSCode-shield]][VSCode-url]
 
