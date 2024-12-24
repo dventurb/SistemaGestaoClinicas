@@ -1,0 +1,15 @@
+Pediatria
+Cardiologia
+Endocrinologia
+Pneumologia
+Gastroenterologia
+Clínica Geral
+Neurologia
+Dermatologia
+Reumatologia
+Ortopedia
+Psiquiatria
+Ginecologia
+Oftalmologia
+Otorrinolaringologia
+Oncologia
