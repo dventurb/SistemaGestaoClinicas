@@ -5,4 +5,14 @@ Aplicação para gestão de clientes, médicos e consultas de uma clínica, impl
 O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilização e manipulação de dados em clínicas, permitindo realizar operações essenciais de gestão de clientes, médicos e consultas, oferecendo uma interface interativa com validações garantindo integridade nos dados.
 
 ### Funcionalidades:
-- Gestão de Clientes - 
+- Gestão de Clientes
+  Registar, alterar e ativar/desativar clientes.
+  Listar clientes, consultar dados e procurar por nome.
+- Gestão de Médicos
+  Registar, alterar e controlar disponibilidade.
+  Listar por especialidade e procurar por nome.
+  - Gestão de Consultas
+    Agendar, atualizar e desmarcar consultas.
+    Histórico de consultas por cliente.
+    Listar de consultas por médico no dia atual.
+    
