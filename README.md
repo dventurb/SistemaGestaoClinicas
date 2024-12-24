@@ -6,7 +6,7 @@ O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilizaçã
 
 ## Tecnologias Utilizadas
 ### Linguagem
-* [![ ][C-shield]][C-url]
+[![ ][C-shield]][C-url]
 ### Ferramenta de Desenvolvimento
 [![VSCode][VSCode-shield]][VSCode-url]
 
