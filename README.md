@@ -4,7 +4,7 @@ Aplicação para gestão de clientes, médicos e consultas de uma clínica, impl
 ## Introdução 
 O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilização e manipulação de dados em clínicas, permitindo realizar operações essenciais de gestão de clientes, médicos e consultas, oferecendo uma interface interativa com validações garantindo integridade nos dados.
 
-## Instalação
+## 🔨 Instalação
 1. Necessário a instalação do 'make' no sistema.
 2. Aceder ao diretório do projeto.
 3. Compilar o projeto utilizando:
@@ -16,12 +16,12 @@ O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilizaçã
     ./executavel
 ```
 
-## Tecnologias Utilizadas
-### Linguagem
+## 📦 Tecnologias Utilizadas
+O projeto foi desenvolvido em Linguagem C e desenvolvido no VS Code.
 [![ ][C-shield]][C-url]
-### Ferramenta de Desenvolvimento
 [![VSCode][VSCode-shield]][VSCode-url]
 
+## 📄 Licença
 
 
 [C-shield]: https://img.shields.io/badge/C-00599C?style=for-the-badge&logo=c&logoColor=white
