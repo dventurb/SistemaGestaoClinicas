@@ -12,7 +12,7 @@ O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilizaçã
     make
 ```
 4. Executar o projeto utilizando:
-    ```bash
+```bash
     ./executavel
 ```
 
