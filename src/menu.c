@@ -26,7 +26,7 @@ void menuPrincipal(ST_CLIENTE *clientes, ST_MEDICO *medicos, ST_CONSULTA *consul
     case 0:
       break;
     default:
-      printf("Opção não é válida!\n");
+      printf("Opção não é válida!\a\n");
       delay(1);
       break;
     }
@@ -68,7 +68,7 @@ void menuClientes(ST_CLIENTE *clientes){
       case 0:
         break;
       default: 
-        printf("Opção não é válida!\n");
+        printf("Opção não é válida!\a\n");
         delay(1);
         break;
     }
@@ -119,7 +119,7 @@ void menuMedicos(ST_MEDICO *medicos){
       case 0:
         break;
       default: 
-        printf("Opção não é válida!\n");
+        printf("Opção não é válida!\a\n");
         delay(1);
         break;
     }
@@ -162,7 +162,7 @@ void menuConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *medi
       case 0:
         break;
       default:
-        printf("Opção não é válida!\n");
+        printf("Opção não é válida!\a\n");
         delay(1);
         break;
     }

@@ -6,12 +6,12 @@ void agendarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *m
   unsigned int clienteID, medicoID;
   int opcao;
   if(!numeroClientes(clientes)){
-    printf("Não existe clientes registados.\n");
+    printf("Não existe clientes registados.\a\n");
     delay(1);
     return;
   }
   if (!numeroMedicos(medicos)){
-    printf("Não existe médicos registados.\n");
+    printf("Não existe médicos registados.\a\n");
     delay(1);
     return;
   }
@@ -19,25 +19,25 @@ void agendarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *m
   printf("ID do cliente: ");
   scanf("%d", &clienteID);
   limparBuffer();
-  if(!clientes[clienteID - 1].estado){
-    printf("O cliente está inativo.\n");
+  if (clienteID <= 0 || clienteID > numeroClientes(clientes)){
+    printf("O ID é inválido.\a\n");
     delay(1);
     return;
   }
-  if (clienteID <= 0 || clienteID > numeroClientes(clientes)){
-    printf("O ID é inválido.\n");
+  if(!clientes[clienteID - 1].estado){
+    printf("O cliente está inativo.\a\n");
     delay(1);
     return;
   }
   printf("ID do médico: ");
   scanf("%d", &medicoID);
-  if(!medicos[medicoID - 1].estado){
-    printf("O médico está indisponível.\n");
+  if(medicoID <= 0 || medicoID > numeroMedicos(medicos)){
+    printf("O ID é inválido.\a\n");
     delay(1);
     return;
   }
-  if(medicoID <= 0 || medicoID > numeroMedicos(medicos)){
-    printf("O ID é inválido.\n");
+  if(!medicos[medicoID - 1].estado){
+    printf("O médico está indisponível.\a\n");
     delay(1);
     return;
   }
@@ -53,7 +53,7 @@ void agendarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *m
     scanf("%d", &consulta.data_inicial.hora);
     limparBuffer();
     if(!verificarDisponibilidade(consultas, &consulta)){
-      printf("Horário não é válido.\n");
+      printf("Horário não é válido.\a\n");
       delay(1);
     }
   }while(!verificarDisponibilidade(consultas, &consulta));
@@ -66,6 +66,7 @@ void agendarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *m
   }while(opcao != 0 && opcao != 1);
   if(opcao){
     confirmarConsultas(consultas, consulta);
+    inserirFicheiroConsulta(consulta);
     printf("Consulta agendada com sucesso.\n");
     delay(1);
   }
@@ -74,7 +75,7 @@ void agendarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *m
 void desmarcarConsultas(ST_CONSULTA *consultas){
   unsigned int ID;
   if (!numeroConsultas(consultas)){
-    printf("Não há consultas registadas.\n");
+    printf("Não há consultas registadas.\a\n");
     delay(1);
     return;
   }
@@ -84,21 +85,22 @@ void desmarcarConsultas(ST_CONSULTA *consultas){
   limparBuffer();
   ST_CONSULTA *consulta = obterConsulta(consultas, ID);
   if (consulta == NULL){
-    printf("Consulta não foi encontrada.\n");
+    printf("Consulta não foi encontrada.\a\n");
     delay(1);
     return;
   }
   if (consulta->estado == Realizado){
-    printf("Consulta já foi realizada.\n");
+    printf("Consulta já foi realizada.\a\n");
     delay(1);
     return;
   }
   if (consulta->estado == Cancelado){
-    printf("Consulta já foi cancelada.\n");
+    printf("Consulta já foi cancelada.\a\n");
     delay(1);
     return;
   }
   consulta->estado = Cancelado;
+  atualizarFicheiroConsulta(consultas);
   printf("Consulta desmarcada com sucesso.\n");
   delay(1);
   return;
@@ -107,7 +109,7 @@ void desmarcarConsultas(ST_CONSULTA *consultas){
 void marcarConsultasRealizadas(ST_CONSULTA *consultas){
   unsigned int ID;
   if(!numeroConsultas(consultas)){
-    printf("Não há consultas registadas.\n");
+    printf("Não há consultas registadas.\a\n");
     delay(1);
     return;
   }
@@ -117,21 +119,22 @@ void marcarConsultasRealizadas(ST_CONSULTA *consultas){
   limparBuffer();
   ST_CONSULTA *consulta = obterConsulta(consultas, ID);
   if (consulta == NULL){
-    printf("Consulta não foi encontrada.\n");
+    printf("Consulta não foi encontrada.\a\n");
     delay(1);
     return;
   }
   if (consulta->estado == Realizado){
-    printf("Consulta já foi realizada.\n");
+    printf("Consulta já foi realizada.\a\n");
     delay(1);
     return;
   }
   if (consulta->estado == Cancelado){
-    printf("Consulta já foi cancelada.\n");
+    printf("Consulta já foi cancelada.\a\n");
     delay(1);
     return;
   }
   consulta->estado = Realizado;
+  atualizarFicheiroConsulta(consultas);
   printf("Consulta marcada como realizada.\n");
   delay(1);
   return;
@@ -141,7 +144,7 @@ void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO 
   unsigned int ID, clienteID, medicoID;
   int opcao;
   if (!numeroConsultas(consultas)){
-    printf("Não há consultas registadas.\n");
+    printf("Não há consultas registadas.\a\n");
     delay(1);
     return;
   }
@@ -151,7 +154,7 @@ void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO 
   limparBuffer();
   ST_CONSULTA *consulta = obterConsulta(consultas, ID);
   if (consulta == NULL){
-    printf("Consulta não foi encontrada.\n");
+    printf("Consulta não foi encontrada.\a\n");
     delay(1);
     return;
   }
@@ -161,7 +164,7 @@ void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO 
     return;
   }
   if (consulta->estado == Cancelado){
-    printf("Consulta já foi cancelada.\n");
+    printf("Consulta já foi cancelada.\a\n");
     delay(1);
     return;
   }
@@ -182,7 +185,7 @@ void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO 
           scanf("%d", &clienteID);
           limparBuffer();
           if(!clientes[clienteID - 1].estado){
-            printf("O cliente está inativo.\n");
+            printf("O cliente está inativo.\a\n");
             delay(1);
           }
         }while(!clientes[clienteID - 1].estado);
@@ -195,7 +198,7 @@ void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO 
           scanf("%d", &medicoID);
           limparBuffer();
           if(!medicos[medicoID -1].estado){
-            printf("O médico está indisponível.\n");
+            printf("O médico está indisponível.\a\n");
             delay(1);
           }
         }while(!medicos[medicoID -1].estado);
@@ -211,7 +214,7 @@ void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO 
           scanf("%d", &consulta->data_inicial.hora);
           limparBuffer();
           if(!verificarDisponibilidade(consultas, consulta)){
-            printf("Horário não é válido.\n");
+            printf("Horário não é válido.\a\n");
             delay(1);
           }
         }while(!verificarDisponibilidade(consultas, consulta));
@@ -219,9 +222,10 @@ void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO 
         delay(5);
         break;
       case 0:
+        atualizarFicheiroConsulta(consultas);
         break;
       default:
-        printf("Opção não é válida.\n");
+        printf("Opção não é válida.\a\n");
         delay(1);
         break;
     }
@@ -233,7 +237,7 @@ void obterListaConsultasDiaAtualMedico(ST_CONSULTA *consultas, ST_MEDICO *medico
   dataAtual(&data);
   unsigned int medicoID, encontrados = 0;
   if (!numeroConsultas(consultas)){
-    printf("Não há consultas registadas.\n");
+    printf("Não há consultas registadas.\a\n");
     delay(1);
     return;
   }
@@ -242,7 +246,7 @@ void obterListaConsultasDiaAtualMedico(ST_CONSULTA *consultas, ST_MEDICO *medico
   scanf("%d", &medicoID);
   limparBuffer();
   if(!medicos[medicoID -1].estado){
-    printf("O médico está indisponível.\n");
+    printf("O médico está indisponível.\a\n");
     delay(1);
     return;
   }
@@ -254,7 +258,7 @@ void obterListaConsultasDiaAtualMedico(ST_CONSULTA *consultas, ST_MEDICO *medico
     }
   }
   if (!encontrados){
-    printf("Não há consultas para o médico no dia de hoje.\n");
+    printf("Não há consultas para o médico no dia de hoje.\a\n");
     delay(1);
     return;
   }
@@ -265,7 +269,7 @@ void obterListaConsultasDiaAtualMedico(ST_CONSULTA *consultas, ST_MEDICO *medico
 void obterHistoricoConsultasCliente(ST_CONSULTA *consultas, ST_CLIENTE *clientes){
   unsigned int clienteID, encontrados = 0;
   if (!numeroConsultas(consultas)){
-    printf("Não há consultas registadas.\n");
+    printf("Não há consultas registadas.\a\n");
     delay(1);
     return;
   }
@@ -274,7 +278,7 @@ void obterHistoricoConsultasCliente(ST_CONSULTA *consultas, ST_CLIENTE *clientes
   scanf("%d", &clienteID);
   limparBuffer();
   if (!clientes[clienteID - 1].estado){
-    printf("O cliente está inativo.\n");
+    printf("O cliente está inativo.\a\n");
     delay(1);
     return;
   }
@@ -286,7 +290,7 @@ void obterHistoricoConsultasCliente(ST_CONSULTA *consultas, ST_CLIENTE *clientes
     }
   }
   if (!encontrados){
-    printf("Não há consultas para o cliente.\n");
+    printf("Não há consultas para o cliente.\a\n");
     delay(1);
     return;
   }
@@ -319,7 +323,8 @@ bool verificarDisponibilidade(ST_CONSULTA *consultas,ST_CONSULTA *consulta){
       return false;
     }
   }
-  if(consulta->data_inicial.ano > data.ano || (consulta->data_inicial.ano == data.ano && consulta->data_inicial.mes > data.mes) || (consulta->data_inicial.ano == data.ano && consulta->data_inicial.mes == data.mes && consulta->data_inicial.dia > data.dia) || (consulta->data_inicial.ano == data.ano && consulta->data_inicial.mes == data.mes && consulta->data_inicial.dia == data.dia && consulta->data_inicial.hora >= data.hora)){
+
+  if(consulta->data_inicial.ano > data.ano || (consulta->data_inicial.ano == data.ano && consulta->data_inicial.mes > data.mes) || (consulta->data_inicial.ano == data.ano && consulta->data_inicial.mes == data.mes && consulta->data_inicial.dia > data.dia) || (consulta->data_inicial.ano == data.ano && consulta->data_inicial.mes == data.mes && consulta->data_inicial.dia == data.dia && consulta->data_inicial.hora > data.hora)){
     if(consulta->data_inicial.hora >= 8 && consulta->data_inicial.hora <= 18){
       if(consulta->medico->estado && consulta->cliente->estado){
         consulta->data_final.ano = consulta->data_inicial.ano;
@@ -350,4 +355,81 @@ ST_CONSULTA *obterConsulta(ST_CONSULTA *consultas, unsigned int ID){
     }
   }
   return NULL;
+}
+
+void inserirFicheiroConsulta(ST_CONSULTA consulta){
+  char *estadoConsulta[3] = { "Cancelado", "Agendado", "Realizado"};
+  FILE *ficheiro = fopen("data/consultas.txt", "a");
+  if(ficheiro == NULL){
+    printf("Erro.\n");
+    return;
+  }
+  fprintf(ficheiro, "%d,%d,%s,%d,%s,%s,%d,%d,%d,%d,%d,%s\n", consulta.ID, consulta.cliente->ID, consulta.cliente->nome, consulta.medico->ID, consulta.medico->nome, consulta.medico->especialidade, consulta.data_inicial.dia, consulta.data_inicial.mes, consulta.data_inicial.ano, consulta.data_inicial.hora, consulta.data_final.hora, estadoConsulta[consulta.estado]);
+  fclose(ficheiro);
+  return;
+}
+
+void carregarFicheiroConsulta(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *medicos){
+char linha[1024], *token;
+unsigned int clienteID, medicoID;
+int i = 0;
+FILE *ficheiro;
+ficheiro = fopen("data/consultas.txt", "r");
+if (ficheiro == NULL){
+  printf("Erro\n");
+  return;
+}
+while(fgets(linha, sizeof(linha), ficheiro) && i < MAX_CONSULTAS){
+  linha[strcspn(linha, "\n")] = '\0';
+  token = strtok(linha, ",");
+  consultas[i].ID = (atoi(token));
+  token = strtok(NULL, ",");
+  clienteID = (atoi(token));
+  consultas[i].cliente = obterCliente(clientes, clienteID);
+  token = strtok(NULL, ",");
+  token = strtok(NULL, ",");
+  medicoID = (atoi(token));
+  consultas[i].medico = obterMedico(medicos, medicoID);
+  token = strtok(NULL, ",");
+  token = strtok(NULL, ",");
+  token = strtok(NULL, ",");
+  consultas[i].data_inicial.dia = (atoi(token));
+  token = strtok(NULL, ",");
+  consultas[i].data_inicial.mes = (atoi(token));
+  token = strtok(NULL, ",");
+  consultas[i].data_inicial.ano = (atoi(token));
+  token = strtok(NULL, ",");
+  consultas[i].data_inicial.hora = (atoi(token));
+  token = strtok(NULL, ",");
+  consultas[i].data_final.hora = (atoi(token));
+  token = strtok(NULL, ",");
+  if(strcmp(token, "Cancelado") == 0){
+    consultas[i].estado = 0;
+  }else if(strcmp(token, "Agendado") == 0){
+    consultas[i].estado = 1;
+  }else if(strcmp(token, "Realizado") == 0){
+    consultas[i].estado = 2;
+  }
+  consultas[i].data_final.dia = consultas[i].data_inicial.dia;
+  consultas[i].data_final.mes = consultas[i].data_inicial.mes;
+  consultas[i].data_final.ano = consultas[i].data_inicial.ano;
+  i++;
+}
+fclose(ficheiro);
+return;
+}
+
+void atualizarFicheiroConsulta(ST_CONSULTA *consultas){
+  char *estadoConsulta[3] = {"Cancelado", "Agendado", "Realizado"};
+  FILE *ficheiro;
+  ficheiro = fopen("data/consultas.txt", "w");
+  if (ficheiro == NULL){
+    printf("Erro.\n");
+    return;
+  }
+  for (int i = 0; i < numeroConsultas(consultas); i++){
+    fprintf(ficheiro, "%d,%s,%s,%s,%d,%d,%d,%d,%d,%s\n", consultas[i].ID, consultas[i].cliente->nome, consultas[i].medico->nome, consultas[i].medico->especialidade, consultas[i].data_inicial.dia, consultas[i].data_inicial.mes, consultas[i].data_inicial.ano, consultas[i].data_inicial.hora, consultas[i].data_final.hora, estadoConsulta[consultas[i].estado]);
+  }
+  fclose(ficheiro);
+  return;
 }
