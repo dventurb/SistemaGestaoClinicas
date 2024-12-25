@@ -1,6 +1,6 @@
  <h1 align="center"> 🏥 Sistema de Gestão de Clínicas</h1>
  <p style="text-align: center;">
-  Aplicação para gestão de clientes, médicos e consultas de uma clínica, implementada em Linguagem C. O projeto utiliza conceitos como vetores estáticos, manipulação de ficheiros e estruturas, apontadores e programação modular, desenvolvido como parte da disciplina de Algoritmia e Programação.
+  Aplicação para gestão de clientes, médicos e consultas de uma clínica, implementada em Linguagem C. O projeto utiliza conceitos como vetores estáticos, manipulação de ficheiros, estruturas, apontadores e programação modular, desenvolvido como parte da disciplina de Algoritmia e Programação.
  </p>
 
 <div align="center" style="text-align: center">
@@ -16,20 +16,28 @@ O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilizaçã
 ```bash
 git clone https://github.com/dventurb/SistemaGestaoClinicas.git
 ```
-3. Compilar o projeto utilizando:
+3. Navegue até ao diretório do projeto.
+```bash
+cd SistemaGestaoClinicas
+```
+4. Compilar o projeto utilizando:
 ```bash
 make
 ```
-4. Executar o projeto utilizando:
+5. Executar o projeto utilizando:
 ```bash
 ./executavel
 ```
 
 ## 📦 Tecnologias Utilizadas
-O projeto foi desenvolvido em Linguagem C e desenvolvido no Visual Studio Code.
+O projeto foi implementado em Linguagem C e desenvolvido no Visual Studio Code.
 
 [![C](https://img.shields.io/badge/C-00599C?logo=c&logoColor=white)](#)
 [![Visual Studio Code](https://custom-icon-badges.demolab.com/badge/Visual%20Studio%20Code-0078d7.svg?logo=vsc&logoColor=white)](#)
 
+## 👷 Autor
+**Daniel Ventura Brito** - [GitHub](https://gitghub.com/dventurb)
+
 ## 📄 Licença
 Este projeto está sob a licença MIT - Disponível no documento [LICENSE](./LICENSE) para mais detalhes.
+
