@@ -23,5 +23,8 @@ void confirmarConsultas(ST_CONSULTA *consultas, ST_CONSULTA consulta);
 bool verificarDisponibilidade(ST_CONSULTA *consultas, ST_CONSULTA *consulta);
 void infoConsultas(ST_CONSULTA consultas);
 ST_CONSULTA *obterConsulta(ST_CONSULTA *consultas, unsigned int ID);
+void inserirFicheiroConsulta(ST_CONSULTA consulta);
+void carregarFicheiroConsulta(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *medicos);
+void atualizarFicheiroConsulta(ST_CONSULTA *consultas);
 
 #endif
