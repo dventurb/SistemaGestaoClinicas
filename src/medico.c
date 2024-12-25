@@ -5,7 +5,7 @@
 void inserirMedicos(ST_MEDICO *medicos){
   int opcao;
   if(numeroMedicos(medicos) >= MAX_MEDICOS){
-    printf("Número máximo de médicos atingido!\n");
+    printf("Número máximo de médicos atingido!\a\n");
     delay(1);
     return;
   }else {
@@ -25,6 +25,7 @@ void inserirMedicos(ST_MEDICO *medicos){
     }while(opcao!= 0 && opcao != 1);
     if(opcao){
       confirmarMedicos(medicos, medico);
+      inserirFicheiroMedico(medico);
       printf("Médico inserido com sucesso.\n");
       delay(1);
     }
@@ -38,7 +39,7 @@ void alterarDadosMedicos(ST_MEDICO *medicos){
   scanf("%d", &ID);
   limparBuffer();
   if(ID <= 0 || ID > numeroMedicos(medicos)){
-    printf("O ID é inválido.\n");
+    printf("O ID é inválido.\a\n");
     delay(1);
     return;
   }
@@ -66,9 +67,10 @@ void alterarDadosMedicos(ST_MEDICO *medicos){
         delay(1);
         break;
       case 0:
+        atualizarFicheiroMedico(medicos);
         break;
       default:
-        printf("Opção não é válida.\n");
+        printf("Opção não é válida.\a\n");
         delay(1);
         break;
     }
@@ -82,11 +84,12 @@ void ativarDesativarMedicos(ST_MEDICO *medicos){
   scanf("%d", &ID);
   limparBuffer();
   if(ID <= 0 || ID > numeroMedicos(medicos)){
-    printf("ID não é válido.\n");
+    printf("ID não é válido.\a\n");
     delay(1);
     return;
   }
   medicos[ID - 1].estado = !medicos[ID - 1].estado;
+  atualizarFicheiroMedico(medicos);
   printf("Médico %s com sucesso.\n", medicos[ID - 1].estado ? "Disponível" : "Indisponível");
   delay(1);
   return;
@@ -99,7 +102,7 @@ void consultarDadosMedicos(ST_MEDICO *medicos){
   scanf("%d", &ID);
   limparBuffer();
   if(ID <= 0 || ID > numeroMedicos(medicos)){
-    printf("ID não é válido.\n");
+    printf("ID não é válido.\a\n");
     delay(1);
     return;
   }
@@ -120,7 +123,7 @@ void obterListaTodosMedicos(ST_MEDICO *medicos){
   }
   if(!encontrados){
     clear();
-    printf("Não há médicos registados.\n");
+    printf("Não há médicos registados.\a\n");
     delay(1);
     return;
   }
@@ -138,7 +141,7 @@ void obterListaMedicosAtivos(ST_MEDICO *medicos){
   }
   if(!encontrados){
     clear();
-    printf("Não há médicos disponíveis.\n");
+    printf("Não há médicos disponíveis.\a\n");
     delay(1);
     return;
   }
@@ -163,7 +166,7 @@ void obterListaMedicosEspecialidade(ST_MEDICO *medicos){
   }
   if (!encontrados){
     clear();
-    printf("Não há medicos com a especialidade %s.\n", especialidade);
+    printf("Não há medicos com a especialidade %s.\a\n", especialidade);
     delay(1);
     return;
   }
@@ -186,7 +189,7 @@ void procurarMedicosNome(ST_MEDICO *medicos){
   }
   if(!encontrados){
     clear();
-    printf("Não há médicos com o nome %s.\n", nome);
+    printf("Não há médicos com o nome %s.\a\n", nome);
     delay(1);
     return;
   }
@@ -219,4 +222,54 @@ ST_MEDICO *obterMedico(ST_MEDICO *medicos, unsigned int ID){
     }
   }
   return NULL;
+}
+
+void inserirFicheiroMedico(ST_MEDICO medico){
+  FILE *ficheiro = fopen("data/medicos.txt", "a");
+  if(ficheiro == NULL){
+    printf("Erro.\n");
+    return;
+  }
+  fprintf(ficheiro, "%d,%s,%s,%s\n", medico.ID, medico.nome, medico.especialidade, medico.estado ? "Disponível" : "Indisponível");
+  fclose(ficheiro);
+  return;
+}
+
+void carregarFicheiroMedico(ST_MEDICO *medicos){
+  char linha[1024], *token;
+  int i = 0;
+  FILE *ficheiro;
+  ficheiro = fopen("data/medicos.txt", "r");
+  if (ficheiro == NULL){
+    printf("Erro.\n");
+    return;
+  }
+  while(fgets(linha, sizeof(linha), ficheiro) && i < MAX_MEDICOS){
+    linha[strcspn(linha, "\n")] = '\0';
+    token = strtok(linha, ",");
+    medicos[i].ID = (atoi(token));
+    token = strtok(NULL, ",");
+    strncpy(medicos[i].nome, token, STRING_MAX);
+    token = strtok(NULL, ",");
+    strncpy(medicos[i].especialidade, token, STRING_MAX);
+    token = strtok(NULL, ",");
+    medicos[i].estado = (strcmp(token, "Disponível") == 0);
+    i++;
+  }
+  fclose(ficheiro);
+  return;
+}
+
+void atualizarFicheiroMedico(ST_MEDICO *medicos){
+  FILE *ficheiro;
+  ficheiro = fopen("data/medicos.txt", "w");
+  if (ficheiro == NULL){
+    printf("Erro.\n");
+    return;
+  }
+  for (int i = 0; i < numeroMedicos(medicos); i++){
+    fprintf(ficheiro, "%d,%s,%s,%s\n", medicos[i].ID, medicos[i].nome, medicos[i].especialidade, medicos[i].estado ? "Disponível" : "Indisponível");
+  }
+  fclose(ficheiro);
+  return;
 }

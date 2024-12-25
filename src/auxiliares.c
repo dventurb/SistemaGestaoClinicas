@@ -43,10 +43,9 @@ void limparBuffer(void){
     return;
    }
     printf("Código Postal (1234567): ");
-    scanf("%ld", &codigo_postal);
+    scanf("%lu", &codigo_postal);
     limparBuffer();
-   while (!feof(ficheiro)){
-     fgets(linha, sizeof(linha), ficheiro);
+    while (fgets(linha, sizeof(linha), ficheiro)){
      token = strtok(linha, ",");
      char *tokens[20];
      int total_tokens = 0;
@@ -63,13 +62,13 @@ void limparBuffer(void){
         cliente->morada.rua[strcspn(cliente->morada.rua, "\n")] = '\0';
         strcpy(cliente->morada.cidade, tokens[total_tokens - 1]);
         cliente->morada.cidade[strcspn(cliente->morada.cidade, "\n")] = '\0';
-        codigo_postal = cliente->morada.codigo_postal;
+        cliente->morada.codigo_postal = codigo_postal;
         break;
       }
     }
    }
    if(!encontrados){
-     printf("Código postal não encontrado.\n");
+     printf("Código postal não encontrado.\a\n");
    }
    fclose(ficheiro);
    return;
@@ -112,12 +111,12 @@ void obterEspecialidade(ST_MEDICO *medico){
             }
           }
           if (!especialidade_valida){
-            printf("Especialidade não é válida.\n");
+            printf("Especialidade não é válida.\a\n");
           }
         }while(especialidade_valida != 1);
         break;
       default:
-        printf("Opção inválida!\n");
+        printf("Opção inválida!\a\n");
         break;
     }
   }while(opcao != 2);
