@@ -36,7 +36,7 @@ O projeto foi implementado em Linguagem C e desenvolvido no Visual Studio Code.
 [![Visual Studio Code](https://custom-icon-badges.demolab.com/badge/Visual%20Studio%20Code-0078d7.svg?logo=vsc&logoColor=white)](#)
 
 ## 👷 Autor
-**Daniel Ventura Brito** - [GitHub](https://gitghub.com/dventurb)
+**Daniel Ventura Brito** - [GitHub](https://github.com/dventurb)
 
 ## 📄 Licença
 Este projeto está sob a licença MIT - Disponível no documento [LICENSE](./LICENSE) para mais detalhes.
