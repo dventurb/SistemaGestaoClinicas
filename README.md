@@ -18,7 +18,7 @@ git clone https://github.com/dventurb/SistemaGestaoClinicas.git
 ```
 3. Navegue até ao diretório do projeto.
 ```bash
-cd SistemaGestaoClinicas
+cd SistemaGestaoClinicas/
 ```
 4. Compilar o projeto utilizando:
 ```bash
