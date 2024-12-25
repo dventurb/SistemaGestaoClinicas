@@ -22,5 +22,8 @@ void procurarMedicosNome(ST_MEDICO *medicos);
 void confirmarMedicos(ST_MEDICO *medicos, ST_MEDICO medico);
 void infoMedicos(ST_MEDICO medicos);
 ST_MEDICO *obterMedico(ST_MEDICO *medicos, unsigned int ID);
+void inserirFicheiroMedico(ST_MEDICO medico);
+void carregarFicheiroMedico(ST_MEDICO *medicos);
+void atualizarFicheiroMedico(ST_MEDICO *medicos);
 
 #endif

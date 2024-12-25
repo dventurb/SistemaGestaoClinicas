@@ -20,5 +20,8 @@ void procurarClientesNome(ST_CLIENTE *clientes);
 void confirmarClientes(ST_CLIENTE *clientes, ST_CLIENTE cliente);
 void infoClientes(ST_CLIENTE clientes);
 ST_CLIENTE *obterCliente(ST_CLIENTE *clientes, unsigned int ID);
+void inserirFicheiroCliente(ST_CLIENTE cliente);
+void carregarFicheiroCliente(ST_CLIENTE *clientes);
+void atualizarFicheiroCliente(ST_CLIENTE *clientes);
 
 #endif
