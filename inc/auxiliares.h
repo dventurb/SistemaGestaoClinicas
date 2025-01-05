@@ -22,5 +22,6 @@ void dataAtual(ST_DATA *data_hora_atual);
 void obterMorada(ST_CLIENTE *cliente);
 void obterEspecialidade(ST_MEDICO *medico);
 void listarEspecialidades(void);
+void pressionarEnter(void);
 
 #endif
