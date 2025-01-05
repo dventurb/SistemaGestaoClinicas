@@ -36,8 +36,8 @@ typedef struct {
   char email[STRING_MAX];
   ST_MORADA morada;
   ST_DATA data_nascimento;
-  unsigned int NIF;
-  unsigned int SNS;
+  unsigned long int NIF;
+  unsigned long int SNS;
   bool estado;
 }ST_CLIENTE;
 
