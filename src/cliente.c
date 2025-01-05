@@ -19,22 +19,22 @@ void inserirClientes(ST_CLIENTE *clientes){
     printf("Rua: %s\n", cliente.morada.rua);
     printf("Cidade: %s\n", cliente.morada.cidade);
     printf("Data de nascimento (dd-mm-aaaa): ");
-    scanf("%d-%d-%d", &cliente.data_nascimento.dia, &cliente.data_nascimento.mes, &cliente.data_nascimento.ano);
+    scanf("%2u-%2u-%4u", &cliente.data_nascimento.dia, &cliente.data_nascimento.mes, &cliente.data_nascimento.ano);
     limparBuffer();
     printf("E-Mail: ");
     fgets(cliente.email, STRING_MAX, stdin);
     cliente.email[strcspn(cliente.email, "\n")] = '\0';
     printf("NIF: ");
-    scanf("%d", &cliente.NIF);
+    scanf("%9lu", &cliente.NIF);
     limparBuffer();
     printf("SNS: ");
-    scanf("%d", &cliente.SNS);
+    scanf("%9lu", &cliente.SNS);
     limparBuffer();
     cliente.estado = true;
   
     do {
     printf("Deseja confirmar inserção do cliente? [1] - SIM e [0] - NÃO: ");
-    scanf("%d", &opcao);
+    scanf("%1d", &opcao);
     limparBuffer();
     } while(opcao != 0 && opcao != 1);
     if (opcao){
@@ -50,7 +50,7 @@ void alterarDadosClientes(ST_CLIENTE *clientes){
   int ID, opcao;
   clear();
   printf("ID do cliente: ");
-  scanf("%d", &ID);
+  scanf("%u", &ID);
   limparBuffer();
   if (ID <= 0 || ID > numeroClientes(clientes)){
     printf("O ID é inválido.\a\n");
@@ -68,7 +68,7 @@ void alterarDadosClientes(ST_CLIENTE *clientes){
     printf("[6] - SNS\n");
     printf("[0] - Sair\n");
     printf("\n-> ");
-    scanf("%d", &opcao);
+    scanf("%1d", &opcao);
     limparBuffer();
     switch(opcao){
       case 1:
@@ -83,7 +83,7 @@ void alterarDadosClientes(ST_CLIENTE *clientes){
       case 3: 
         clear();
         printf("Data de nascimento (dd-mm-aaaa): ");
-        scanf("%d-%d-%d", &cliente->data_nascimento.dia, &cliente->data_nascimento.mes, &cliente->data_nascimento.ano);
+        scanf("%2u-%2u-%4u", &cliente->data_nascimento.dia, &cliente->data_nascimento.mes, &cliente->data_nascimento.ano);
         limparBuffer();
         break;
       case 4:
@@ -95,13 +95,13 @@ void alterarDadosClientes(ST_CLIENTE *clientes){
       case 5:
         clear();
         printf("NIF: ");
-        scanf("%d", &cliente->NIF);
+        scanf("%9lu", &cliente->NIF);
         limparBuffer();
         break;
       case 6: 
         clear();
         printf("SNS: ");
-        scanf("%d", &cliente->SNS);
+        scanf("%9lu", &cliente->SNS);
         limparBuffer();
         break;
       case 0:
@@ -119,7 +119,7 @@ void ativarDesativarClientes(ST_CLIENTE *clientes){
   int ID;
   clear();
   printf("ID do cliente: ");
-  scanf("%d", &ID);
+  scanf("%u", &ID);
   limparBuffer();
   if (ID <= 0 || ID > numeroClientes(clientes)){
     printf("ID não é válido.\a\n");
@@ -137,7 +137,7 @@ void consultarDadosClientes(ST_CLIENTE *clientes){
   int ID;
   clear();
   printf("ID do cliente: ");
-  scanf("%d", &ID);
+  scanf("%u", &ID);
   limparBuffer();
   if (ID <= 0 || ID > numeroClientes(clientes)){
     printf("ID não é válido.\a\n");
@@ -146,7 +146,7 @@ void consultarDadosClientes(ST_CLIENTE *clientes){
   }
   clear();
   infoClientes(clientes[ID - 1]);
-  delay(10);
+  pressionarEnter();
   return;
 }
 
@@ -167,7 +167,7 @@ void obterListaClientesAtivos(ST_CLIENTE *clientes){
     delay(1);
     return;
   }
-  delay(10);
+  pressionarEnter();
 }
 
 void procurarClientesNome(ST_CLIENTE *clientes){
@@ -190,7 +190,7 @@ void procurarClientesNome(ST_CLIENTE *clientes){
     delay(1);
     return;
   }
-  delay(10);
+  pressionarEnter();
 }
 
 
@@ -207,13 +207,13 @@ int numeroClientes(ST_CLIENTE *clientes){
 }
 
 void infoClientes(ST_CLIENTE clientes){
-  printf("ID: %d\n", clientes.ID);
+  printf("ID: %u\n", clientes.ID);
   printf("Nome: %s\n", clientes.nome);
   printf("Código Postal: %lu | Rua: %s | Cidade: %s\n", clientes.morada.codigo_postal, clientes.morada.rua, clientes.morada.cidade);
-  printf("Data de Nascimento: %d-%d-%d\n", clientes.data_nascimento.dia, clientes.data_nascimento.mes, clientes.data_nascimento.ano);
+  printf("Data de Nascimento: %2u-%2u-%4u\n", clientes.data_nascimento.dia, clientes.data_nascimento.mes, clientes.data_nascimento.ano);
   printf("E-Mail: %s\n", clientes.email);
-  printf("NIF: %d\n", clientes.NIF);
-  printf("SNS: %d\n", clientes.SNS);
+  printf("NIF: %lu\n", clientes.NIF);
+  printf("SNS: %lu\n", clientes.SNS);
   printf("Estado: %s\n", clientes.estado ? "Ativo" : "Inativo");
 }
 
@@ -232,7 +232,7 @@ void inserirFicheiroCliente(ST_CLIENTE cliente){
     printf("Erro.\n");
     return;
   }
-  fprintf(ficheiro, "%d,%s,%lu,%s,%s,%d,%d,%d,%s,%d,%d,%s\n", cliente.ID, cliente.nome, cliente.morada.codigo_postal, cliente.morada.rua, cliente.morada.cidade, cliente.data_nascimento.dia, cliente.data_nascimento.mes, cliente.data_nascimento.ano, cliente.email, cliente.NIF, cliente.SNS, cliente.estado ? "Ativo" : "Inativo");
+  fprintf(ficheiro, "%u,%s,%lu,%s,%s,%2u,%2u,%4u,%s,%9lu,%9lu,%s\n", cliente.ID, cliente.nome, cliente.morada.codigo_postal, cliente.morada.rua, cliente.morada.cidade, cliente.data_nascimento.dia, cliente.data_nascimento.mes, cliente.data_nascimento.ano, cliente.email, cliente.NIF, cliente.SNS, cliente.estado ? "Ativo" : "Inativo");
   fclose(ficheiro);
   return;
 }
@@ -285,7 +285,7 @@ void atualizarFicheiroCliente(ST_CLIENTE *clientes){
     return;
   }
   for (int i = 0; i < numeroClientes(clientes); i++){
-   fprintf(ficheiro, "%d,%s,%lu,%s,%s,%d,%d,%d,%s,%d,%d,%s\n", clientes[i].ID, clientes[i].nome, clientes[i].morada.codigo_postal, clientes[i].morada.rua, clientes[i].morada.cidade, clientes[i].data_nascimento.dia, clientes[i].data_nascimento.mes, clientes[i].data_nascimento.ano, clientes[i].email, clientes[i].NIF, clientes[i].SNS, clientes[i].estado ? "Ativo" : "Inativo");
+   fprintf(ficheiro, "%u,%s,%lu,%s,%s,%2u,%2u,%4u,%s,%9lu,%9lu,%s\n", clientes[i].ID, clientes[i].nome, clientes[i].morada.codigo_postal, clientes[i].morada.rua, clientes[i].morada.cidade, clientes[i].data_nascimento.dia, clientes[i].data_nascimento.mes, clientes[i].data_nascimento.ano, clientes[i].email, clientes[i].NIF, clientes[i].SNS, clientes[i].estado ? "Ativo" : "Inativo");
   }
   fclose(ficheiro);
   return;

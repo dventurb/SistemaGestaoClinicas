@@ -20,7 +20,7 @@ void inserirMedicos(ST_MEDICO *medicos){
 
     do {
       printf("Deseja confirmar inserção do médico? [1] - SIM e [0] - NÃO: ");
-      scanf("%d", &opcao);
+      scanf("%1d", &opcao);
       limparBuffer();
     }while(opcao!= 0 && opcao != 1);
     if(opcao){
@@ -36,7 +36,7 @@ void alterarDadosMedicos(ST_MEDICO *medicos){
   int ID, opcao;
   clear();
   printf("ID do médico: ");
-  scanf("%d", &ID);
+  scanf("%u", &ID);
   limparBuffer();
   if(ID <= 0 || ID > numeroMedicos(medicos)){
     printf("O ID é inválido.\a\n");
@@ -50,7 +50,7 @@ void alterarDadosMedicos(ST_MEDICO *medicos){
     printf("[2] - Especialidade\n");
     printf("[0] - Sair\n");
     printf("\n-> ");
-    scanf("%d", &opcao);
+    scanf("%1d", &opcao);
     limparBuffer();
     switch(opcao){
       case 1:
@@ -81,7 +81,7 @@ void ativarDesativarMedicos(ST_MEDICO *medicos){
   int ID;
   clear();
   printf("ID do médico: ");
-  scanf("%d", &ID);
+  scanf("%u", &ID);
   limparBuffer();
   if(ID <= 0 || ID > numeroMedicos(medicos)){
     printf("ID não é válido.\a\n");
@@ -99,7 +99,7 @@ void consultarDadosMedicos(ST_MEDICO *medicos){
   int ID;
   clear();
   printf("ID do médico: ");
-  scanf("%d", &ID);
+  scanf("%u", &ID);
   limparBuffer();
   if(ID <= 0 || ID > numeroMedicos(medicos)){
     printf("ID não é válido.\a\n");
@@ -108,7 +108,7 @@ void consultarDadosMedicos(ST_MEDICO *medicos){
   }
   clear();
   infoMedicos(medicos[ID - 1]);
-  delay(10);
+  pressionarEnter();
   return;
 }
 
@@ -127,7 +127,7 @@ void obterListaTodosMedicos(ST_MEDICO *medicos){
     delay(1);
     return;
   }
-  delay(10);
+  pressionarEnter();
 }
 
 void obterListaMedicosAtivos(ST_MEDICO *medicos){
@@ -145,7 +145,7 @@ void obterListaMedicosAtivos(ST_MEDICO *medicos){
     delay(1);
     return;
   }
-  delay(10);
+  pressionarEnter();
 }
 
 void obterListaMedicosEspecialidade(ST_MEDICO *medicos){
@@ -170,7 +170,7 @@ void obterListaMedicosEspecialidade(ST_MEDICO *medicos){
     delay(1);
     return;
   }
-  delay(10);
+  pressionarEnter();
 }
 
 void procurarMedicosNome(ST_MEDICO *medicos){
@@ -193,7 +193,7 @@ void procurarMedicosNome(ST_MEDICO *medicos){
     delay(1);
     return;
   }
-  delay(10);
+  pressionarEnter();
 }
 
 int numeroMedicos(ST_MEDICO *medicos){
@@ -209,7 +209,7 @@ void confirmarMedicos(ST_MEDICO *medicos, ST_MEDICO medico){
 }
 
 void infoMedicos(ST_MEDICO medicos){
-  printf("ID: %d\n", medicos.ID);
+  printf("ID: %u\n", medicos.ID);
   printf("Nome: %s\n", medicos.nome);
   printf("Especialidade: %s\n", medicos.especialidade);
   printf("Estado: %s\n", medicos.estado ? "Disponível" : "Indisponível");
@@ -230,7 +230,7 @@ void inserirFicheiroMedico(ST_MEDICO medico){
     printf("Erro.\n");
     return;
   }
-  fprintf(ficheiro, "%d,%s,%s,%s\n", medico.ID, medico.nome, medico.especialidade, medico.estado ? "Disponível" : "Indisponível");
+  fprintf(ficheiro, "%u,%s,%s,%s\n", medico.ID, medico.nome, medico.especialidade, medico.estado ? "Disponível" : "Indisponível");
   fclose(ficheiro);
   return;
 }
@@ -268,7 +268,7 @@ void atualizarFicheiroMedico(ST_MEDICO *medicos){
     return;
   }
   for (int i = 0; i < numeroMedicos(medicos); i++){
-    fprintf(ficheiro, "%d,%s,%s,%s\n", medicos[i].ID, medicos[i].nome, medicos[i].especialidade, medicos[i].estado ? "Disponível" : "Indisponível");
+    fprintf(ficheiro, "%u,%s,%s,%s\n", medicos[i].ID, medicos[i].nome, medicos[i].especialidade, medicos[i].estado ? "Disponível" : "Indisponível");
   }
   fclose(ficheiro);
   return;

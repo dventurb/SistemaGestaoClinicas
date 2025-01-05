@@ -17,7 +17,7 @@ void agendarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *m
   }
   clear();
   printf("ID do cliente: ");
-  scanf("%d", &clienteID);
+  scanf("%u", &clienteID);
   limparBuffer();
   if (clienteID <= 0 || clienteID > numeroClientes(clientes)){
     printf("O ID é inválido.\a\n");
@@ -30,7 +30,7 @@ void agendarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *m
     return;
   }
   printf("ID do médico: ");
-  scanf("%d", &medicoID);
+  scanf("%u", &medicoID);
   if(medicoID <= 0 || medicoID > numeroMedicos(medicos)){
     printf("O ID é inválido.\a\n");
     delay(1);
@@ -47,21 +47,21 @@ void agendarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *m
   consulta.medico = obterMedico(medicos, medicoID);
   do {
   printf("Data da consulta (dd-mm-aaaa): ");
-  scanf("%d-%d-%d", &consulta.data_inicial.dia, &consulta.data_inicial.mes, &consulta.data_inicial.ano);
+  scanf("%2u-%2u-%4u", &consulta.data_inicial.dia, &consulta.data_inicial.mes, &consulta.data_inicial.ano);
   limparBuffer();
     printf("Hora (8h - 18h): ");
-    scanf("%d", &consulta.data_inicial.hora);
+    scanf("%2u", &consulta.data_inicial.hora);
     limparBuffer();
     if(!verificarDisponibilidade(consultas, &consulta)){
       printf("Horário não é válido.\a\n");
       delay(1);
     }
   }while(!verificarDisponibilidade(consultas, &consulta));
-  printf("Data: %d-%d-%d  | Ás %dh até %dh\n", consulta.data_inicial.dia, consulta.data_inicial.mes, consulta.data_inicial.ano, consulta.data_inicial.hora, consulta.data_final.hora);
+  printf("Data: %2u-%2u-%4u  | Ás %2uh até %2uh\n", consulta.data_inicial.dia, consulta.data_inicial.mes, consulta.data_inicial.ano, consulta.data_inicial.hora, consulta.data_final.hora);
   consulta.estado = Agendado;
   do {
     printf("Deseja confirmar agendamento da consulta? [1] - SIM e [0] - NÃO: ");
-    scanf("%d", &opcao);
+    scanf("%1d", &opcao);
     limparBuffer();
   }while(opcao != 0 && opcao != 1);
   if(opcao){
@@ -81,7 +81,7 @@ void desmarcarConsultas(ST_CONSULTA *consultas){
   }
   clear();
   printf("ID da consulta: ");
-  scanf("%d", &ID);
+  scanf("%u", &ID);
   limparBuffer();
   ST_CONSULTA *consulta = obterConsulta(consultas, ID);
   if (consulta == NULL){
@@ -115,7 +115,7 @@ void marcarConsultasRealizadas(ST_CONSULTA *consultas){
   }
   clear();
   printf("ID da consulta: ");
-  scanf("%d", &ID);
+  scanf("%u", &ID);
   limparBuffer();
   ST_CONSULTA *consulta = obterConsulta(consultas, ID);
   if (consulta == NULL){
@@ -150,7 +150,7 @@ void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO 
   }
   clear();
   printf("ID da consulta: ");
-  scanf("%d", &ID);
+  scanf("%u", &ID);
   limparBuffer();
   ST_CONSULTA *consulta = obterConsulta(consultas, ID);
   if (consulta == NULL){
@@ -175,14 +175,14 @@ void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO 
     printf("[3] - Horário da consulta\n");
     printf("[0] - Sair\n");
     printf("\n-> ");
-    scanf("%d", &opcao);
+    scanf("%1d", &opcao);
     limparBuffer();
     switch(opcao){
       case 1:
         do { 
           clear();
           printf("ID do cliente: ");
-          scanf("%d", &clienteID);
+          scanf("%u", &clienteID);
           limparBuffer();
           if(!clientes[clienteID - 1].estado){
             printf("O cliente está inativo.\a\n");
@@ -195,7 +195,7 @@ void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO 
         do {
           clear();
           printf("ID do médico: ");
-          scanf("%d", &medicoID);
+          scanf("%u", &medicoID);
           limparBuffer();
           if(!medicos[medicoID -1].estado){
             printf("O médico está indisponível.\a\n");
@@ -208,10 +208,10 @@ void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO 
         do {
           clear();
           printf("Data da consulta (dd-mm-aaaa): ");
-          scanf("%d-%d-%d", &consulta->data_inicial.dia, &consulta->data_inicial.mes, &consulta->data_inicial.ano);
+          scanf("%2u-%2u-%4u", &consulta->data_inicial.dia, &consulta->data_inicial.mes, &consulta->data_inicial.ano);
           limparBuffer();
           printf("Hora (8h - 18h): ");
-          scanf("%d", &consulta->data_inicial.hora);
+          scanf("%2u", &consulta->data_inicial.hora);
           limparBuffer();
           if(!verificarDisponibilidade(consultas, consulta)){
             printf("Horário não é válido.\a\n");
@@ -243,7 +243,7 @@ void obterListaConsultasDiaAtualMedico(ST_CONSULTA *consultas, ST_MEDICO *medico
   }
   clear();
   printf("ID do médico: ");
-  scanf("%d", &medicoID);
+  scanf("%u", &medicoID);
   limparBuffer();
   if(!medicos[medicoID -1].estado){
     printf("O médico está indisponível.\a\n");
@@ -262,7 +262,7 @@ void obterListaConsultasDiaAtualMedico(ST_CONSULTA *consultas, ST_MEDICO *medico
     delay(1);
     return;
   }
-  delay(15);
+  pressionarEnter();
   return;
 }
 
@@ -275,7 +275,7 @@ void obterHistoricoConsultasCliente(ST_CONSULTA *consultas, ST_CLIENTE *clientes
   }
   clear();
   printf("ID do cliente: ");
-  scanf("%d", &clienteID);
+  scanf("%u", &clienteID);
   limparBuffer();
   if (!clientes[clienteID - 1].estado){
     printf("O cliente está inativo.\a\n");
@@ -294,7 +294,7 @@ void obterHistoricoConsultasCliente(ST_CONSULTA *consultas, ST_CLIENTE *clientes
     delay(1);
     return;
   }
-  delay(15);
+  pressionarEnter();
   return;
 }
 
@@ -340,11 +340,11 @@ bool verificarDisponibilidade(ST_CONSULTA *consultas,ST_CONSULTA *consulta){
 
 void infoConsultas(ST_CONSULTA consultas){
   char *estadoConsulta[3] = { "Cancelado", "Agendado", "Realizado"};
-  printf("ID: %d\n", consultas.ID);
+  printf("ID: %u\n", consultas.ID);
   printf("Nome do cliente: %s\n", consultas.cliente->nome);
   printf("Nome do médico: %s\n", consultas.medico->nome);
   printf("Tipo de Consulta: %s\n", consultas.medico->especialidade);
-  printf("Data: %d-%d-%d | Ás %dh até %dh\n", consultas.data_inicial.dia, consultas.data_inicial.mes, consultas.data_inicial.ano, consultas.data_inicial.hora, consultas.data_final.hora);
+  printf("Data: %2u-%2u-%4u | Ás %2uh até %2uh\n", consultas.data_inicial.dia, consultas.data_inicial.mes, consultas.data_inicial.ano, consultas.data_inicial.hora, consultas.data_final.hora);
   printf("Estado: %s\n\n", estadoConsulta[consultas.estado]);
 }
 
@@ -364,7 +364,7 @@ void inserirFicheiroConsulta(ST_CONSULTA consulta){
     printf("Erro.\n");
     return;
   }
-  fprintf(ficheiro, "%d,%d,%s,%d,%s,%s,%d,%d,%d,%d,%d,%s\n", consulta.ID, consulta.cliente->ID, consulta.cliente->nome, consulta.medico->ID, consulta.medico->nome, consulta.medico->especialidade, consulta.data_inicial.dia, consulta.data_inicial.mes, consulta.data_inicial.ano, consulta.data_inicial.hora, consulta.data_final.hora, estadoConsulta[consulta.estado]);
+  fprintf(ficheiro, "%u,%u,%s,%u,%s,%s,%2u,%2u,%4u,%2u,%2u,%s\n", consulta.ID, consulta.cliente->ID, consulta.cliente->nome, consulta.medico->ID, consulta.medico->nome, consulta.medico->especialidade, consulta.data_inicial.dia, consulta.data_inicial.mes, consulta.data_inicial.ano, consulta.data_inicial.hora, consulta.data_final.hora, estadoConsulta[consulta.estado]);
   fclose(ficheiro);
   return;
 }
@@ -428,7 +428,7 @@ void atualizarFicheiroConsulta(ST_CONSULTA *consultas){
     return;
   }
   for (int i = 0; i < numeroConsultas(consultas); i++){
-    fprintf(ficheiro, "%d,%s,%s,%s,%d,%d,%d,%d,%d,%s\n", consultas[i].ID, consultas[i].cliente->nome, consultas[i].medico->nome, consultas[i].medico->especialidade, consultas[i].data_inicial.dia, consultas[i].data_inicial.mes, consultas[i].data_inicial.ano, consultas[i].data_inicial.hora, consultas[i].data_final.hora, estadoConsulta[consultas[i].estado]);
+    fprintf(ficheiro, "%u,%u,%s,%u,%s,%s,%2u,%2u,%4u,%2u,%2u,%s\n", consultas[i].ID, consultas[i].cliente->ID, consultas[i].cliente->nome, consultas[i].medico->ID, consultas[i].medico->nome, consultas[i].medico->especialidade, consultas[i].data_inicial.dia, consultas[i].data_inicial.mes, consultas[i].data_inicial.ano, consultas[i].data_inicial.hora, consultas[i].data_final.hora, estadoConsulta[consultas[i].estado]);
   }
   fclose(ficheiro);
   return;

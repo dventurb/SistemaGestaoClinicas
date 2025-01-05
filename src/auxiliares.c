@@ -19,8 +19,8 @@ void delay(int num){
 }
 
 void limparBuffer(void){
-  char c;
-  while((c = getchar()) != '\n');
+  int c;
+  while((c = getchar()) != '\n' && c != EOF);
 }
 
  void dataAtual(ST_DATA *data_hora_atual){
@@ -43,7 +43,7 @@ void limparBuffer(void){
     return;
    }
     printf("Código Postal (1234567): ");
-    scanf("%lu", &codigo_postal);
+    scanf("%7lu", &codigo_postal);
     limparBuffer();
     while (fgets(linha, sizeof(linha), ficheiro)){
      token = strtok(linha, ",");
@@ -140,4 +140,9 @@ void listarEspecialidades(void){
   fclose(ficheiro);
   delay(10);
   return;
+}
+
+void pressionarEnter(void){
+  printf("Pressionar Enter para sair.\n");
+  while (getchar() != '\n');
 }
