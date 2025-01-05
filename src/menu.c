@@ -11,7 +11,7 @@ void menuPrincipal(ST_CLIENTE *clientes, ST_MEDICO *medicos, ST_CONSULTA *consul
     printf("[3] - Gestão de Consultas\n");
     printf("[0] - Sair\n");
     printf("\n-> ");
-    scanf("%d", &opcao);
+    scanf("%1d", &opcao);
     limparBuffer();
     switch (opcao){
     case 1:
@@ -45,7 +45,7 @@ void menuClientes(ST_CLIENTE *clientes){
     printf("[6] - Procurar um cliente pelo nome\n");
     printf("[0] - Sair\n");
     printf("\n-> ");
-    scanf("%d", &opcao);
+    scanf("%1d", &opcao);
     limparBuffer();
     switch(opcao){
       case 1:
@@ -89,7 +89,7 @@ void menuMedicos(ST_MEDICO *medicos){
     printf("[8] - Procurar um médico pelo nome\n");
     printf("[0] - Sair\n");
     printf("\n-> ");
-    scanf("%d", &opcao);
+    scanf("%1d", &opcao);
     limparBuffer();
     switch (opcao){
       case 1:
@@ -138,7 +138,7 @@ void menuConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *medi
     printf("[6] - Obter histórico de consultas por cliente\n");
     printf("[0] - Sair\n");
     printf("\n-> ");
-    scanf("%d", &opcao);
+    scanf("%1d", &opcao);
     limparBuffer();
     switch(opcao){
       case 1:
