@@ -22,7 +22,7 @@ cd SistemaGestaoClinicas/
 ```
 4. Compilar o projeto utilizando:
 ```bash
-make
+make rebuild
 ```
 5. Executar o projeto utilizando:
 ```bash
