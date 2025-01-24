@@ -15,6 +15,7 @@ void inserirMedicos(ST_MEDICO *medicos){
     printf("Nome do médico: ");
     fgets(medico.nome, STRING_MAX, stdin);
     medico.nome[strcspn(medico.nome, "\n")] = '\0';
+    medico.nome[0] = toupper(medico.nome[0]);
     obterEspecialidade(&medico);
     medico.estado = true;
 
@@ -58,6 +59,7 @@ void alterarDadosMedicos(ST_MEDICO *medicos){
         printf("Nome: ");
         fgets(medico->nome, STRING_MAX, stdin);
         medico->nome[strcspn(medico->nome, "\n")] = '\0';
+        medico->nome[0] = toupper(medico->nome[0]);
         printf("Nome do médico alterado com sucesso.\n");
         delay(1);
         break;
@@ -155,10 +157,11 @@ void obterListaMedicosEspecialidade(ST_MEDICO *medicos){
   printf("Especialidade: ");
   fgets(especialidade, STRING_MAX, stdin);
   especialidade[strcspn(especialidade, "\n")] = '\0';
+  especialidade[0] = toupper(especialidade[0]);
   clear();
   printf("Lista de Médicos de %s:\n", especialidade);
   for (int i = 0; i < numeroMedicos(medicos); i++){
-    if(strncmp(medicos[i].especialidade, especialidade, 4) == 0){
+    if(strncmp(medicos[i].especialidade, especialidade, 2) == 0){
       infoMedicos(medicos[i]);
       printf("\n");
       encontrados++;
@@ -180,6 +183,7 @@ void procurarMedicosNome(ST_MEDICO *medicos){
   printf("Nome do médico: ");
   fgets(nome, STRING_MAX, stdin);
   nome[strcspn(nome, "\n")] = '\0';
+  nome[0] = toupper(nome[0]);
   for (int i = 0; i < numeroMedicos(medicos); i++){
     if(strncmp(medicos[i].nome, nome, 4) == 0){
       infoMedicos(medicos[i]);

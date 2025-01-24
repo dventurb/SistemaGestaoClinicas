@@ -177,8 +177,9 @@ void procurarClientesNome(ST_CLIENTE *clientes){
   printf("Nome do cliente: ");
   fgets(nome, STRING_MAX, stdin);
   nome[strcspn(nome, "\n")] = '\0';
+  nome[0] = toupper(nome[0]);
   for (int i = 0; i < numeroClientes(clientes); i++){
-    if (strncmp(clientes[i].nome, nome, 4) == 0){
+    if (strncmp(clientes[i].nome, nome, 2) == 0){
       infoClientes(clientes[i]);
       printf("\n");
       encontrados++;
