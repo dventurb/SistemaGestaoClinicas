@@ -102,9 +102,10 @@ void obterEspecialidade(ST_MEDICO *medico){
           printf("Especialidade: ");
           fgets(especialidade, sizeof(especialidade), stdin);
           especialidade[strcspn(especialidade, "\n")] = '\0';
+          especialidade[0] = toupper(especialidade[0]);
           while (fgets(linha, sizeof(linha), ficheiro) != NULL){
               linha[strcspn(linha, "\n")] = '\0';
-              if(strncmp(especialidade, linha, 4) == 0){
+              if(strncmp(especialidade, linha, 3) == 0){
               strcpy(medico->especialidade, especialidade);
               especialidade_valida = 1;
               break;
