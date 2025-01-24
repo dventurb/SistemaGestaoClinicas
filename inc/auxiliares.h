@@ -7,6 +7,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include "structs.h"
 #ifdef _WIN32
   #include <windows.h> // Função Sleep em sistemas Windows
