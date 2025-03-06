@@ -33,7 +33,7 @@ make rebuild
 O projeto foi implementado em Linguagem C e desenvolvido no Visual Studio Code.
 
 [![C](https://img.shields.io/badge/C-00599C?logo=c&logoColor=white)](#)
-[![Visual Studio Code](https://custom-icon-badges.demolab.com/badge/Visual%20Studio%20Code-0078d7.svg?logo=vsc&logoColor=white)](#)
+[![Neovim Minimum Version](https://img.shields.io/badge/Neovim-0.10-blueviolet.svg?style=flat-square&logo=Neovim&color=90E59A&logoColor=white)](https://github.com/neovim/neovim)
 
 ## 👷 Autor
 **Daniel Ventura Brito** - [GitHub](https://github.com/dventurb)
