@@ -3,7 +3,7 @@
 
 // FUNÇÕES CLIENTES
 void inserirClientes(ST_CLIENTE *clientes){
-  int opcao;
+  int opcao = 2, tecla;
   if(numeroClientes(clientes) >= MAX_CLIENTES){
     printf("Número máximo de clientes atingido!\a\n");
     delay(1);
@@ -33,11 +33,13 @@ void inserirClientes(ST_CLIENTE *clientes){
     cliente.estado = true;
   
     do {
-    printf("Deseja confirmar inserção do cliente? [1] - SIM e [0] - NÃO: ");
-    scanf("%1d", &opcao);
-    limparBuffer();
-    } while(opcao != 0 && opcao != 1);
-    if (opcao){
+      clear();
+      printf("Deseja confirmar inserção do cliente?\n   [%s%s] - SIM   [%s%s] - NÃO", (opcao == 1) ? GREEN "X" : "", RESET, (opcao == 2) ? GREEN "X" : "", RESET);
+      tecla = getKey();
+      selecionarOpcao(&opcao, tecla);
+    } while((opcao != 1 && opcao!= 2) || tecla != 10);
+    if (opcao == 1){
+      clear();
       confirmarClientes(clientes, cliente);
       inserirFicheiroCliente(cliente);
       printf("Cliente inserido com sucesso.\n");
@@ -47,7 +49,7 @@ void inserirClientes(ST_CLIENTE *clientes){
 }
 
 void alterarDadosClientes(ST_CLIENTE *clientes){
-  int ID, opcao;
+  int ID, opcao = 1, tecla;
   clear();
   printf("ID do cliente: ");
   scanf("%u", &ID);
@@ -60,59 +62,59 @@ void alterarDadosClientes(ST_CLIENTE *clientes){
   ST_CLIENTE *cliente = &clientes[ID - 1];
   do {
     clear();
-    printf("[1] - Nome\n");
-    printf("[2] - Código Postal\n");
-    printf("[3] - Data de nascimento\n");
-    printf("[4] - E-Mail\n");
-    printf("[5] - NIF\n");
-    printf("[6] - SNS\n");
-    printf("[0] - Sair\n");
-    printf("\n-> ");
-    scanf("%1d", &opcao);
-    limparBuffer();
-    switch(opcao){
-      case 1:
-        clear();
-        printf("Nome: ");
-        fgets(cliente->nome, STRING_MAX, stdin);
-        cliente->nome[strcspn(cliente->nome, "\n")] = '\0';
-        break;
-      case 2:
-        obterMorada(cliente);
-        break;
-      case 3: 
-        clear();
-        printf("Data de nascimento (dd-mm-aaaa): ");
-        scanf("%2u-%2u-%4u", &cliente->data_nascimento.dia, &cliente->data_nascimento.mes, &cliente->data_nascimento.ano);
-        limparBuffer();
-        break;
-      case 4:
-        clear();
-        printf("E-Mail: ");
-        fgets(cliente->email, STRING_MAX, stdin);
-        cliente->email[strcspn(cliente->email, "\n")] = '\0';
-        break;
-      case 5:
-        clear();
-        printf("NIF: ");
-        scanf("%9lu", &cliente->NIF);
-        limparBuffer();
-        break;
-      case 6: 
-        clear();
-        printf("SNS: ");
-        scanf("%9lu", &cliente->SNS);
-        limparBuffer();
-        break;
-      case 0:
-        atualizarFicheiroCliente(clientes);
-        break;
-      default: 
-        printf("Opção não é válida.\a\n");
-        delay(1);
-        break;
+    printf("%s%sNome\n", (opcao == 1) ? GREEN "▶" : "", RESET);
+    printf("%s%sCódigo Postal\n", (opcao == 2) ? GREEN "▶" : "", RESET);
+    printf("%s%sData de nascimento\n", (opcao == 3) ? GREEN "▶" : "", RESET);
+    printf("%s%sE-Mail\n", (opcao == 4) ? GREEN "▶" : "", RESET);
+    printf("%s%sNIF\n", (opcao == 5) ? GREEN "▶" : "", RESET);
+    printf("%s%sSNS\n", (opcao == 6) ? GREEN "▶" : "", RESET);
+    printf("%s%sSair\n", (opcao == 7) ? GREEN "▶" : "", RESET);
+    tecla = getKey();
+    if(tecla == 10){ 
+      switch(opcao){
+        case 1:
+          clear();
+          printf("Nome: ");
+          fgets(cliente->nome, STRING_MAX, stdin);
+          cliente->nome[strcspn(cliente->nome, "\n")] = '\0';
+          break;
+        case 2:
+          obterMorada(cliente);
+          printf("Rua: %s\n", cliente->morada.rua);
+          printf("Cidade: %s\n", cliente->morada.cidade);
+          delay(1);
+          break;
+        case 3: 
+          clear();
+          printf("Data de nascimento (dd-mm-aaaa): ");
+          scanf("%2u-%2u-%4u", &cliente->data_nascimento.dia, &cliente->data_nascimento.mes, &cliente->data_nascimento.ano);
+          limparBuffer();
+          break;
+        case 4:
+          clear();
+          printf("E-Mail: ");
+          fgets(cliente->email, STRING_MAX, stdin);
+          cliente->email[strcspn(cliente->email, "\n")] = '\0';
+          break;
+        case 5:
+          clear();
+          printf("NIF: ");
+          scanf("%9lu", &cliente->NIF);
+          limparBuffer();
+          break;
+        case 6: 
+          clear();
+          printf("SNS: ");
+          scanf("%9lu", &cliente->SNS);
+          limparBuffer();
+          break;
+        case 7:
+          atualizarFicheiroCliente(clientes);
+          return;
+      }
     }
-  }while (opcao != 0);
+    navegarMenu(&opcao, tecla, 7);
+  }while(opcao != 7 || tecla != 10);
 }
 
 void ativarDesativarClientes(ST_CLIENTE *clientes){

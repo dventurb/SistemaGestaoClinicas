@@ -69,6 +69,7 @@ void limparBuffer(void){
    }
    if(!encontrados){
      printf("Código postal não encontrado.\a\n");
+     delay(1);
    }
    fclose(ficheiro);
    return;
@@ -77,7 +78,7 @@ void limparBuffer(void){
 void obterEspecialidade(ST_MEDICO *medico){
   FILE *ficheiro;
   char linha[20], especialidade[20];
-  int opcao;
+  int opcao = 1, tecla;
   ficheiro = fopen("data/especialidade.txt", "r");
   if (ficheiro == NULL){
     printf("Erro\n");
@@ -86,41 +87,40 @@ void obterEspecialidade(ST_MEDICO *medico){
   clear();
   do { 
     clear();
-    printf("[1] - Obter uma lista das especialidades\n");
-    printf("[2] - Inserir a especialidade do médico\n");
-    printf("\n-> ");
-    scanf("%d", &opcao);
-    limparBuffer();
-    switch (opcao){
-      case 1:
-        listarEspecialidades();
-        break;
-      case 2:
-        clear();
-        int especialidade_valida = 0;
-        do{ 
-          printf("Especialidade: ");
-          fgets(especialidade, sizeof(especialidade), stdin);
-          especialidade[strcspn(especialidade, "\n")] = '\0';
-          especialidade[0] = toupper(especialidade[0]);
-          while (fgets(linha, sizeof(linha), ficheiro) != NULL){
+    printf("%s%sObter uma lista das especialidades\n", (opcao == 1) ? GREEN "▶" : "", RESET);
+    printf("%s%sInserir a especialidade do médico\n", (opcao == 2) ? GREEN "▶" : "", RESET);
+    tecla = getKey();
+    if(tecla == 10){ 
+      switch (opcao){
+        case 1:
+          listarEspecialidades();
+          break;
+        case 2:
+          clear();
+          int especialidade_valida = 0;
+          do{ 
+            printf("Especialidade: ");
+            fgets(especialidade, sizeof(especialidade), stdin);
+            especialidade[strcspn(especialidade, "\n")] = '\0';
+            especialidade[0] = toupper(especialidade[0]);
+            rewind(ficheiro);
+            while (fgets(linha, sizeof(linha), ficheiro)){
               linha[strcspn(linha, "\n")] = '\0';
-              if(strncmp(especialidade, linha, 3) == 0){
-              strcpy(medico->especialidade, especialidade);
-              especialidade_valida = 1;
-              break;
+              if(strncmp(especialidade, linha, 5) == 0){
+                strcpy(medico->especialidade, linha);
+                especialidade_valida = 1;
+                break;
+              }
             }
-          }
-          if (!especialidade_valida){
-            printf("Especialidade não é válida.\a\n");
-          }
-        }while(especialidade_valida != 1);
-        break;
-      default:
-        printf("Opção inválida!\a\n");
-        break;
+            if (!especialidade_valida){
+              printf("Especialidade não é válida.\a\n");
+            }
+          }while(especialidade_valida != 1);
+          break;
+      }
     }
-  }while(opcao != 2);
+    navegarMenu(&opcao, tecla, 2);
+  }while((opcao != 2) || tecla != 10);
   fclose(ficheiro);
   return;
 }
@@ -139,11 +139,101 @@ void listarEspecialidades(void){
     printf("%s", linha);
   }
   fclose(ficheiro);
-  delay(10);
+  pressionarEnter();
   return;
 }
 
 void pressionarEnter(void){
-  printf("Pressionar Enter para sair.\n");
+  printf("\nPressionar Enter para sair.\n");
   while (getchar() != '\n');
 }
+
+void navegarMenu(int *opcao, int tecla, int n){
+  #ifdef _WIN32
+    if(tecla == 224){
+      tecla = getKey();
+      if (tecla == 72){        // Tecla seta de cima
+        *opcao = (*opcao == 1) ? 1 : (*opcao - 1);
+      }else if (tecla == 80){  // Tecla seta de baixo
+        *opcao = (*opcao == n) ? n : (*opcao + 1);
+      }
+    }
+#else 
+    if(tecla == 27){
+      if(getKey() == 91){
+        tecla = getKey();
+        if(tecla == 65){       // Tecla seta de cima
+          *opcao = (*opcao == 1) ? 1 : (*opcao - 1);
+        }else if(tecla == 66){  // Tecla seta de baixo
+          *opcao = (*opcao == n) ? n : (*opcao + 1); 
+        }
+      }
+    }
+#endif
+}
+
+void selecionarOpcao(int *opcao, int tecla){
+  #ifdef _WIN32
+    if(tecla == 224){
+      tecla = getKey();
+      if(tecla == 75){
+        *opcao = (*opcao == 1) ? 1 : (*opcao - 1);
+      }else if(tecla == 77){
+        *opcao = (*opcao == 2) ? 2 : (*opcao + 1);
+      }
+    }
+  #else
+    if(tecla == 27){
+      if(getKey() == 91){
+        tecla = getKey();
+        if(tecla == 68){
+          *opcao = (*opcao == 1) ? 1 : (*opcao - 1);
+        }else if (tecla == 67){
+          *opcao = (*opcao == 2) ? 2 : (*opcao + 1);
+        }
+      }
+    }
+#endif
+}
+
+int getKey(void){
+  #ifdef _WIN32
+    int ch;
+    ch = _getch();
+    if (ch == 13){   // Enter em sistemas Windows
+      return 10;
+    }else{
+      return ch;
+    }
+  #else
+    struct termios old, new;  // old - Configurações antigas; new - Configurações novas
+    int ch;
+    tcgetattr(STDIN_FILENO, &old);
+    new = old;
+    new.c_lflag &= ~(ECHO | ICANON);  // Desativar exibição do stdin e necessidade do Enter
+    tcsetattr(STDIN_FILENO, TCSANOW, &new);
+    ch = getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &old);
+    return ch;
+  #endif
+}
+
+void ativarDesativarCursor(int n){
+#ifdef _WIN32
+  HANDLE hConsole = GetStdHandle(STD_INPUT_HANDLE);
+  CONSOLE_CURSOR_INFO cursorInfo;
+  GetConsoleCursorInfo(hConsole, &cursorInfo);
+  cursorInfo.bVisible = (n != 0);
+  setConsoleCursorInfo(hConsole, &cursorInfo);
+#else 
+  if(n == 0){
+    printf("\e[?25l");
+  }else {
+    printf("\e[?25h");
+  }
+#endif
+}
+
+
+
+

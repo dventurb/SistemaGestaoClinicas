@@ -3,7 +3,7 @@
 
 // FUNÇÕES MÉDICOS
 void inserirMedicos(ST_MEDICO *medicos){
-  int opcao;
+  int opcao = 2, tecla;
   if(numeroMedicos(medicos) >= MAX_MEDICOS){
     printf("Número máximo de médicos atingido!\a\n");
     delay(1);
@@ -20,11 +20,13 @@ void inserirMedicos(ST_MEDICO *medicos){
     medico.estado = true;
 
     do {
-      printf("Deseja confirmar inserção do médico? [1] - SIM e [0] - NÃO: ");
-      scanf("%1d", &opcao);
-      limparBuffer();
-    }while(opcao!= 0 && opcao != 1);
-    if(opcao){
+      clear();
+      printf("Deseja confirmar inserção do médico?\n   [%s%s] - SIM   [%s%s] - NÃO\n", (opcao == 1) ? GREEN "X" : "", RESET, (opcao == 2) ? GREEN "X" : "", RESET);
+      tecla = getKey();
+      selecionarOpcao(&opcao, tecla);
+    }while((opcao!= 1 && opcao != 2) || tecla != 10);
+    if(opcao == 1){
+      clear();
       confirmarMedicos(medicos, medico);
       inserirFicheiroMedico(medico);
       printf("Médico inserido com sucesso.\n");
@@ -34,7 +36,7 @@ void inserirMedicos(ST_MEDICO *medicos){
 }
 
 void alterarDadosMedicos(ST_MEDICO *medicos){
-  int ID, opcao;
+  int ID, opcao = 1, tecla;
   clear();
   printf("ID do médico: ");
   scanf("%u", &ID);
@@ -47,36 +49,33 @@ void alterarDadosMedicos(ST_MEDICO *medicos){
   ST_MEDICO *medico = &medicos[ID - 1];
   do {
     clear();
-    printf("[1] - Nome\n");
-    printf("[2] - Especialidade\n");
-    printf("[0] - Sair\n");
-    printf("\n-> ");
-    scanf("%1d", &opcao);
-    limparBuffer();
-    switch(opcao){
-      case 1:
-        clear();
-        printf("Nome: ");
-        fgets(medico->nome, STRING_MAX, stdin);
-        medico->nome[strcspn(medico->nome, "\n")] = '\0';
-        medico->nome[0] = toupper(medico->nome[0]);
-        printf("Nome do médico alterado com sucesso.\n");
-        delay(1);
-        break;
-      case 2:
-        obterEspecialidade(medico);
-        printf("Especialidade alterada com sucesso.\n");
-        delay(1);
-        break;
-      case 0:
-        atualizarFicheiroMedico(medicos);
-        break;
-      default:
-        printf("Opção não é válida.\a\n");
-        delay(1);
-        break;
+    printf("%s%sNome\n", (opcao == 1) ? GREEN "▶" : "", RESET);
+    printf("%s%sEspecialidade\n", (opcao == 2) ? GREEN "▶" : "", RESET);
+    printf("%s%sSair\n", (opcao == 3) ? GREEN "▶" : "", RESET);
+    tecla = getKey();
+    if(tecla == 10){ 
+      switch(opcao){
+        case 1:
+          clear();
+          printf("Nome: ");
+          fgets(medico->nome, STRING_MAX, stdin);
+          medico->nome[strcspn(medico->nome, "\n")] = '\0';
+          medico->nome[0] = toupper(medico->nome[0]);
+          printf("Nome do médico alterado com sucesso.\n");
+          delay(1);
+          break;
+        case 2:
+          obterEspecialidade(medico);
+          printf("Especialidade alterada com sucesso.\n");
+          delay(1);
+          break;
+        case 3:
+          atualizarFicheiroMedico(medicos);
+          return;
     }
-  }while(opcao != 0);
+  }
+  navegarMenu(&opcao, tecla, 3);
+  }while(opcao != 3 || tecla != 10);
 }
 
 void ativarDesativarMedicos(ST_MEDICO *medicos){
@@ -244,8 +243,8 @@ void carregarFicheiroMedico(ST_MEDICO *medicos){
   int i = 0;
   FILE *ficheiro;
   ficheiro = fopen("data/medicos.txt", "r");
-  if (ficheiro == NULL){
-    printf("Erro.\n");
+  if(ficheiro == NULL){
+    printf("Erro\n");
     return;
   }
   while(fgets(linha, sizeof(linha), ficheiro) && i < MAX_MEDICOS){
