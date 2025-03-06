@@ -4,7 +4,7 @@
 // FUNÇÕES CONSULTAS
 void agendarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *medicos){
   unsigned int clienteID, medicoID;
-  int opcao;
+  int opcao = 2, tecla;
   if(!numeroClientes(clientes)){
     printf("Não existe clientes registados.\a\n");
     delay(1);
@@ -57,14 +57,16 @@ void agendarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *m
       delay(1);
     }
   }while(!verificarDisponibilidade(consultas, &consulta));
-  printf("Data: %2u-%2u-%4u  | Ás %2uh até %2uh\n", consulta.data_inicial.dia, consulta.data_inicial.mes, consulta.data_inicial.ano, consulta.data_inicial.hora, consulta.data_final.hora);
   consulta.estado = Agendado;
   do {
-    printf("Deseja confirmar agendamento da consulta? [1] - SIM e [0] - NÃO: ");
-    scanf("%1d", &opcao);
-    limparBuffer();
-  }while(opcao != 0 && opcao != 1);
-  if(opcao){
+    clear();
+    printf("Data: %2u-%2u-%4u  | Ás %2uh até %2uh\n", consulta.data_inicial.dia, consulta.data_inicial.mes, consulta.data_inicial.ano, consulta.data_inicial.hora, consulta.data_final.hora);
+    printf("Deseja confirmar agendamento da consulta?\n   [%s%s] - SIM   [%s%s] - NÃO\n", (opcao == 1) ? GREEN "X" : "", RESET, (opcao == 2) ? GREEN "X" : "", RESET);
+    tecla = getKey();
+    selecionarOpcao(&opcao, tecla);
+  }while((opcao != 1 && opcao != 2) || tecla != 10);
+  if(opcao == 1){
+    clear();
     confirmarConsultas(consultas, consulta);
     inserirFicheiroConsulta(consulta);
     printf("Consulta agendada com sucesso.\n");
@@ -142,7 +144,7 @@ void marcarConsultasRealizadas(ST_CONSULTA *consultas){
 
 void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *medicos){
   unsigned int ID, clienteID, medicoID;
-  int opcao;
+  int opcao = 1, tecla;
   if (!numeroConsultas(consultas)){
     printf("Não há consultas registadas.\a\n");
     delay(1);
@@ -170,66 +172,63 @@ void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO 
   }
   do {
     clear();
-    printf("[1] - ID do cliente\n");
-    printf("[2] - ID do médico\n");
-    printf("[3] - Horário da consulta\n");
-    printf("[0] - Sair\n");
-    printf("\n-> ");
-    scanf("%1d", &opcao);
-    limparBuffer();
-    switch(opcao){
-      case 1:
-        do { 
-          clear();
-          printf("ID do cliente: ");
-          scanf("%u", &clienteID);
-          limparBuffer();
-          if(!clientes[clienteID - 1].estado){
-            printf("O cliente está inativo.\a\n");
-            delay(1);
-          }
-        }while(!clientes[clienteID - 1].estado);
-        consulta->cliente = obterCliente(clientes, clienteID);
-        break;
-      case 2:
-        do {
-          clear();
-          printf("ID do médico: ");
-          scanf("%u", &medicoID);
-          limparBuffer();
-          if(!medicos[medicoID -1].estado){
-            printf("O médico está indisponível.\a\n");
-            delay(1);
-          }
-        }while(!medicos[medicoID -1].estado);
-        consulta->medico = obterMedico(medicos, medicoID);
-        break;
-      case 3:
-        do {
-          clear();
-          printf("Data da consulta (dd-mm-aaaa): ");
-          scanf("%2u-%2u-%4u", &consulta->data_inicial.dia, &consulta->data_inicial.mes, &consulta->data_inicial.ano);
-          limparBuffer();
-          printf("Hora (8h - 18h): ");
-          scanf("%2u", &consulta->data_inicial.hora);
-          limparBuffer();
-          if(!verificarDisponibilidade(consultas, consulta)){
-            printf("Horário não é válido.\a\n");
-            delay(1);
-          }
-        }while(!verificarDisponibilidade(consultas, consulta));
-        infoConsultas(*consulta);
-        delay(5);
-        break;
-      case 0:
-        atualizarFicheiroConsulta(consultas);
-        break;
-      default:
-        printf("Opção não é válida.\a\n");
-        delay(1);
-        break;
+    printf("%s%sID do cliente\n", (opcao == 1) ? GREEN "▶" : "", RESET);
+    printf("%s%sID do médico\n", (opcao == 2) ? GREEN "▶" : "", RESET);
+    printf("%s%sHorário da consulta\n", (opcao == 3) ? GREEN "▶" : "", RESET);
+    printf("%s%sSair\n", (opcao == 4) ? GREEN "▶" : "", RESET);
+    tecla = getKey();
+    if(tecla == 10){ 
+      switch(opcao){
+        case 1:
+          do { 
+            clear();
+            printf("ID do cliente: ");
+            scanf("%u", &clienteID);
+            limparBuffer();
+            if(!clientes[clienteID - 1].estado){
+              printf("O cliente está inativo.\a\n");
+              delay(1);
+            }
+          }while(!clientes[clienteID - 1].estado);
+          consulta->cliente = obterCliente(clientes, clienteID);
+          break;
+        case 2:
+          do {
+            clear();
+            printf("ID do médico: ");
+            scanf("%u", &medicoID);
+            limparBuffer();
+            if(!medicos[medicoID -1].estado){
+              printf("O médico está indisponível.\a\n");
+              delay(1);
+            }
+          }while(!medicos[medicoID -1].estado);
+          consulta->medico = obterMedico(medicos, medicoID);
+          break;
+        case 3:
+          do {
+            clear();
+            printf("Data da consulta (dd-mm-aaaa): ");
+            scanf("%2u-%2u-%4u", &consulta->data_inicial.dia, &consulta->data_inicial.mes, &consulta->data_inicial.ano);
+            limparBuffer();
+            printf("Hora (8h - 18h): ");
+            scanf("%2u", &consulta->data_inicial.hora);
+            limparBuffer();
+            if(!verificarDisponibilidade(consultas, consulta)){
+              printf("Horário não é válido.\a\n");
+              delay(1);
+            }
+          }while(!verificarDisponibilidade(consultas, consulta));
+          infoConsultas(*consulta);
+          delay(5);
+          break;
+        case 4:
+          atualizarFicheiroConsulta(consultas);
+          break;
+      }
     }
-  }while(opcao != 0);
+    navegarMenu(&opcao, tecla, 4);
+  }while(opcao != 4 || tecla != 10);
 }
 
 void obterListaConsultasDiaAtualMedico(ST_CONSULTA *consultas, ST_MEDICO *medicos){
