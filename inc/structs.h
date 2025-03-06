@@ -9,6 +9,8 @@
 #define MAX_CLIENTES 1000
 #define MAX_MEDICOS 100
 #define MAX_CONSULTAS 5000
+#define GREEN "\x1B[32m"
+#define RESET "\x1B[0m"
 
 // ESTRUTURAS E ENUMERADORES
 typedef enum {
