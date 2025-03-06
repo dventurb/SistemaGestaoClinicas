@@ -4,7 +4,7 @@
  </p>
 
 <div align="center" style="text-align: center">
-<img src="https://i.imgur.com/cCbTDD9.gif" alt="script">
+<img src="https://i.imgur.com/62acdvd.gif" alt="script">
 </div>
 
 ## 🎯 Introdução 
