@@ -3,6 +3,7 @@
 
 // MAIN 
 int main(){
+    ativarDesativarCursor(0);
     ST_CLIENTE clientes[MAX_CLIENTES];
     ST_MEDICO medicos[MAX_MEDICOS];
     ST_CONSULTA consultas[MAX_CONSULTAS];
