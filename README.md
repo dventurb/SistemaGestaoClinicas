@@ -30,7 +30,7 @@ make rebuild
 ```
 
 ## 📦 Tecnologias Utilizadas
-O projeto foi implementado em Linguagem C e desenvolvido no Visual Studio Code.
+O projeto foi implementado em Linguagem C e desenvolvido no neovim.
 
 [![C](https://img.shields.io/badge/C-00599C?logo=c&logoColor=white)](#)
 [![Neovim Minimum Version](https://img.shields.io/badge/Neovim-0.10-blueviolet.svg?style=flat-square&logo=Neovim&color=90E59A&logoColor=white)](https://github.com/neovim/neovim)
