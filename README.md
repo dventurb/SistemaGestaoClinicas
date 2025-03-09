@@ -8,7 +8,7 @@
 </div>
 
 ## 🎯 Introdução 
-O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilização e manipulação de dados em clínicas, permitindo realizar operações essenciais de gestão de clientes, médicos e consultas, oferecendo uma interface interativa com validações garantindo integridade nos dados.
+O Sistema de Gestão de Clínicas foi criado com o intuito de fácil utilização e manipulação de dados em clínicas, permitindo realizar operações essenciais de gestão de clientes, médicos e consultas, oferecendo um menu interativo com uma navegação fluída controlado pelas teclas de seta do teclado.
 
 ## 🔨 Instalação
 1. Necessário a instalação do ```make``` no sistema.
