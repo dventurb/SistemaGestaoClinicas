@@ -7,6 +7,9 @@
 #include "leftbar.h"
 #include "paths.h"
 #include "dashboard.h"
+#include "ui_clients.h"
+#include "ui_doctors.h"
+#include "ui_appointments.h"
 
 // PROTÓTIPOS DAS FUNÇÕES MENUS
 void createMainWindow(GtkApplication *app, gpointer data);

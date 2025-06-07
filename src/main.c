@@ -4,7 +4,7 @@
 #include "mainWindow.h"
 
 // MAIN 
-int main(int argc, int **argv){
+int main(int argc, char **argv){
   GtkApplication *app;
     
   ST_CLIENTE clientes[MAX_CLIENTES];
