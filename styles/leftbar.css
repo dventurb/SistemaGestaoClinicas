@@ -1,0 +1,17 @@
+.leftbar-button {
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 10px;
+}
+
+.leftbar-button:selected, 
+.leftbar-button:checked,
+.leftbar-button:active {
+  background-color: #B2E0D4;
+}
+
+.leftbar-button-label {
+  color: #000000;
+  font-weight: 500;
+}
