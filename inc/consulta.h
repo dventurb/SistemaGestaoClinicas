@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-#include "menu.h"
 #include "cliente.h"
 #include "medico.h"
 #include "auxiliares.h"
