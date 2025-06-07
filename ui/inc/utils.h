@@ -1,5 +1,5 @@
-#ifndef UI_UTILS_H 
-#define UI_UTILS_H 
+#ifndef UTILS_H 
+#define UTILS_H 
 
 #include <gtk/gtk.h>
 

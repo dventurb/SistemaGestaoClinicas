@@ -1,4 +1,4 @@
-#include "ui_utils.h"
+#include "utils.h"
 
 void createButtonWithImageLabel(ST_BUTTON *button, const char *pathToImage, const char *text) {
   button->button = gtk_button_new();

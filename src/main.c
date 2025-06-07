@@ -1,7 +1,7 @@
 // BIBLIOTECAS
 #include <gtk/gtk.h>
+#include "structs.h"
 #include "mainWindow.h"
-#include "menu.h"
 
 // MAIN 
 int main(int argc, int **argv){
