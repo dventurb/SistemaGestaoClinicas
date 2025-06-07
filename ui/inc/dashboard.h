@@ -3,6 +3,6 @@
 
 #include <gtk/gtk.h>
 
-void initializeDashboard(GtkWidget *right_box);
+void initializeDashboard(GtkWidget *stack);
 
 #endif
