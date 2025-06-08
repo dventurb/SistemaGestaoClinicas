@@ -1,8 +1,10 @@
 #include "mainWindow.h"
   
 void createMainWindow(GtkApplication *app, gpointer data) {
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
   GtkWidget *window = gtk_application_window_new(app);
-  gtk_window_set_title(GTK_WINDOW(window), "Sistema de Gestão de Clínicas");
+  gtk_window_set_title(GTK_WINDOW(window), "Hospital Management");
   gtk_window_set_default_size(GTK_WINDOW(window), 1000, 600);
   gtk_widget_add_css_class(window, "window");
   
@@ -19,7 +21,7 @@ void createMainWindow(GtkApplication *app, gpointer data) {
   initializeLeftBar(left_box, stack);
   
   initializeDashboard(stack);
-  initializeUIClients(stack);
+  initializeUIClients(stack, application->clientes);
   initializeUIDoctors(stack);
   initializeUIAppointments(stack);
 

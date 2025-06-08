@@ -14,9 +14,15 @@ int main(int argc, char **argv){
   carregarFicheiroCliente(clientes);
   carregarFicheiroMedico(medicos);
   carregarFicheiroConsulta(consultas, clientes, medicos);
+
+  ST_APPLICATION application = {
+    .clientes = clientes,
+    .medicos = medicos,
+    .consultas = consultas
+  }; 
     
   app = gtk_application_new("clinica.gestao", G_APPLICATION_DEFAULT_FLAGS);
-  g_signal_connect(app, "activate", G_CALLBACK(createMainWindow), NULL);
+  g_signal_connect(app, "activate", G_CALLBACK(createMainWindow), &application);
   int status = g_application_run(G_APPLICATION(app), argc, argv);
   g_object_unref(app);
     

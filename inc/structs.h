@@ -59,4 +59,11 @@ typedef struct {
   ESTADO estado;
 }ST_CONSULTA;
 
+
+typedef struct {
+  ST_CLIENTE *clientes;
+  ST_MEDICO *medicos;
+  ST_CONSULTA *consultas;
+} ST_APPLICATION;
+
 #endif
