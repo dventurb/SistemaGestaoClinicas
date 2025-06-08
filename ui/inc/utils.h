@@ -10,6 +10,16 @@ typedef struct {
   GtkWidget *label;
 } ST_BUTTON;
 
-void createButtonWithImageLabel(ST_BUTTON *button, const char *pathToImage, const char *text);
+typedef enum {
+  BUTTON_ORIENTATION_HORIZONTAL,
+  BUTTON_ORIENTATION_VERTICAL,
+} BUTTON_ORIENTATION;
+
+typedef enum {
+  BUTTON_POSITION_FIRST_LABEL,
+  BUTTON_POSITION_FIRST_IMAGE,
+} BUTTON_POSITION;
+
+void createButtonWithImageLabel(ST_BUTTON *button, const char *pathToImage, const char *text, BUTTON_ORIENTATION orientation, BUTTON_POSITION position);
 
 #endif

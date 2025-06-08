@@ -11,4 +11,9 @@
 #define APPOINTMENT_ICON_PATH "icon/appointment.png"
 #define SETTINGS_ICON_PATH "icon/settings.png"
 
+#define ADD_CLIENT_PATH "icon/add-client.png"
+#define EDIT_CLIENT_PATH "icon/edit-client.png"
+#define TOGGLE_CLIENT_PATH "icon/toggle-client.png"
+#define VIEW_CLIENT_PATH "icon/view-client.png"
+
 #endif
