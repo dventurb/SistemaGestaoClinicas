@@ -1,2 +1,20 @@
 1,Rui,7160294,Vila Viçosa,VILA VIÇOSA,19,5,2000,ruijorge@gmail.com,123456789,123456789,Ativo
 2,Tiago,4990120,Ponte de Lima,PONTE DE LIMA,20,3,1998,tiagobelmiro@hotmail.com,987654321,987654321,Ativo
+3,Joana,5012048,Rua da Liberdade,PORTO,5,6,1995,joana.santos@gmail.com,911111111,222222222,Ativo
+4,Carlos,7123985,Avenida Central,BRAGA,12,11,1987,carlos.almeida@yahoo.com,933333333,244444444,Inativo
+5,Inês,8203941,Rua das Flores,COIMBRA,3,1,1999,ines.monteiro@hotmail.com,944444444,255555555,Ativo
+6,André,6710293,Largo do Município,LEIRIA,14,7,1990,andre.mendes@gmail.com,955555555,266666666,Ativo
+7,Sofia,5590123,Rua do Carmo,FARO,25,9,1992,sofia.ferreira@gmail.com,966666666,277777777,Inativo
+8,Filipe,3301249,Rua Nova,LISBOA,1,2,1996,filipe.martins@outlook.com,977777777,288888888,Ativo
+9,Beatriz,4193940,Rua das Oliveiras,AVEIRO,30,12,1994,beatriz.costa@gmail.com,988888888,299999999,Ativo
+10,Miguel,2930120,Rua do Sol,VISEU,7,4,1988,miguel.rosa@hotmail.com,999999999,211111111,Ativo
+11,Ana,6719401,Rua do Norte,GUIMARÃES,17,8,1997,ana.barros@gmail.com,922222222,233333333,Inativo
+12,Diogo,8712094,Rua da Paz,SETÚBAL,22,6,1993,diogo.sousa@gmail.com,933444555,244556677,Ativo
+13,Mariana,5812934,Rua Verde,ÉVORA,9,10,1991,mariana.nunes@gmail.com,944555666,255667788,Ativo
+14,Bruno,7812039,Rua Azul,CASTELO BRANCO,6,3,1990,bruno.torres@gmail.com,955666777,266778899,Ativo
+15,Catarina,3912044,Rua Amarela,BEJA,28,2,1998,catarina.lopes@gmail.com,966777888,277889900,Inativo
+16,Ricardo,4912387,Rua Vermelha,SANTARÉM,11,5,1992,ricardo.gomes@gmail.com,977888999,288990011,Ativo
+17,Sara,6019840,Rua Rosa,VILA REAL,23,7,1995,sara.teixeira@gmail.com,988999000,299001122,Ativo
+18,Gonçalo,7039841,Rua Branca,BRAGANÇA,4,11,1989,goncalo.pires@gmail.com,999000111,211112233,Ativo
+19,Helena,8091342,Rua Cinzenta,PORTIMÃO,15,12,1996,helena.vieira@gmail.com,911123456,222334455,Inativo
+20,Pedro,9123481,Rua Laranja,MADEIRA,2,6,1994,pedro.neves@gmail.com,922234567,233445566,Ativo

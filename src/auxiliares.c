@@ -248,21 +248,28 @@ bool validarFormatoData(const char *data) {
   
   sscanf(data, "%2u-%2u-%4u", &dia, &mes, &ano);
   
-  ST_DATA *data_atual;
-  dataAtual(data_atual);
+  ST_DATA data_atual;
+  dataAtual(&data_atual);
 
   if(ano < 1900) return false;
   if(mes < 1 || mes > 12) return false;
   if(dia < 1 || dia > 31) return false;
   
-  if(ano > data_atual->ano || (ano == data_atual->ano && mes > data_atual->mes) ||
-    (ano == data_atual->ano && dia > data_atual->dia)) {
+  if(ano > data_atual.ano || (ano == data_atual.ano && mes > data_atual.mes) ||
+    (ano == data_atual.ano && dia > data_atual.dia)) {
     return false;
   }
 
   return true; 
 }
 
+bool validarCodigoPostal(const char *codigo_postal) {
+  if(strlen(codigo_postal) != 7) return false;
 
+  for(int i = 0; i < 7; i++) {
+    if(!isdigit((unsigned char)codigo_postal[i])) return false;
+  }
+  return true;
+}
 
 
