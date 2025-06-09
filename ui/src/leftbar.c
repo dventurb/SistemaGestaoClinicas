@@ -48,30 +48,35 @@ void initializeLeftBar(GtkWidget *left_box, GtkWidget *stack) {
 }
 
 void clickedButtonDashboard(GtkButton *button, gpointer user_data) {
+  (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)user_data;
 
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "dashboard");
 }
 
 void clickedButtonClients(GtkButton *button, gpointer user_data) {
+  (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)user_data;
 
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
 }
 
 void clickedButtonDoctors(GtkButton *button, gpointer user_data) {
+  (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)user_data;
 
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "doctors");
 }
 
 void clickedButtonAppointments(GtkButton *button, gpointer user_data) {
+  (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)user_data;
 
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "appointments");
 }
 
 void clickedButtonSettings(GtkButton *button, gpointer user_data) {
+  (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)user_data;
 
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "settings");

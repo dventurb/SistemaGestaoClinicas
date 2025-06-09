@@ -31,5 +31,6 @@ void selecionarOpcao(int *opcao, int tecla);
 int getKey(void);
 void ativarDesativarCursor(int n);
 bool validarFormatoData(const char *data);
+bool validarCodigoPostal(const char *codigo_postal);
 
 #endif

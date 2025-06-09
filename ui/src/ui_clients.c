@@ -35,9 +35,13 @@ void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients) {
 
   addClientButtonsToGrid(grid, clients);
 
+  GtkWidget *scrolled = gtk_scrolled_window_new();
+  gtk_widget_set_vexpand(scrolled, true);
+  gtk_box_append(GTK_BOX(rigth_main_box), scrolled);
+
   grid = createClientTable(clients, numeroClientes(clients));
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
-  gtk_box_append(GTK_BOX(rigth_main_box), grid);
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);
 }
 
 /** 
@@ -55,9 +59,16 @@ void addClientButtonsToGrid(GtkWidget *grid, ST_CLIENTE *clients) {
   const char *labels[] = {
     "Add", "Edit", "Toggle", "View"
   };
+
+  const char *paths[] = {
+    ADD_CLIENT_PATH, 
+    EDIT_CLIENT_PATH, 
+    TOGGLE_CLIENT_PATH, 
+    VIEW_CLIENT_PATH
+  };
   
   for (int i = 0; i <= 3; i++) {
-    createButtonWithImageLabel(&button, ADD_CLIENT_PATH, labels[i], BUTTON_ORIENTATION_VERTICAL, BUTTON_POSITION_FIRST_IMAGE);
+    createButtonWithImageLabel(&button, paths[i], labels[i], BUTTON_ORIENTATION_VERTICAL, BUTTON_POSITION_FIRST_IMAGE);
     gtk_widget_set_size_request(button.button, 96, 96);
     gtk_widget_set_size_request(button.image, 48, 48);
     gtk_widget_add_css_class(button.button, "clients-button");
@@ -118,7 +129,7 @@ GtkWidget *createClientTable(ST_CLIENTE *clients, int n_clients) {
     snprintf(sns, sizeof(sns), "%lu", j.SNS);
 
     char status[10]; 
-    strcpy(status, j.estado ? "Active" : "Inactive");
+    strcpy(status, j.estado ? "🟢" : "🔴");
 
     GtkWidget *labels[] = {
       gtk_label_new(id),
@@ -133,6 +144,7 @@ GtkWidget *createClientTable(ST_CLIENTE *clients, int n_clients) {
 
     for (int z = 0; z < 8; z++) {
       gtk_grid_attach(GTK_GRID(grid), labels[z], z, i + 1, 1, 1);
+      if(z < 7) gtk_label_set_selectable(GTK_LABEL(labels[z]), true);
     }
   }
 
@@ -372,32 +384,44 @@ static void changedEntryPostalCode(GtkEntry *entry, gpointer data) {
         gtk_widget_set_sensitive(entry_city, true);
         gtk_widget_add_css_class(entry_city, "form-entry");
       }
-    }else {
-        GtkWidget *entry_street = g_object_get_data(G_OBJECT(rigth_box), "Street");  
-        gtk_editable_set_editable(GTK_EDITABLE(entry_street), false);
-        gtk_widget_set_sensitive(entry_street, false);
-        gtk_widget_add_css_class(entry_street, "form-entry-disabled");
-
-        GtkWidget *entry_city = g_object_get_data(G_OBJECT(rigth_box), "City");
-        gtk_editable_set_editable(GTK_EDITABLE(entry_city), false);
-        gtk_widget_set_sensitive(entry_city, false);
-        gtk_widget_add_css_class(entry_city, "form-entry-disabled");
     }
+  }else {
+    GtkWidget *entry_street = g_object_get_data(G_OBJECT(rigth_box), "Street");  
+    gtk_editable_set_editable(GTK_EDITABLE(entry_street), false);
+    gtk_widget_set_sensitive(entry_street, false);
+    gtk_widget_remove_css_class(entry_street, "form-entry");
+
+    GtkWidget *entry_city = g_object_get_data(G_OBJECT(rigth_box), "City");
+    gtk_editable_set_editable(GTK_EDITABLE(entry_city), false);
+    gtk_widget_set_sensitive(entry_city, false);
+    gtk_widget_remove_css_class(entry_city, "form-entry");
   }
 }
 
 static void clickedButtonSubmit(GtkButton *button, gpointer data) {
-  //ST_CLIENTE *clients = (ST_CLIENTE *)clients;
+  ST_CLIENTE *clients = (ST_CLIENTE *)data;
 
   GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(button));
   
   GtkWidget *entry = g_object_get_data(G_OBJECT(rigth_box), "Name");
   GtkEntryBuffer *buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
-  const char *name = gtk_entry_buffer_get_text(buffer);
+  char name[STRING_MAX];
+  strncpy(name, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
+  name[STRING_MAX - 1] = '\0';
 
   entry = g_object_get_data(G_OBJECT(rigth_box), "Email");
   buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
-  const char *email = gtk_entry_buffer_get_text(buffer);
+  char email[STRING_MAX];
+  strncpy(email, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
+  email[STRING_MAX - 1] = '\0';
+
+  if(!strstr(email, "@")) {
+    gtk_widget_add_css_class(entry, "entry-error");
+    return;
+  }else {
+    gtk_widget_remove_css_class(entry, "entry-error");
+    gtk_widget_add_css_class(entry, "form-entry");
+  }
   
   entry = g_object_get_data(G_OBJECT(rigth_box), "BirthDate");
   buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
@@ -405,5 +429,82 @@ static void clickedButtonSubmit(GtkButton *button, gpointer data) {
   if(!validarFormatoData(birth_date)) {
     gtk_widget_add_css_class(entry, "entry-error");
     return;
+  }else {
+    gtk_widget_remove_css_class(entry, "entry-error");
+    gtk_widget_add_css_class(entry, "form-entry");
   }
+
+  entry = g_object_get_data(G_OBJECT(rigth_box), "NIF");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+  const char *nif = gtk_entry_buffer_get_text(buffer);
+  if(strlen(nif) != 9) {
+    gtk_widget_add_css_class(entry, "entry-error");
+    return;
+  }else {
+    gtk_widget_remove_css_class(entry, "entry-error");
+    gtk_widget_add_css_class(entry, "form-entry");
+  }
+
+  entry = g_object_get_data(G_OBJECT(rigth_box), "SNS");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+  const char *sns = gtk_entry_buffer_get_text(buffer);
+  if(strlen(sns) != 9) {
+    gtk_widget_add_css_class(entry, "entry-error");
+    return;
+  }else {
+    gtk_widget_remove_css_class(entry, "entry-error");
+    gtk_widget_add_css_class(entry, "form-entry");
+  }
+  
+  entry = g_object_get_data(G_OBJECT(rigth_box), "PostalCode");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+  const char *postal_code = gtk_entry_buffer_get_text(buffer);
+  if(!validarCodigoPostal(postal_code)) {
+    gtk_widget_add_css_class(entry, "entry-error");
+    return;
+  }else {
+    gtk_widget_remove_css_class(entry, "entry-error");
+    gtk_widget_add_css_class(entry, "form-entry");
+  }
+ 
+  ST_CLIENTE new_client = {
+    .ID = numeroClientes(clients) + 1,
+    .NIF = atoi(nif),
+    .SNS = atoi(sns),
+    .estado = true,
+  };
+
+  strncpy(new_client.nome, name, STRING_MAX - 1);
+  new_client.nome[STRING_MAX - 1] = '\0';
+
+  strncpy(new_client.email, email, STRING_MAX - 1);
+  new_client.email[STRING_MAX - 1] = '\0';
+  
+  sscanf(birth_date,"%2u-%2u-%4u", &new_client.data_nascimento.dia, &new_client.data_nascimento.mes, &new_client.data_nascimento.ano);
+
+  if(!obterMorada(&new_client, atoi(postal_code))) {
+    entry = g_object_get_data(G_OBJECT(rigth_box), "City");
+    buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+    strncpy(new_client.morada.cidade, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
+    new_client.morada.cidade[STRING_MAX - 1] = '\0';
+
+    entry = g_object_get_data(G_OBJECT(rigth_box), "Street");
+    buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+    strncpy(new_client.morada.rua, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
+    new_client.morada.rua[STRING_MAX - 1] = '\0';
+  }
+
+  confirmarClientes(clients, new_client);
+  inserirFicheiroCliente(new_client);
+
+  GtkWidget *stack = gtk_widget_get_parent(rigth_box);
+  
+  GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), "AddClients");
+  gtk_stack_remove(GTK_STACK(stack), child);
+
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "clients");
+  gtk_stack_remove(GTK_STACK(stack), child);
+
+  initializeUIClients(stack, clients);
+  gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
 }

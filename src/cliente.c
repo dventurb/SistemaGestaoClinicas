@@ -15,7 +15,7 @@ void inserirClientes(ST_CLIENTE *clientes){
     printf("Nome do cliente: ");
     fgets(cliente.nome, STRING_MAX, stdin);
     cliente.nome[strcspn(cliente.nome, "\n")] = '\0';
-    obterMorada(&cliente);
+    //obterMorada(&cliente);
     printf("Rua: %s\n", cliente.morada.rua);
     printf("Cidade: %s\n", cliente.morada.cidade);
     printf("Data de nascimento (dd-mm-aaaa): ");
@@ -79,7 +79,7 @@ void alterarDadosClientes(ST_CLIENTE *clientes){
           cliente->nome[strcspn(cliente->nome, "\n")] = '\0';
           break;
         case 2:
-          obterMorada(cliente);
+          //obterMorada(cliente);
           printf("Rua: %s\n", cliente->morada.rua);
           printf("Cidade: %s\n", cliente->morada.cidade);
           delay(1);
