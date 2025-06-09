@@ -32,19 +32,15 @@ void limparBuffer(void){
    data_hora_atual->ano = tm.tm_year + 1900; 
  }
 
- void obterMorada(ST_CLIENTE *cliente){
+ bool obterMorada(ST_CLIENTE *cliente, long unsigned int codigo_postal){
    FILE *ficheiro;
    char linha[1024], *token;
    int encontrados = 0;
-   unsigned long int codigo_postal;
    ficheiro = fopen("data/codigos_postais.txt", "r");
    if (ficheiro == NULL){
     printf("Erro\n");
-    return;
+    return false;
    }
-    printf("Código Postal (1234567): ");
-    scanf("%7lu", &codigo_postal);
-    limparBuffer();
     while (fgets(linha, sizeof(linha), ficheiro)){
      token = strtok(linha, ",");
      char *tokens[20];
@@ -68,11 +64,12 @@ void limparBuffer(void){
     }
    }
    if(!encontrados){
-     printf("Código postal não encontrado.\a\n");
-     delay(1);
+      fclose(ficheiro);
+      return false; 
    }
+
    fclose(ficheiro);
-   return;
+   return true;
  }
 
 void obterEspecialidade(ST_MEDICO *medico){
@@ -232,6 +229,38 @@ void ativarDesativarCursor(int n){
     printf("\e[?25h");
   }
 #endif
+}
+
+bool validarFormatoData(const char *data) {
+  unsigned int dia, mes, ano;
+
+  if(strlen(data) != 10) return false;
+
+  for(int i = 0; i < 10; i++) {
+    if(i == 2 || i == 5) {
+      if(data[i] != '-') return false;
+    }else {
+      if(!isdigit((unsigned char)data[i])) {
+        return false;
+      }
+    }
+  }
+  
+  sscanf(data, "%2u-%2u-%4u", &dia, &mes, &ano);
+  
+  ST_DATA *data_atual;
+  dataAtual(data_atual);
+
+  if(ano < 1900) return false;
+  if(mes < 1 || mes > 12) return false;
+  if(dia < 1 || dia > 31) return false;
+  
+  if(ano > data_atual->ano || (ano == data_atual->ano && mes > data_atual->mes) ||
+    (ano == data_atual->ano && dia > data_atual->dia)) {
+    return false;
+  }
+
+  return true; 
 }
 
 

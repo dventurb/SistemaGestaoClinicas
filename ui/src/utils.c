@@ -49,3 +49,4 @@ void createButtonWithImageLabel(ST_BUTTON *button, const char *pathToImage, cons
     }
   }
 }
+

@@ -19,7 +19,7 @@ clean:
 ifeq ($(OS),Windows_NT)
 	del /f $(OBJ)\*.o $(BIN)
 else
-	rm -f src/*.o $(BIN)
+	rm -f src/*.o ui/src/*.o $(BIN)
 endif
 
 rebuild: clean all

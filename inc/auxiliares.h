@@ -22,7 +22,7 @@ void clear(void);
 void delay(int num);
 void limparBuffer(void);
 void dataAtual(ST_DATA *data_hora_atual);
-void obterMorada(ST_CLIENTE *cliente);
+bool obterMorada(ST_CLIENTE *cliente, long  unsigned int codigo_postal);
 void obterEspecialidade(ST_MEDICO *medico);
 void listarEspecialidades(void);
 void pressionarEnter(void);
@@ -30,5 +30,6 @@ void navegarMenu(int *opcao, int tecla, int n);
 void selecionarOpcao(int *opcao, int tecla);
 int getKey(void);
 void ativarDesativarCursor(int n);
+bool validarFormatoData(const char *data);
 
 #endif

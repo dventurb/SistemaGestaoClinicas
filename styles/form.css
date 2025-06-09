@@ -1,0 +1,78 @@
+.back-button {
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 12px;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: #d5d5d5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.back-button-label {
+  color: #333;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.submit-button {
+  background-color: #34A853;
+  border-radius: 10px;
+  padding: 4px;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.submit-button:hover {
+  background-color: #2c8e47;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.2s ease;
+}
+
+.submit-button-label {
+  color: white;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.form-label {
+  font-family: "Roboto", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #444;
+  padding-bottom: 4px;
+  padding-top: 2px;
+}
+
+.form-entry {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 14px;
+  font-family: "Roboto", sans-serif;
+  color: #333;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-entry:focus {
+  border: 2px solid #34A853;
+  border-color: #34A853; 
+  box-shadow: 0 0 4px 1px rgba(52, 168, 83, 0.4);
+  outline: none;
+}
+
+.form-entry-disabled {
+  background-color: #f5f5f5;
+  color: #777;
+  border-color: #ddd;
+}
+
+.entry-error {
+  border: 1px solid #e53935;
+  background-color: #ffecec;
+}
