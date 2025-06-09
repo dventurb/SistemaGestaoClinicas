@@ -9,6 +9,7 @@
 #include "cliente.h"
 
 void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients);
+void addClientButtonsToGrid(GtkWidget *grid, ST_CLIENTE *clients);
 GtkWidget *createClientTable(ST_CLIENTE *client, int n_clients);
 
 #endif

@@ -16,4 +16,6 @@
 #define TOGGLE_CLIENT_PATH "icon/toggle-client.png"
 #define VIEW_CLIENT_PATH "icon/view-client.png"
 
+#define SUBMIT_PATH "icon/submit.png"
+
 #endif

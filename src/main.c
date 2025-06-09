@@ -2,6 +2,9 @@
 #include <gtk/gtk.h>
 #include "structs.h"
 #include "mainWindow.h"
+#include "cliente.h"
+#include "medico.h"
+#include "consulta.h"
 
 // MAIN 
 int main(int argc, char **argv){
