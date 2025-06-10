@@ -81,7 +81,7 @@ static void gtk_chart_init(GtkChart *self)
     self->x_max = 100;
     self->y_max = 100;
     self->value_min = 0;
-    self->value_max = 100;
+    self->value_max = 500;
     self->width = 500;
     self->snapshot = NULL;
     self->text_color.alpha = -1.0;

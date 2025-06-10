@@ -8,7 +8,9 @@
 #include <time.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <regex.h>
 #include "structs.h"
+#include "cliente.h"
 #ifdef _WIN32
   #include <windows.h>  // Função Sleep em sistemas Windows
   #include <conio.h>    // Função getch em sistemas Windows
@@ -32,5 +34,8 @@ int getKey(void);
 void ativarDesativarCursor(int n);
 bool validarFormatoData(const char *data);
 bool validarCodigoPostal(const char *codigo_postal);
+bool validarEmail(const char *email, ST_CLIENTE *clients);
+bool validarNIF(const char *nif, ST_CLIENTE *clients);
+bool validarSNS(const char *sns, ST_CLIENTE *clients);
 
 #endif

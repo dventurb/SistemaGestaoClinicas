@@ -272,4 +272,114 @@ bool validarCodigoPostal(const char *codigo_postal) {
   return true;
 }
 
+/** 
+  * @brief Validates an email format and check for duplicates in clients. 
+  *
+  * @param email    The email to validate.
+  * @param clients  Pointer to the ST_CLIENTE struct. 
+  * 
+  * @note Requires the regex lib (regex.h). 
+  * 
+*/
+bool validarEmail(const char *email, ST_CLIENTE *clients) {
+  const char *email_regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
+  regex_t regex;
+  int reti = regcomp(&regex, email_regex, REG_EXTENDED);
+  if(reti) {
+    return false;
+  }
+
+  reti = regexec(&regex, email, 0, NULL, 0);
+  
+  if(reti == REG_NOMATCH) {
+    regfree(&regex);
+    return false;
+  }else if(reti) {
+    regfree(&regex);
+    return false;
+  }
+  regfree(&regex);
+
+  for(int i = 0; i < numeroClientes(clients); i++) {
+    if(strcmp(email, clients[i].email) == 0) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/** 
+  * @brief Validates an NIF number and check for duplicates in clients. 
+  *
+  * The NIF is a 9-digit number where the last digit is a checksum,
+  * calculated from the first 8 digits using modulo 11: 
+  * d1 * 9 + d2 * 8 + d3 * 7 + d4 * 6 + ... + d8 * 2
+  *
+  * @param nif      NIF to validate.
+  * @param clients  Pointer to the ST_CLIENTE struct. 
+  * 
+*/
+bool validarNIF(const char *nif, ST_CLIENTE *clients) {
+  if(strlen(nif) != 9) {
+    return false;
+  }
+
+  for(int i = 0; i < 9; i++) {
+    if(!isdigit((unsigned char)nif[i])) return false;
+  }
+
+  for(int i = 0; i < numeroClientes(clients); i++) {
+    char str[10];
+    snprintf(str, sizeof(str), "%lu", clients[i].NIF);
+
+    if(strcmp(nif, str) == 0) {
+      return false;
+    }
+  }
+  
+  
+  int digit[8] = {9, 8, 7, 6, 5, 4, 3, 2 };
+  int sum = 0;
+  for(int i = 0; i < 8; i++) {
+    sum += (nif[i] - '0') * digit[i];
+  }
+
+  int remainer = sum % 11;
+  int checksum = (remainer == 0 || remainer == 1) ? 0 : 11 - remainer;
+
+  if((11 - remainer) != (nif[8] - '0')) {
+    return false;
+  }
+
+  return true;
+}
+
+/** 
+  * @brief Validates an SNS number and check for duplicates in clients. 
+  *
+  * @param sns      SNS to validate.
+  * @param clients  Pointer to the ST_CLIENTE struct. 
+  * 
+*/
+bool validarSNS(const char *sns, ST_CLIENTE *clients) {
+  if(strlen(sns) != 9) {
+    return false;
+  }
+
+  for(int i = 0; i < 9; i++) {
+    if(!isdigit((unsigned char)sns[i])) return false;
+  }
+
+  for(int i = 0; i < numeroClientes(clients); i++) {
+    char str[10];
+    snprintf(str, sizeof(str), "%lu", clients[i].SNS);
+
+    if(strcmp(sns, str) == 0) {
+      return false;
+    }
+  }
+
+  return true;
+}
