@@ -9,6 +9,13 @@ static void clickedButtonBack(GtkButton *button, gpointer data);
 static void changedEntryPostalCode(GtkEntry *entry, gpointer data);
 static void clickedButtonSubmit(GtkButton *button, gpointer data);
 
+/** 
+ *  @brief Initializes the interface for the clients. 
+ *
+ *  @param stack      A pointer to the stack widget used to manage different UI pages.
+ *  @param clients    Pointer to the ST_CLIENTE struct.
+ *
+ */
 void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients) {
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "clients");
@@ -315,7 +322,18 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
 static void clickedButtonEdit(GtkButton *button, gpointer data) {
   ST_CLIENTE *clients = (ST_CLIENTE *)data;
 
+  GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
+  if(!stack) {
+    return;
+  }
 
+  GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_stack_add_named(GTK_STACK(stack), rigth_box, "EditClients");
+  gtk_stack_set_visible_child_name(GTK_STACK(stack), "EditClients");
+
+  GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  gtk_widget_set_size_request(spacer, -1, 80);
+  gtk_box_append(GTK_BOX(rigth_box), spacer);
 }
 
 static void clickedButtonToggle(GtkButton *button, gpointer data) {
@@ -341,6 +359,16 @@ static void clickedButtonBack(GtkButton *button, gpointer data) {
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
 }
 
+/**
+  * @brief Callback function when the postal code entry is changed.
+  *
+  * This function updates the city and street entry based on 
+  * the postal code entered by the user. 
+  *
+  * @param entry    A pointer to GtkEntry widget.
+  * @param data     User data passed to the callback (unused, NULL). 
+  *
+*/
 static void changedEntryPostalCode(GtkEntry *entry, gpointer data) {
   GtkWidget *grid = gtk_widget_get_parent(GTK_WIDGET(entry));
   GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(grid));
@@ -415,7 +443,7 @@ static void clickedButtonSubmit(GtkButton *button, gpointer data) {
   strncpy(email, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
   email[STRING_MAX - 1] = '\0';
 
-  if(!strstr(email, "@")) {
+  if(!validarEmail(email, clients)) {
     gtk_widget_add_css_class(entry, "entry-error");
     return;
   }else {
@@ -437,7 +465,7 @@ static void clickedButtonSubmit(GtkButton *button, gpointer data) {
   entry = g_object_get_data(G_OBJECT(rigth_box), "NIF");
   buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
   const char *nif = gtk_entry_buffer_get_text(buffer);
-  if(strlen(nif) != 9) {
+  if(!validarNIF(nif, clients)) {
     gtk_widget_add_css_class(entry, "entry-error");
     return;
   }else {
@@ -448,7 +476,7 @@ static void clickedButtonSubmit(GtkButton *button, gpointer data) {
   entry = g_object_get_data(G_OBJECT(rigth_box), "SNS");
   buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
   const char *sns = gtk_entry_buffer_get_text(buffer);
-  if(strlen(sns) != 9) {
+  if(!validarSNS(sns, clients)) {
     gtk_widget_add_css_class(entry, "entry-error");
     return;
   }else {
@@ -493,18 +521,24 @@ static void clickedButtonSubmit(GtkButton *button, gpointer data) {
     strncpy(new_client.morada.rua, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
     new_client.morada.rua[STRING_MAX - 1] = '\0';
   }
-
+  
+  // Confirm the new client by adding it to the clients list.
   confirmarClientes(clients, new_client);
-  inserirFicheiroCliente(new_client);
 
+  // Save the new client to the file.
+  inserirFicheiroCliente(new_client);
+  
   GtkWidget *stack = gtk_widget_get_parent(rigth_box);
   
+  // Remove the "AddClients" page from the stack.
   GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), "AddClients");
   gtk_stack_remove(GTK_STACK(stack), child);
-
+  
+  // Remove the "clients" page from the stack to update the table with the new client.
   child = gtk_stack_get_child_by_name(GTK_STACK(stack), "clients");
   gtk_stack_remove(GTK_STACK(stack), child);
-
+  
+  // Reinitialize with the updated clients list.
   initializeUIClients(stack, clients);
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
 }

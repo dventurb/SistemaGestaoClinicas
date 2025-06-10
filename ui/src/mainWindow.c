@@ -20,7 +20,7 @@ void createMainWindow(GtkApplication *app, gpointer data) {
   
   initializeLeftBar(left_box, stack);
   
-  initializeDashboard(stack);
+  initializeDashboard(stack, application->clientes);
   initializeUIClients(stack, application->clientes);
   initializeUIDoctors(stack);
   initializeUIAppointments(stack);

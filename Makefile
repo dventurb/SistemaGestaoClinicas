@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = $(shell pkg-config --cflags gtk4) -Iinc -Iui/inc -Iui/lib/*.h -Wall -Wextra -g
+CFLAGS = $(shell pkg-config --cflags gtk4) -Iinc -Iui/inc -Iui/lib -Wall -Wextra -g
 LDFLAGS = $(shell pkg-config --libs gtk4)
 
 SRC = $(wildcard src/*.c) $(wildcard ui/src/*.c) $(wildcard ui/lib/*.c)
