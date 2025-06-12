@@ -178,7 +178,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_box_append(GTK_BOX(rigth_box), rigth_top_box);
  
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-  gtk_widget_set_size_request(spacer, -1, 40);
+  gtk_widget_set_size_request(spacer, -1, 30);
   gtk_box_append(GTK_BOX(rigth_box), spacer);
 
   ST_BUTTON btn; 
@@ -352,7 +352,7 @@ static void clickedButtonEdit(GtkButton *button, gpointer data) {
   g_signal_connect(search_entry, "activate", G_CALLBACK(activateSearchEditClient), clients);
   
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-  gtk_widget_set_size_request(spacer, -1, 40);
+  gtk_widget_set_size_request(spacer, -1, 30);
   gtk_box_append(GTK_BOX(rigth_box), spacer);
 
   GtkWidget *label = gtk_label_new("");
@@ -823,7 +823,11 @@ static void clickedButtonSubmitEdit(GtkButton *button, gpointer data) {
 
   GtkWidget *entry = g_object_get_data(G_OBJECT(rigth_box), "ID");
   GtkEntryBuffer *buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+
   ST_CLIENTE *edit_client = procurarClientesID(clients, atoi(gtk_entry_buffer_get_text(buffer)));
+  if(!edit_client) {
+    return;
+  }
   
   entry = g_object_get_data(G_OBJECT(rigth_box), "Name");
   buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
