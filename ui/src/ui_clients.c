@@ -52,7 +52,7 @@ void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients) {
   gtk_widget_set_vexpand(scrolled, true);
   gtk_box_append(GTK_BOX(rigth_main_box), scrolled);
 
-  grid = createClientTable(clients, numeroClientes(clients));
+  grid = createActiveClientTable(clients, numeroClientes(clients));
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);
 }
@@ -106,7 +106,68 @@ void addClientButtonsToGrid(GtkWidget *grid, ST_CLIENTE *clients) {
 }
 
 /** 
-  * @brief Creates a table to display information about the clients.
+  * @brief Creates a table to display information about the active clients.
+  *
+  * @param clients      Pointer to the ST_CLIENTE struct. 
+  * @param n_clients    Total number of clients.
+  *
+  * @return GtkWidget   GtkGrid widget which represents the table.
+  *
+  */
+GtkWidget *createActiveClientTable(ST_CLIENTE *clients, int n_clients) {
+  GtkWidget *grid = gtk_grid_new();
+  gtk_grid_set_row_spacing(GTK_GRID(grid), 5);
+  gtk_grid_set_column_spacing(GTK_GRID(grid), 10);
+
+  const char *headers[] = {"ID", "Name", "Email", "City", "Birth Date ", "NIF", "SNS", "Status" };
+  for (int i = 0; i < 8; i++) {
+    GtkWidget *label = gtk_label_new(headers[i]);
+    gtk_widget_add_css_class(label, "header-label");
+    gtk_grid_attach(GTK_GRID(grid), label, i, 0, 1, 1);
+  }
+
+  for (int i = 0; i < n_clients; i++) {
+    if(clients[i].estado) {
+      ST_CLIENTE j = clients[i];
+    
+      char id[5];
+      snprintf(id, sizeof(id), "%u", j.ID);
+
+      char date[15];
+      snprintf(date, sizeof(date), "%02u-%02u-%04u", j.data_nascimento.dia, j.data_nascimento.mes, j.data_nascimento.ano);
+    
+      char nif[10];
+      snprintf(nif, sizeof(nif), "%lu", j.NIF);
+
+      char sns[10];
+      snprintf(sns, sizeof(sns), "%lu", j.SNS);
+
+      char status[10]; 
+      strcpy(status, j.estado ? "🟢" : "🔴");   // always green
+
+        GtkWidget *labels[] = {
+        gtk_label_new(id),
+        gtk_label_new(j.nome),
+        gtk_label_new(j.email),
+        gtk_label_new(j.morada.cidade),
+        gtk_label_new(date),
+        gtk_label_new(nif),
+        gtk_label_new(sns),
+        gtk_label_new(status)
+      };
+
+      for (int z = 0; z < 8; z++) {
+        gtk_grid_attach(GTK_GRID(grid), labels[z], z, i + 1, 1, 1);
+        if(z < 7) gtk_label_set_selectable(GTK_LABEL(labels[z]), true);
+      }
+    }
+  }
+
+  return grid;
+}
+
+/** 
+  * @brief Creates a table to display the information for all the clients.
   *
   * @param clients      Pointer to the ST_CLIENTE struct. 
   * @param n_clients    Total number of clients.
@@ -133,7 +194,7 @@ GtkWidget *createClientTable(ST_CLIENTE *clients, int n_clients) {
     snprintf(id, sizeof(id), "%u", j.ID);
 
     char date[15];
-    snprintf(date, sizeof(date), "%u-%u-%u", j.data_nascimento.dia, j.data_nascimento.mes, j.data_nascimento.ano);
+    snprintf(date, sizeof(date), "%02u-%02u-%04u", j.data_nascimento.dia, j.data_nascimento.mes, j.data_nascimento.ano);
     
     char nif[10];
     snprintf(nif, sizeof(nif), "%lu", j.NIF);
@@ -143,7 +204,6 @@ GtkWidget *createClientTable(ST_CLIENTE *clients, int n_clients) {
 
     char status[10]; 
     strcpy(status, j.estado ? "🟢" : "🔴");
-
     GtkWidget *labels[] = {
       gtk_label_new(id),
       gtk_label_new(j.nome),
@@ -160,7 +220,7 @@ GtkWidget *createClientTable(ST_CLIENTE *clients, int n_clients) {
       if(z < 7) gtk_label_set_selectable(GTK_LABEL(labels[z]), true);
     }
   }
-
+  
   return grid;
 }
 
@@ -640,7 +700,53 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
 static void clickedButtonView(GtkButton *button, gpointer data) {
   ST_CLIENTE *clients = (ST_CLIENTE *)data;
 
+  GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
+  if(!stack) {
+    return;
+  }
 
+  GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_stack_add_named(GTK_STACK(stack), rigth_box, "ViewClients");
+  gtk_stack_set_visible_child_name(GTK_STACK(stack), "ViewClients");
+ 
+  GtkWidget *rigth_top_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_widget_add_css_class(rigth_top_box, "rigth_top_box");
+  gtk_widget_set_size_request(rigth_top_box, -1, 60);
+  gtk_box_append(GTK_BOX(rigth_box), rigth_top_box);
+  
+  GtkWidget *search_entry = gtk_search_entry_new();
+  gtk_search_entry_set_placeholder_text(GTK_SEARCH_ENTRY(search_entry), "Search for clients");
+  gtk_widget_add_css_class(search_entry, "search-entry");
+  gtk_widget_set_hexpand(search_entry, true);
+  gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
+  
+  GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_widget_set_size_request(spacer, -1, 10);
+  gtk_box_append(GTK_BOX(rigth_box), spacer);
+
+  GtkWidget *label = gtk_label_new("");
+  gtk_widget_add_css_class(label, "label-error");
+  gtk_widget_set_visible(label, false);
+  g_object_set_data(G_OBJECT(rigth_box), "label-error", label);
+  gtk_box_append(GTK_BOX(spacer), label);
+ 
+  ST_BUTTON btn; 
+  createButtonWithImageLabel(&btn, "icon/back.png","BACK", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);  
+  gtk_widget_add_css_class(btn.button, "back-button");
+  gtk_widget_add_css_class(btn.label, "back-button-label");
+  gtk_widget_set_size_request(btn.button, 25, 25);
+  gtk_widget_set_halign(btn.button, GTK_ALIGN_START);
+  gtk_widget_set_hexpand(btn.button, false);
+  gtk_box_append(GTK_BOX(rigth_box), btn.button);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonBack), stack);
+  
+  GtkWidget *scrolled = gtk_scrolled_window_new();
+  gtk_widget_set_vexpand(scrolled, true);
+  gtk_box_append(GTK_BOX(rigth_box), scrolled);
+  
+  GtkWidget *grid = createClientTable(clients, numeroClientes(clients));
+  gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);
 }
 
 static void clickedButtonBack(GtkButton *button, gpointer data) {
@@ -660,6 +766,11 @@ static void clickedButtonBack(GtkButton *button, gpointer data) {
   }
 
   child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ToggleClients");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+ 
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ViewClients");
   if(child) {
     gtk_stack_remove(GTK_STACK(stack), child);
   }

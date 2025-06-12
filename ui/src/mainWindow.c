@@ -5,7 +5,7 @@ void createMainWindow(GtkApplication *app, gpointer data) {
 
   GtkWidget *window = gtk_application_window_new(app);
   gtk_window_set_title(GTK_WINDOW(window), "Hospital Management");
-  gtk_window_set_default_size(GTK_WINDOW(window), 1000, 600);
+  gtk_window_set_default_size(GTK_WINDOW(window), 1100, 700);
   gtk_widget_add_css_class(window, "window");
   
   GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);

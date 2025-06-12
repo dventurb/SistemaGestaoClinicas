@@ -249,7 +249,7 @@ void infoClientes(ST_CLIENTE clientes){
   printf("ID: %u\n", clientes.ID);
   printf("Nome: %s\n", clientes.nome);
   printf("Código Postal: %lu | Rua: %s | Cidade: %s\n", clientes.morada.codigo_postal, clientes.morada.rua, clientes.morada.cidade);
-  printf("Data de Nascimento: %2u-%2u-%4u\n", clientes.data_nascimento.dia, clientes.data_nascimento.mes, clientes.data_nascimento.ano);
+  printf("Data de Nascimento: %02u-%02u-%04u\n", clientes.data_nascimento.dia, clientes.data_nascimento.mes, clientes.data_nascimento.ano);
   printf("E-Mail: %s\n", clientes.email);
   printf("NIF: %lu\n", clientes.NIF);
   printf("SNS: %lu\n", clientes.SNS);
@@ -271,7 +271,7 @@ void inserirFicheiroCliente(ST_CLIENTE cliente){
     printf("Erro.\n");
     return;
   }
-  fprintf(ficheiro, "%u,%s,%lu,%s,%s,%2u,%2u,%4u,%s,%9lu,%9lu,%s\n", cliente.ID, cliente.nome, cliente.morada.codigo_postal, cliente.morada.rua, cliente.morada.cidade, cliente.data_nascimento.dia, cliente.data_nascimento.mes, cliente.data_nascimento.ano, cliente.email, cliente.NIF, cliente.SNS, cliente.estado ? "Ativo" : "Inativo");
+  fprintf(ficheiro, "%u,%s,%lu,%s,%s,%02u,%02u,%04u,%s,%9lu,%9lu,%s\n", cliente.ID, cliente.nome, cliente.morada.codigo_postal, cliente.morada.rua, cliente.morada.cidade, cliente.data_nascimento.dia, cliente.data_nascimento.mes, cliente.data_nascimento.ano, cliente.email, cliente.NIF, cliente.SNS, cliente.estado ? "Ativo" : "Inativo");
   fclose(ficheiro);
   return;
 }
@@ -324,7 +324,7 @@ void atualizarFicheiroCliente(ST_CLIENTE *clientes){
     return;
   }
   for (int i = 0; i < numeroClientes(clientes); i++){
-   fprintf(ficheiro, "%u,%s,%lu,%s,%s,%2u,%2u,%4u,%s,%9lu,%9lu,%s\n", clientes[i].ID, clientes[i].nome, clientes[i].morada.codigo_postal, clientes[i].morada.rua, clientes[i].morada.cidade, clientes[i].data_nascimento.dia, clientes[i].data_nascimento.mes, clientes[i].data_nascimento.ano, clientes[i].email, clientes[i].NIF, clientes[i].SNS, clientes[i].estado ? "Ativo" : "Inativo");
+   fprintf(ficheiro, "%u,%s,%lu,%s,%s,%02u,%02u,%04u,%s,%9lu,%9lu,%s\n", clientes[i].ID, clientes[i].nome, clientes[i].morada.codigo_postal, clientes[i].morada.rua, clientes[i].morada.cidade, clientes[i].data_nascimento.dia, clientes[i].data_nascimento.mes, clientes[i].data_nascimento.ano, clientes[i].email, clientes[i].NIF, clientes[i].SNS, clientes[i].estado ? "Ativo" : "Inativo");
   }
   fclose(ficheiro);
   return;
