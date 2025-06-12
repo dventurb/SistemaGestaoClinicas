@@ -5,11 +5,15 @@ static void clickedButtonAdd(GtkButton *button, gpointer data);
 static void clickedButtonEdit(GtkButton *button, gpointer data);
 static void clickedButtonToggle(GtkButton *button, gpointer data);
 static void clickedButtonView(GtkButton *button, gpointer data);
+
 static void clickedButtonBack(GtkButton *button, gpointer data);
 static void changedEntryPostalCode(GtkEntry *entry, gpointer data);
 static void clickedButtonSubmitAdd(GtkButton *button, gpointer data);
 static void activateSearchEditClient(GtkSearchEntry *search_entry, gpointer data);
 static void clickedButtonSubmitEdit(GtkButton *button, gpointer data);
+static void activateSearchToggleClient(GtkSearchEntry *search_entry, gpointer data);
+static void clickedButtonSubmitToggle(GtkButton *button, gpointer data);
+static void toggledButton(GtkToggleButton *toggle, gpointer data);
 
 /** 
  *  @brief Initializes the interface for the clients. 
@@ -503,7 +507,134 @@ static void clickedButtonEdit(GtkButton *button, gpointer data) {
 static void clickedButtonToggle(GtkButton *button, gpointer data) {
   ST_CLIENTE *clients = (ST_CLIENTE *)data;
 
+  GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
+  if(!stack) {
+    return;
+  }
 
+  GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_stack_add_named(GTK_STACK(stack), rigth_box, "ToggleClients");
+  gtk_stack_set_visible_child_name(GTK_STACK(stack), "ToggleClients");
+ 
+  GtkWidget *rigth_top_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_widget_add_css_class(rigth_top_box, "rigth_top_box");
+  gtk_widget_set_size_request(rigth_top_box, -1, 60);
+  gtk_box_append(GTK_BOX(rigth_box), rigth_top_box);
+  
+  GtkWidget *search_entry = gtk_search_entry_new();
+  gtk_search_entry_set_placeholder_text(GTK_SEARCH_ENTRY(search_entry), "Search by ID, Email, NIF or SNS");
+  gtk_widget_add_css_class(search_entry, "search-entry");
+  gtk_widget_set_hexpand(search_entry, true);
+  gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
+  g_signal_connect(search_entry, "activate", G_CALLBACK(activateSearchToggleClient), clients);
+  
+  GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  gtk_widget_set_size_request(spacer, -1, 30);
+  gtk_box_append(GTK_BOX(rigth_box), spacer);
+
+  GtkWidget *label = gtk_label_new("");
+  gtk_widget_add_css_class(label, "label-error");
+  gtk_widget_set_visible(label, false);
+  g_object_set_data(G_OBJECT(rigth_box), "label-error", label);
+  gtk_box_append(GTK_BOX(spacer), label);
+ 
+  ST_BUTTON btn; 
+  createButtonWithImageLabel(&btn, "icon/back.png","BACK", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);  
+  gtk_widget_add_css_class(btn.button, "back-button");
+  gtk_widget_add_css_class(btn.label, "back-button-label");
+  gtk_widget_set_size_request(btn.button, 25, 25);
+  gtk_widget_set_halign(btn.button, GTK_ALIGN_START);
+  gtk_widget_set_hexpand(btn.button, false);
+  gtk_box_append(GTK_BOX(rigth_box), btn.button);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonBack), stack);
+  
+  GtkWidget *grid = gtk_grid_new();
+  gtk_grid_set_column_spacing(GTK_GRID(grid), 20);
+  gtk_grid_set_row_spacing(GTK_GRID(grid), 14);
+  gtk_widget_set_halign(grid, GTK_ALIGN_START);
+  gtk_widget_set_hexpand(grid, true);
+  gtk_widget_set_valign(grid, GTK_ALIGN_CENTER);
+  gtk_box_append(GTK_BOX(rigth_box), grid);
+  
+  label = gtk_label_new("ID");
+  gtk_widget_set_hexpand(label, true);
+  gtk_widget_add_css_class(label, "form-label");
+  gtk_grid_attach(GTK_GRID(grid), label, 0, 0, 1, 1);
+
+  GtkWidget *entry = gtk_entry_new();
+  gtk_widget_set_hexpand(entry, true);
+  gtk_widget_set_sensitive(entry, false);
+  gtk_editable_set_editable(GTK_EDITABLE(entry), false);
+  g_object_set_data(G_OBJECT(rigth_box), "ID", entry);
+  gtk_widget_add_css_class(entry, "form-entry-disabled");
+
+  label = gtk_label_new("Name");
+  gtk_widget_add_css_class(label, "form-label");
+  gtk_grid_attach(GTK_GRID(grid), label, 0, 1, 1, 1);
+
+  entry = gtk_entry_new();
+  gtk_widget_set_sensitive(entry, false);
+  gtk_editable_set_editable(GTK_EDITABLE(entry), false);
+  gtk_entry_set_max_length(GTK_ENTRY(entry), 100);
+  gtk_widget_add_css_class(entry, "form-entry-disabled");
+  g_object_set_data(G_OBJECT(rigth_box), "Name", entry);
+  gtk_grid_attach(GTK_GRID(grid), entry, 1, 1, 4, 1);
+  
+  label = gtk_label_new("Email");
+  gtk_widget_add_css_class(label, "form-label");
+  gtk_grid_attach(GTK_GRID(grid), label, 0, 2, 1, 1);
+ 
+  entry = gtk_entry_new();
+  gtk_widget_set_sensitive(entry, false);
+  gtk_editable_set_editable(GTK_EDITABLE(entry), false);
+  gtk_entry_set_max_length(GTK_ENTRY(entry), 100);
+  gtk_widget_add_css_class(entry, "form-entry-disabled");
+  g_object_set_data(G_OBJECT(rigth_box), "Email", entry);
+  gtk_grid_attach(GTK_GRID(grid), entry, 1, 2, 6, 1);
+
+  label = gtk_label_new("NIF");
+  gtk_widget_add_css_class(label, "form-label");
+  gtk_grid_attach(GTK_GRID(grid), label, 0, 3, 1, 1);
+ 
+  entry = gtk_entry_new();
+  gtk_widget_set_sensitive(entry, false);
+  gtk_editable_set_editable(GTK_EDITABLE(entry), false);
+  gtk_entry_set_max_length(GTK_ENTRY(entry), 9);
+  gtk_widget_add_css_class(entry, "form-entry-disabled");
+  g_object_set_data(G_OBJECT(rigth_box), "NIF", entry);
+  gtk_grid_attach(GTK_GRID(grid), entry, 1, 3, 1, 1);
+
+  label = gtk_label_new("SNS");
+  gtk_widget_add_css_class(label, "form-label");
+  gtk_grid_attach(GTK_GRID(grid), label, 0, 4, 1, 1);
+ 
+  entry = gtk_entry_new();
+  gtk_widget_set_sensitive(entry, false);
+  gtk_editable_set_editable(GTK_EDITABLE(entry), false);
+  gtk_entry_set_max_length(GTK_ENTRY(entry), 9);
+  gtk_widget_add_css_class(entry, "form-entry-disabled");
+  g_object_set_data(G_OBJECT(rigth_box), "SNS", entry);
+  gtk_grid_attach(GTK_GRID(grid), entry, 1, 4, 1, 1);
+
+  spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  gtk_widget_set_size_request(spacer, -1, 80);
+  gtk_box_append(GTK_BOX(rigth_box), spacer);
+
+  GtkWidget *toggle_button = gtk_toggle_button_new_with_label("Active");
+  gtk_widget_add_css_class(toggle_button, "form-toggle");
+  g_object_set_data(G_OBJECT(rigth_box), "status", toggle_button);
+  gtk_widget_set_halign(toggle_button, GTK_ALIGN_CENTER);
+  gtk_box_append(GTK_BOX(spacer), toggle_button);
+  g_signal_connect(toggle_button, "toggled", G_CALLBACK(toggledButton), NULL);
+
+  createButtonWithImageLabel(&btn, SUBMIT_PATH,"SUBMIT", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_LABEL);  
+  gtk_widget_add_css_class(btn.button, "submit-button");
+  gtk_widget_add_css_class(btn.label, "submit-button-label");
+  gtk_widget_set_size_request(btn.button, 40, 40);
+  gtk_widget_set_halign(btn.button, GTK_ALIGN_CENTER);
+  gtk_widget_set_hexpand(btn.button, false);
+  gtk_box_append(GTK_BOX(rigth_box), btn.button);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitToggle), clients);
 }
 
 static void clickedButtonView(GtkButton *button, gpointer data) {
@@ -524,6 +655,11 @@ static void clickedButtonBack(GtkButton *button, gpointer data) {
   }
    
   child = gtk_stack_get_child_by_name(GTK_STACK(stack), "EditClients");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ToggleClients");
   if(child) {
     gtk_stack_remove(GTK_STACK(stack), child);
   }
@@ -940,4 +1076,137 @@ static void clickedButtonSubmitEdit(GtkButton *button, gpointer data) {
   // Reinitialize with the updated clients list.
   initializeUIClients(stack, clients);
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
+}
+
+
+static void activateSearchToggleClient(GtkSearchEntry *search_entry, gpointer data) {
+  ST_CLIENTE *clients = (ST_CLIENTE *)data;
+  ST_CLIENTE *toggle_client = NULL;
+  
+  GtkWidget *rigth_top_box = gtk_widget_get_parent(GTK_WIDGET(search_entry));
+  GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(rigth_top_box));
+  
+  GtkWidget *label = g_object_get_data(G_OBJECT(rigth_box), "label-error");
+  gtk_label_set_text(GTK_LABEL(label), "");
+  gtk_widget_set_visible(label, false);
+  
+  const char *input = gtk_editable_get_text(GTK_EDITABLE(search_entry));
+
+  SEARCH_TYPE type = detectSearchType(input);
+  
+  switch(type) {
+    case SEARCH_BY_ID:
+      toggle_client = procurarClientesID(clients, atoi(input));
+      if(!toggle_client) {
+        label = g_object_get_data(G_OBJECT(rigth_box), "label-error");
+        gtk_label_set_text(GTK_LABEL(label), "No client found with the provided ID. Please check and try again.");
+        gtk_widget_set_visible(label, true);
+      }
+      break;
+    case SEARCH_BY_EMAIL:
+      toggle_client = procurarClientesEmail(clients, input);
+      if(!toggle_client) {
+        label = g_object_get_data(G_OBJECT(rigth_box), "label-error");
+        gtk_label_set_text(GTK_LABEL(label), "No client found with the provided Email. Please check and try again.");
+        gtk_widget_set_visible(label, true);
+      }
+      break;
+    case SEARCH_BY_NIF:
+      toggle_client = procurarClientesNIF(clients, atoi(input));
+      if(!toggle_client) {
+        label = g_object_get_data(G_OBJECT(rigth_box), "label-error");
+        gtk_label_set_text(GTK_LABEL(label), "No client found with the provided NIF. Please check and try again.");
+        gtk_widget_set_visible(label, true);
+      }
+      break;
+    case SEARCH_BY_SNS:
+      toggle_client = procurarClientesSNS(clients, atoi(input));
+      if(!toggle_client) {
+        label = g_object_get_data(G_OBJECT(rigth_box), "label-error");
+        gtk_label_set_text(GTK_LABEL(label), "No client found with the provided SNS. Please check and try again.");
+        gtk_widget_set_visible(label, true);
+      }
+      break;
+    case SEARCH_BY_INVALID:
+      label = g_object_get_data(G_OBJECT(rigth_box), "label-error");
+      gtk_label_set_text(GTK_LABEL(label), "Invalid identifier. Please enter a valid ID, NIF, SNS, or Email.");
+      gtk_widget_set_visible(label, true);
+      return;
+  }
+
+  if(toggle_client) {
+    GtkWidget *entry = g_object_get_data(G_OBJECT(rigth_box), "ID");
+    GtkEntryBuffer *buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+    char id[10];
+    snprintf(id, sizeof(id), "%u", toggle_client->ID);
+    gtk_entry_buffer_set_text(buffer, id, -1);
+        
+    entry = g_object_get_data(G_OBJECT(rigth_box), "Name");
+    buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+    gtk_entry_buffer_set_text(buffer, toggle_client->nome, -1);
+
+    entry = g_object_get_data(G_OBJECT(rigth_box), "Email");
+    buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+    gtk_entry_buffer_set_text(buffer, toggle_client->email, -1);
+        
+    entry = g_object_get_data(G_OBJECT(rigth_box), "NIF");
+    buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+    char nif[10];
+    snprintf(nif, sizeof(nif), "%lu", toggle_client->NIF);
+    gtk_entry_buffer_set_text(buffer, nif, -1);
+
+    entry = g_object_get_data(G_OBJECT(rigth_box), "SNS");
+    buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+    char sns[10];
+    snprintf(sns, sizeof(sns), "%lu", toggle_client->SNS);
+    gtk_entry_buffer_set_text(buffer, sns, -1);
+
+    GtkWidget *toggle_button = g_object_get_data(G_OBJECT(rigth_box), "status");
+    bool status = toggle_client->estado;
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle_button), status);
+    gtk_button_set_label(GTK_BUTTON(toggle_button), status ? "Active" : "Inactive");
+  }
+}
+
+static void clickedButtonSubmitToggle(GtkButton *button, gpointer data) {
+  ST_CLIENTE *clients = (ST_CLIENTE *)data;
+
+  GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(button));
+
+  GtkWidget *entry = g_object_get_data(G_OBJECT(rigth_box), "ID");
+  GtkEntryBuffer *buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+
+  ST_CLIENTE *toggle_client = procurarClientesID(clients, atoi(gtk_entry_buffer_get_text(buffer)));
+  if(!toggle_client) {
+    return;
+  }
+  
+  GtkWidget *toggle_button = g_object_get_data(G_OBJECT(rigth_box), "status");
+  bool status = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toggle_button));
+  toggle_client->estado = status;
+
+  GtkWidget *stack = gtk_widget_get_parent(rigth_box);
+  
+  GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ToggleClients");
+  if(child) {
+    // Update the clients file.
+    atualizarFicheiroCliente(clients);
+
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+  
+  // Remove the "clients" page from the stack to update the table with new information.
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "clients");
+  gtk_stack_remove(GTK_STACK(stack), child);
+  
+  // Reinitialize with the updated clients list.
+  initializeUIClients(stack, clients);
+  gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
+}
+
+static void toggledButton(GtkToggleButton *toggle, gpointer data) {
+  (void)data; // unused
+  
+  bool status = gtk_toggle_button_get_active(toggle);
+  gtk_button_set_label(GTK_BUTTON(toggle), status ? "Active" : "Inactive");
 }
