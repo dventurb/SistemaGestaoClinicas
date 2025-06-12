@@ -82,3 +82,31 @@
   font-style: italic;
   margin-top: 4px;
 }
+
+.form-toggle {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  border-radius: 12px;
+  padding: 8px 24px;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: #ccc;
+  color: #000;
+  transition: background-color 0.3s ease, color 0.3s, border 0.2s ease;
+}
+
+.form-toggle:hover {
+  background-color: #90A4A3;
+}
+
+.form-toggle:checked {
+  background-color: #4CAF50;
+  color: white;
+  outline: none;
+  box-shadow: none;
+}
+
+.form-toggle:checked:hover {
+  background-color: #43A047;
+}
