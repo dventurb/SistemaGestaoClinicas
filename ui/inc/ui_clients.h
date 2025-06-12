@@ -10,6 +10,7 @@
 
 void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients);
 void addClientButtonsToGrid(GtkWidget *grid, ST_CLIENTE *clients);
-GtkWidget *createClientTable(ST_CLIENTE *client, int n_clients);
+GtkWidget *createActiveClientTable(ST_CLIENTE *client, int n_clients);
+GtkWidget *createClientTable(ST_CLIENTE *clients, int n_clients);
 
 #endif
