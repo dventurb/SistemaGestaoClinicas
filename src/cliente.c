@@ -172,6 +172,42 @@ void obterListaClientesAtivos(ST_CLIENTE *clientes){
   pressionarEnter();
 }
 
+ST_CLIENTE *procurarClientesID(ST_CLIENTE *clients, unsigned int id) {
+  for (int i = 0; i < numeroClientes(clients); i++) {
+    if(id == clients[i].ID) {
+      return &clients[i];
+    }
+  }
+  return NULL;
+}
+
+ST_CLIENTE *procurarClientesEmail(ST_CLIENTE *clients, const char *email) {
+  for (int i = 0; i < numeroClientes(clients); i++) {
+    if(strcmp(email, clients[i].email) == 0) {
+      return &clients[i];
+    }
+  }
+  return NULL;
+}
+
+ST_CLIENTE *procurarClientesNIF(ST_CLIENTE *clients, unsigned int nif) {
+  for (int i = 0; i < numeroClientes(clients); i++) {
+    if(nif == clients[i].NIF) {
+      return &clients[i];
+    }
+  }
+  return NULL;
+}
+
+ST_CLIENTE *procurarClientesSNS(ST_CLIENTE *clients, unsigned int sns) {
+  for (int i = 0; i < numeroClientes(clients); i++) {
+    if(sns == clients[i].SNS) {
+      return &clients[i];
+    }
+  }
+  return NULL;
+}
+
 void procurarClientesNome(ST_CLIENTE *clientes){
   char nome[STRING_MAX];
   int encontrados = 0;
