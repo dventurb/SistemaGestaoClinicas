@@ -246,7 +246,7 @@ bool validarFormatoData(const char *data) {
     }
   }
   
-  sscanf(data, "%2u-%2u-%4u", &dia, &mes, &ano);
+  sscanf(data, "%02u-%02u-%04u", &dia, &mes, &ano);
   
   ST_DATA data_atual;
   dataAtual(&data_atual);

@@ -50,3 +50,61 @@ void createButtonWithImageLabel(ST_BUTTON *button, const char *pathToImage, cons
   }
 }
 
+/**
+  * @brief Detects the type of input used for search the client.
+  *
+  * This function detect the SearchEntry input and determines whether it 
+  * corresponds to an email, NIF, SNS, ID or invalid input. 
+  *
+  * @param input    String representing the user input. 
+  * @return A value from the SEARCH_TYPE enum. 
+  *
+  */
+SEARCH_TYPE detectSearchType(const char *input) {
+
+  // Checking if the input is a valid email format.
+  const char *email_regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+  
+  regex_t regex;
+  int reti = regcomp(&regex, email_regex, REG_EXTENDED);
+
+  reti = regexec(&regex, input, 0, NULL, 0);
+
+  if(reti == REG_NOMATCH) {
+    regfree(&regex);
+  }else if(reti) {
+    regfree(&regex);
+  }else {
+    regfree(&regex);
+    return SEARCH_BY_EMAIL;
+  }
+  
+  // Check if the input is composed of digits.
+  int length = strlen(input);
+  
+  for(int i = 0; i < length; i++) {
+    if(!isdigit((unsigned char)input[i])) {
+      return SEARCH_BY_INVALID;
+    }
+  }
+  
+  // If is 9 digits long, perfome a checksum validation to check if is between NIF or SNS.
+  if(length == 9) {
+    int digit[8] = { 9, 8, 7, 6, 5, 4, 3, 2 };
+    int sum = 0;
+    for(int i = 0; i < 8; i++) {
+      sum += (input[i] - '0') * digit[i];
+    }
+
+    int remainer = sum % 11;
+    int checksum = (remainer == 0 || remainer == 1) ? 0 : 11 - remainer;
+
+    if((11 - remainer) == (input[8] - '0')) {
+      return SEARCH_BY_NIF;
+    }else {
+      return SEARCH_BY_SNS;
+    }
+  }else { 
+    return SEARCH_BY_ID;  // Assume the input is an ID. 
+  }
+}
