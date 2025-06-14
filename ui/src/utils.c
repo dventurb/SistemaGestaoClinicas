@@ -82,6 +82,12 @@ SEARCH_TYPE detectSearchType(const char *input) {
   // Check if the input is composed of digits.
   int length = strlen(input);
   
+  if(validarFormatoData(input)) {
+    return SEARCH_BY_DATE;
+  }else if(validarCodigoPostal(input)) {
+    return SEARCH_BY_POSTAL_CODE;
+  }
+
   for(int i = 0; i < length; i++) {
     if(!isdigit((unsigned char)input[i])) {
       return SEARCH_BY_INVALID;

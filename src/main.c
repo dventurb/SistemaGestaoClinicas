@@ -10,9 +10,9 @@
 int main(int argc, char **argv){
   GtkApplication *app;
     
-  ST_CLIENTE clientes[MAX_CLIENTES];
-  ST_MEDICO medicos[MAX_MEDICOS];
-  ST_CONSULTA consultas[MAX_CONSULTAS];
+  ST_CLIENTE clientes[MAX_CLIENTES] = {0};
+  ST_MEDICO medicos[MAX_MEDICOS] = {0};
+  ST_CONSULTA consultas[MAX_CONSULTAS] = {0};
     
   carregarFicheiroCliente(clientes);
   carregarFicheiroMedico(medicos);

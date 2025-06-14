@@ -383,3 +383,30 @@ bool validarSNS(const char *sns, ST_CLIENTE *clients) {
 
   return true;
 }
+
+/** 
+  * @brief Converts the first letter of each word in uppercase.
+  * 
+  * @param input   The input string.
+  * @return        The modified string.
+  *
+*/
+const char *convertToUppercase(const char *input) {
+  char *upper = malloc(STRING_MAX);
+  if(!upper) {
+    return NULL;
+  }
+
+  strncpy(upper, input, STRING_MAX - 1);
+  upper[STRING_MAX - 1] = '\0';
+  upper[0] = toupper(upper[0]);
+
+  for(int i = 1; upper[i] != '\0'; i++) {
+    if(isspace(upper[i-1])) {
+      upper[i] = toupper(upper[i]); 
+    }else {
+      upper[i] = tolower(upper[i]);  
+    }
+  }
+  return upper;
+}

@@ -208,30 +208,75 @@ ST_CLIENTE *procurarClientesSNS(ST_CLIENTE *clients, unsigned int sns) {
   return NULL;
 }
 
-void procurarClientesNome(ST_CLIENTE *clientes){
-  char nome[STRING_MAX];
-  int encontrados = 0;
-  clear();
-  printf("Nome do cliente: ");
-  fgets(nome, STRING_MAX, stdin);
-  nome[strcspn(nome, "\n")] = '\0';
-  nome[0] = toupper(nome[0]);
-  for (int i = 0; i < numeroClientes(clientes); i++){
-    if (strncmp(clientes[i].nome, nome, 2) == 0){
-      infoClientes(clientes[i]);
-      printf("\n");
-      encontrados++;
+int procurarClientesNome(ST_CLIENTE *clients, ST_CLIENTE **clients_found, const char *name){
+  int counter = 0;
+  *clients_found = NULL;
+ 
+  // Converter first char to uppercase
+  char cmp[STRING_MAX];
+  strncpy(cmp, name, STRING_MAX - 1);
+  cmp[STRING_MAX - 1] = '\0';
+  cmp[0] = toupper(cmp[0]);
+
+  for (int i = 0; i < numeroClientes(clients); i++){
+    if (strncmp(clients[i].nome, cmp, 2) == 0){
+      ST_CLIENTE *temp = realloc(*clients_found, (counter + 1) * sizeof(ST_CLIENTE));
+      if(!temp) {
+        free(*clients_found);
+        *clients_found = NULL;
+        return 0;
+      }
+      *clients_found = temp;
+
+      (*clients_found)[counter] = clients[i];
+      counter++;
     }
   }
-  if (!encontrados){
-    clear();
-    printf("Não existe clientes com o nome.\a\n");
-    delay(1);
-    return;
-  }
-  pressionarEnter();
+  return counter;
 }
 
+int procurarClientesData(ST_CLIENTE *clients, ST_CLIENTE **clients_found, const char *data) {
+  int counter = 0;
+  *clients_found = NULL;
+  
+  unsigned int day, month, year;
+  sscanf(data, "%02u-%02u-%04u", &day, &month, &year);
+
+  for(int i = 0; i < numeroClientes(clients); i++) {
+    if(clients[i].data_nascimento.dia == day && clients[i].data_nascimento.mes == month && clients[i].data_nascimento.ano == year) {
+      ST_CLIENTE *temp = realloc(*clients_found, (counter + 1) * sizeof(ST_CLIENTE));
+      if(!temp) {
+        free(*clients_found);
+        *clients_found = NULL;
+        return 0;
+      }
+      *clients_found = temp;
+      (*clients_found)[counter] = clients[i];
+      counter++;
+    }
+  }
+  return counter;
+}
+
+int procurarClientesCodigoPostal(ST_CLIENTE *clients, ST_CLIENTE **clients_found, const char *input) {
+  int counter = 0;
+  *clients_found = NULL;
+
+  for(int i = 0; i < numeroClientes(clients); i++) {
+    if(clients[i].morada.codigo_postal == strtoul(input, NULL, 10)) {
+      ST_CLIENTE *temp = realloc(*clients_found, (counter + 1) * sizeof(ST_CLIENTE));
+      if(!temp) {
+        free(*clients_found);
+        *clients_found = NULL;
+        return 0;
+      }
+      *clients_found = temp;
+      (*clients_found)[counter] = clients[i];
+      counter++;
+    }
+  }
+  return counter;
+}
 
 void confirmarClientes(ST_CLIENTE *clientes, ST_CLIENTE cliente){
   clientes[numeroClientes(clientes)] = cliente;
