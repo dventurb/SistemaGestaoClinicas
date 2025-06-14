@@ -6,6 +6,7 @@ static void clickedButtonEdit(GtkButton *button, gpointer data);
 static void clickedButtonToggle(GtkButton *button, gpointer data);
 static void clickedButtonView(GtkButton *button, gpointer data);
 
+static void changedSearchClient(GtkSearchEntry *search_entry, gpointer data);
 static void clickedButtonBack(GtkButton *button, gpointer data);
 static void changedEntryPostalCode(GtkEntry *entry, gpointer data);
 static void clickedButtonSubmitAdd(GtkButton *button, gpointer data);
@@ -14,7 +15,7 @@ static void clickedButtonSubmitEdit(GtkButton *button, gpointer data);
 static void activateSearchToggleClient(GtkSearchEntry *search_entry, gpointer data);
 static void clickedButtonSubmitToggle(GtkButton *button, gpointer data);
 static void toggledButton(GtkToggleButton *toggle, gpointer data);
-static void activateSearchViewClient(GtkSearchEntry *search_entry, gpointer data);
+static void changedSearchViewClient(GtkSearchEntry *search_entry, gpointer data);
 
 /** 
  *  @brief Initializes the interface for the clients. 
@@ -24,7 +25,7 @@ static void activateSearchViewClient(GtkSearchEntry *search_entry, gpointer data
  *
  */
 void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients) {
-  GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+  GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "clients");
 
   GtkWidget *rigth_top_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -37,27 +38,38 @@ void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients) {
   gtk_widget_add_css_class(search_entry, "search-entry");
   gtk_widget_set_hexpand(search_entry, true);
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
-
-  GtkWidget *rigth_main_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 25);
-  gtk_box_append(GTK_BOX(rigth_box), rigth_main_box);
+  g_signal_connect(search_entry, "search-changed", G_CALLBACK(changedSearchClient), clients);
+ 
+  GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  gtk_widget_set_size_request(spacer, -1, 10);
+  gtk_box_append(GTK_BOX(rigth_box), spacer);
+  
+  GtkWidget *label = gtk_label_new("");
+  gtk_widget_add_css_class(label, "label-error");
+  gtk_widget_set_visible(label, false);
+  g_object_set_data(G_OBJECT(rigth_box), "label-error", label);
+  gtk_box_append(GTK_BOX(spacer), label);
   
   GtkWidget *grid = gtk_grid_new();
   gtk_grid_set_column_spacing(GTK_GRID(grid), 5);
   gtk_grid_set_row_spacing(GTK_GRID(grid), 5);
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
-  gtk_box_append(GTK_BOX(rigth_main_box), grid);
+  gtk_box_append(GTK_BOX(rigth_box), grid);
 
   addClientButtonsToGrid(grid, clients);
 
   GtkWidget *scrolled = gtk_scrolled_window_new();
   gtk_widget_set_vexpand(scrolled, true);
-  gtk_box_append(GTK_BOX(rigth_main_box), scrolled);
+  g_object_set_data(G_OBJECT(rigth_box), "Scrolled", scrolled);
+  gtk_box_append(GTK_BOX(rigth_box), scrolled);
 
   ST_CLIENTE *clients_active = NULL;
   int counter = obterListaClientesAtivos(clients, &clients_active);
   grid = createClientTable(clients_active, counter);
+  g_object_set_data(G_OBJECT(rigth_box), "ClientTable", grid);
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);
+
 }
 
 /** 
@@ -661,7 +673,7 @@ static void clickedButtonView(GtkButton *button, gpointer data) {
   gtk_widget_add_css_class(search_entry, "search-entry");
   gtk_widget_set_hexpand(search_entry, true);
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
-  g_signal_connect(search_entry, "search-changed", G_CALLBACK(activateSearchViewClient), clients);
+  g_signal_connect(search_entry, "search-changed", G_CALLBACK(changedSearchViewClient), clients);
   
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_set_size_request(spacer, -1, 15);
@@ -693,6 +705,105 @@ static void clickedButtonView(GtkButton *button, gpointer data) {
   g_object_set_data(G_OBJECT(rigth_box), "ClientTable", grid);
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);
+}
+
+static void changedSearchClient(GtkSearchEntry *search_entry, gpointer data) {
+  ST_CLIENTE *clients = (ST_CLIENTE *)data;
+
+  ST_CLIENTE *clients_active = NULL;
+  int counter = obterListaClientesAtivos(clients, &clients_active);
+
+  ST_CLIENTE *clients_found = NULL;
+  
+  GtkWidget *rigth_top_box = gtk_widget_get_parent(GTK_WIDGET(search_entry));
+  GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(rigth_top_box));
+  
+  GtkWidget *label = g_object_get_data(G_OBJECT(rigth_box), "label-error");
+  gtk_label_set_text(GTK_LABEL(label), "");
+  gtk_widget_set_visible(label, false);
+
+  const char *input = gtk_editable_get_text(GTK_EDITABLE(search_entry));
+  if(strlen(input) == 0) {
+    GtkWidget *grid = g_object_get_data(G_OBJECT(rigth_box), "ClientTable");
+    GtkWidget *scrolled = g_object_get_data(G_OBJECT(rigth_box), "Scrolled");
+    gtk_box_remove(GTK_BOX(rigth_box), scrolled);
+    
+    scrolled = gtk_scrolled_window_new();
+    g_object_set_data(G_OBJECT(rigth_box), "Scrolled", scrolled);
+    gtk_widget_set_vexpand(scrolled, true);
+    gtk_box_append(GTK_BOX(rigth_box), scrolled);
+  
+    grid = createClientTable(clients_active, counter);
+    g_object_set_data(G_OBJECT(rigth_box), "ClientTable", grid);
+    gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);
+    return;
+  }
+  
+  SEARCH_TYPE type = detectSearchType(input);
+  
+  switch(type) {
+    case SEARCH_BY_ID:
+      clients_found = procurarClientesID(clients_active, atoi(input));
+      counter = 1; // unique identifier
+      break;
+    case SEARCH_BY_EMAIL:
+      clients_found = procurarClientesEmail(clients_active, input);
+      counter = 1; // unique identifier 
+      break;
+    case SEARCH_BY_NIF:
+      clients_found = procurarClientesNIF(clients_active, atoi(input));
+      counter = 1; // unique identifier
+      break;
+    case SEARCH_BY_SNS:
+      clients_found = procurarClientesSNS(clients_active, atoi(input));
+      counter = 1; // unique identifier;
+      break;
+    case SEARCH_BY_DATE:
+      counter = procurarClientesData(clients_active, &clients_found, input);
+      break;
+    case SEARCH_BY_POSTAL_CODE:
+      counter = procurarClientesCodigoPostal(clients_active, &clients_found, input);
+    default:
+      break;
+  }
+
+  if(clients_found) {
+    GtkWidget *grid = g_object_get_data(G_OBJECT(rigth_box), "ClientTable");
+    GtkWidget *scrolled = g_object_get_data(G_OBJECT(rigth_box), "Scrolled");
+    gtk_box_remove(GTK_BOX(rigth_box), scrolled);
+    
+    scrolled = gtk_scrolled_window_new();
+    g_object_set_data(G_OBJECT(rigth_box), "Scrolled", scrolled);
+    gtk_widget_set_vexpand(scrolled, true);
+    gtk_box_append(GTK_BOX(rigth_box), scrolled);
+   
+    grid = createClientTable(clients_found, counter);
+    gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid); 
+    g_object_set_data(G_OBJECT(rigth_box), "ClientTable", grid);
+  }else {
+    counter = procurarClientesNome(clients_active, &clients_found, input);
+    if(counter > 0) {
+      GtkWidget *grid = g_object_get_data(G_OBJECT(rigth_box), "ClientTable");
+      GtkWidget *scrolled = g_object_get_data(G_OBJECT(rigth_box), "Scrolled");
+      gtk_box_remove(GTK_BOX(rigth_box), scrolled);
+    
+      scrolled = gtk_scrolled_window_new();
+      g_object_set_data(G_OBJECT(rigth_box), "Scrolled", scrolled);
+      gtk_widget_set_vexpand(scrolled, true);
+      gtk_box_append(GTK_BOX(rigth_box), scrolled);
+   
+      grid = createClientTable(clients_found, counter);
+      gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
+      gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid); 
+      g_object_set_data(G_OBJECT(rigth_box), "ClientTable", grid);
+    }else {
+        label = g_object_get_data(G_OBJECT(rigth_box), "label-error");
+        gtk_label_set_text(GTK_LABEL(label), "No client found with the provided input. Please check and try again.");
+        gtk_widget_set_visible(label, true);
+    }
+  }
 }
 
 static void clickedButtonBack(GtkButton *button, gpointer data) {
@@ -1268,7 +1379,7 @@ static void toggledButton(GtkToggleButton *toggle, gpointer data) {
   gtk_button_set_label(GTK_BUTTON(toggle), status ? "Active" : "Inactive");
 }
 
-static void activateSearchViewClient(GtkSearchEntry *search_entry, gpointer data) { 
+static void changedSearchViewClient(GtkSearchEntry *search_entry, gpointer data) { 
   ST_CLIENTE *clients = (ST_CLIENTE *)data;
   
   ST_CLIENTE *clients_found = NULL;
