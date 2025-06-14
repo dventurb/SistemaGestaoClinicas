@@ -37,5 +37,6 @@ bool validarCodigoPostal(const char *codigo_postal);
 bool validarEmail(const char *email, ST_CLIENTE *clients);
 bool validarNIF(const char *nif, ST_CLIENTE *clients);
 bool validarSNS(const char *sns, ST_CLIENTE *clients);
+const char *convertToUppercase(const char *input);
 
 #endif

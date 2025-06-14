@@ -3,3 +3,4 @@
 3,Miguel do Carmo,4980111,Casais,BRAVÃES,01,02,1999,mmiguel.c@gmail.com,256851654,201302354,Ativo
 4,Diamantino Miranda,4950222,Velhas,LONGOS VALES,22,02,1979,tino.miranda@yahoo.com,212504509,114599151,Inativo
 5,Graça Raimundo,4920201,Vila Nova de Cerveira,VILA NOVA DE CERVEIRA,05,02,1982,graca.raimundo@telecom.pt,264290712,222288810,Ativo
+6,Carlos Abreu,4910222,Moledo,MOLEDO CMN,30,08,1989,car.jorge.abreu@gmail.com,260917281,320111682,Ativo
