@@ -15,7 +15,7 @@ void inserirClientes(ST_CLIENTE *clientes);
 void alterarDadosClientes(ST_CLIENTE *clientes);
 void ativarDesativarClientes(ST_CLIENTE *clientes);
 void consultarDadosClientes(ST_CLIENTE *clientes);
-void obterListaClientesAtivos(ST_CLIENTE *clientes);
+int obterListaClientesAtivos(ST_CLIENTE *clients, ST_CLIENTE **clients_found);
 ST_CLIENTE *procurarClientesID(ST_CLIENTE *clients, unsigned int id);
 ST_CLIENTE *procurarClientesEmail(ST_CLIENTE *clients, const char *email);
 ST_CLIENTE *procurarClientesNIF(ST_CLIENTE *clients, unsigned int nif);
