@@ -53,7 +53,9 @@ void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients) {
   gtk_widget_set_vexpand(scrolled, true);
   gtk_box_append(GTK_BOX(rigth_main_box), scrolled);
 
-  grid = createActiveClientTable(clients, numeroClientes(clients));
+  ST_CLIENTE *clients_active = NULL;
+  int counter = obterListaClientesAtivos(clients, &clients_active);
+  grid = createClientTable(clients_active, counter);
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);
 }
@@ -104,67 +106,6 @@ void addClientButtonsToGrid(GtkWidget *grid, ST_CLIENTE *clients) {
         break;
     }
   }
-}
-
-/** 
-  * @brief Creates a table to display information about the active clients.
-  *
-  * @param clients      Pointer to the ST_CLIENTE struct. 
-  * @param n_clients    Total number of clients.
-  *
-  * @return GtkWidget   GtkGrid widget which represents the table.
-  *
-  */
-GtkWidget *createActiveClientTable(ST_CLIENTE *clients, int n_clients) {
-  GtkWidget *grid = gtk_grid_new();
-  gtk_grid_set_row_spacing(GTK_GRID(grid), 5);
-  gtk_grid_set_column_spacing(GTK_GRID(grid), 10);
-
-  const char *headers[] = {"ID", "Name", "Email", "City", "Birth Date ", "NIF", "SNS", "Status" };
-  for (int i = 0; i < 8; i++) {
-    GtkWidget *label = gtk_label_new(headers[i]);
-    gtk_widget_add_css_class(label, "header-label");
-    gtk_grid_attach(GTK_GRID(grid), label, i, 0, 1, 1);
-  }
-
-  for (int i = 0; i < n_clients; i++) {
-    if(clients[i].estado) {
-      ST_CLIENTE j = clients[i];
-    
-      char id[5];
-      snprintf(id, sizeof(id), "%u", j.ID);
-
-      char date[15];
-      snprintf(date, sizeof(date), "%02u-%02u-%04u", j.data_nascimento.dia, j.data_nascimento.mes, j.data_nascimento.ano);
-    
-      char nif[10];
-      snprintf(nif, sizeof(nif), "%lu", j.NIF);
-
-      char sns[10];
-      snprintf(sns, sizeof(sns), "%lu", j.SNS);
-
-      char status[10]; 
-      strcpy(status, j.estado ? "🟢" : "🔴");   // always green
-
-        GtkWidget *labels[] = {
-        gtk_label_new(id),
-        gtk_label_new(j.nome),
-        gtk_label_new(j.email),
-        gtk_label_new(j.morada.cidade),
-        gtk_label_new(date),
-        gtk_label_new(nif),
-        gtk_label_new(sns),
-        gtk_label_new(status)
-      };
-
-      for (int z = 0; z < 8; z++) {
-        gtk_grid_attach(GTK_GRID(grid), labels[z], z, i + 1, 1, 1);
-        if(z < 7) gtk_label_set_selectable(GTK_LABEL(labels[z]), true);
-      }
-    }
-  }
-
-  return grid;
 }
 
 /** 

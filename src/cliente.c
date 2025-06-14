@@ -152,24 +152,24 @@ void consultarDadosClientes(ST_CLIENTE *clientes){
   return;
 }
 
-void obterListaClientesAtivos(ST_CLIENTE *clientes){
-  int encontrados = 0;
-  clear();
-  printf("Lista de Clientes Ativos:\n");
-  for (int i = 0; i < numeroClientes(clientes); i++){
-    if (clientes[i].estado){
-      infoClientes(clientes[i]);
-      printf("\n");
-      encontrados++;
+int obterListaClientesAtivos(ST_CLIENTE *clients, ST_CLIENTE **clients_found) {
+  int counter = 0;
+  *clients_found = NULL;
+
+  for (int i = 0; i < numeroClientes(clients); i++){
+    if(clients[i].estado) {
+      ST_CLIENTE *tmp = realloc(*clients_found, (counter + 1) * sizeof(ST_CLIENTE));
+      if(!tmp) {
+        free(*clients_found);
+        *clients_found = NULL;
+        return 0;
+      }
+      *clients_found = tmp;
+      (*clients_found)[counter] = clients[i];
+      counter++;
     }
   }
-  if (!encontrados){
-    clear();
-    printf("Não existe clientes ativos.\a\n");
-    delay(1);
-    return;
-  }
-  pressionarEnter();
+  return counter;
 }
 
 ST_CLIENTE *procurarClientesID(ST_CLIENTE *clients, unsigned int id) {
