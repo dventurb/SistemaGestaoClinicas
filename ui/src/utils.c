@@ -114,3 +114,21 @@ SEARCH_TYPE detectSearchType(const char *input) {
     return SEARCH_BY_ID;  // Assume the input is an ID. 
   }
 }
+
+GtkStringList *loadSpecialty() {
+  GtkStringList *list = gtk_string_list_new(NULL);
+
+  FILE *file = fopen("data/especialidade.txt", "r");
+  if(!file) {
+    return list;
+  }
+
+  char row[64];
+  while(fgets(row, sizeof(row), file)) {
+    row[strcspn(row, "\n")] = '\0';
+    gtk_string_list_append(list, row);
+  }
+
+  fclose(file);
+  return list;
+}

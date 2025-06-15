@@ -69,7 +69,6 @@ void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients) {
   g_object_set_data(G_OBJECT(rigth_box), "ClientTable", grid);
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);
-
 }
 
 /** 
@@ -171,7 +170,7 @@ GtkWidget *createClientTable(ST_CLIENTE *clients, int n_clients) {
 
     for (int z = 0; z < 8; z++) {
       gtk_grid_attach(GTK_GRID(grid), labels[z], z, i + 1, 1, 1);
-      if(z < 7) gtk_label_set_selectable(GTK_LABEL(labels[z]), true);
+      if(z < 7) gtk_label_set_selectable(GTK_LABEL(labels[z]), true); // get selectable all the labels except the status (emoji).
     }
   }
   
@@ -200,7 +199,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_box_append(GTK_BOX(rigth_box), spacer);
 
   ST_BUTTON btn; 
-  createButtonWithImageLabel(&btn, "icon/back.png","BACK", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);  
+  createButtonWithImageLabel(&btn, BACK_ICON_PATH,"BACK", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);  
   gtk_widget_add_css_class(btn.button, "back-button");
   gtk_widget_add_css_class(btn.label, "back-button-label");
   gtk_widget_set_size_request(btn.button, 25, 25);

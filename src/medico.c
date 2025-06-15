@@ -131,22 +131,25 @@ void obterListaTodosMedicos(ST_MEDICO *medicos){
   pressionarEnter();
 }
 
-void obterListaMedicosAtivos(ST_MEDICO *medicos){
-  int encontrados = 0;
-  clear();
-  printf("Lista de Médicos Disponíveis:\n");
-  for (int i = 0; i < numeroMedicos(medicos); i++){
-    infoMedicos(medicos[i]);
-    printf("\n");
-    encontrados++;
+int obterListaMedicosAtivos(ST_MEDICO *doctors, ST_MEDICO **doctors_active){
+  int counter = 0;
+  
+  *doctors_active = NULL;
+
+  for (int i = 0; i < numeroMedicos(doctors); i++){
+    if(doctors[i].estado) {
+      ST_MEDICO *temp = realloc(*doctors_active, (counter + 1) * sizeof(ST_MEDICO));
+      if(!temp) {
+        free(*doctors_active);
+        *doctors_active = NULL;
+        return 0;
+      }
+      *doctors_active = temp;
+      (*doctors_active)[counter] = doctors[i];
+      counter++;
+    }
   }
-  if(!encontrados){
-    clear();
-    printf("Não há médicos disponíveis.\a\n");
-    delay(1);
-    return;
-  }
-  pressionarEnter();
+  return 0;
 }
 
 void obterListaMedicosEspecialidade(ST_MEDICO *medicos){

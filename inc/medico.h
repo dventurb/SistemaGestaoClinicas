@@ -16,7 +16,7 @@ void alterarDadosMedicos(ST_MEDICO *medicos);
 void ativarDesativarMedicos(ST_MEDICO *medicos);
 void consultarDadosMedicos(ST_MEDICO *medicos);
 void obterListaTodosMedicos(ST_MEDICO *medicos);
-void obterListaMedicosAtivos(ST_MEDICO *medicos);
+int obterListaMedicosAtivos(ST_MEDICO *doctors, ST_MEDICO **doctors_active);
 void obterListaMedicosEspecialidade(ST_MEDICO *medicos);
 void procurarMedicosNome(ST_MEDICO *medicos);
 void confirmarMedicos(ST_MEDICO *medicos, ST_MEDICO medico);

@@ -46,6 +46,8 @@ typedef struct {
 typedef struct {
   unsigned int ID;
   char nome[STRING_MAX];
+  char email[STRING_MAX];
+  unsigned int cedula;
   char especialidade[STRING_MAX];
   bool estado;
 }ST_MEDICO;
