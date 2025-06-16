@@ -98,8 +98,8 @@ void addClientButtonsToGrid(GtkWidget *grid, ST_CLIENTE *clients) {
     createButtonWithImageLabel(&button, paths[i], labels[i], BUTTON_ORIENTATION_VERTICAL, BUTTON_POSITION_FIRST_IMAGE);
     gtk_widget_set_size_request(button.button, 96, 96);
     gtk_widget_set_size_request(button.image, 48, 48);
-    gtk_widget_add_css_class(button.button, "clients-button");
-    gtk_widget_add_css_class(button.label, "clients-button-label");
+    gtk_widget_add_css_class(button.button, "button");
+    gtk_widget_add_css_class(button.label, "button-label");
     gtk_grid_attach(GTK_GRID(grid), button.button, i, 0, 1, 1);
 
     switch(i) {

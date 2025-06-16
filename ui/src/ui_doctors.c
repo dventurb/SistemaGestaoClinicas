@@ -1,6 +1,11 @@
 #include "ui_doctors.h"
 
 static void clickedButtonAdd(GtkButton *button, gpointer data);
+static void clickedButtonEdit(GtkButton *button, gpointer data);
+static void clickedButtonToggle(GtkButton *button, gpointer data);
+static void clickedButtonView(GtkButton *button, gpointer data);
+
+static void clickedButtonBack(GtkButton *button, gpointer data);
 
 void initializeUIDoctors(GtkWidget *stack, ST_MEDICO *doctors) {
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
@@ -76,8 +81,8 @@ void addDoctorButtonsToGrid(GtkWidget *grid, ST_MEDICO *doctors) {
     createButtonWithImageLabel(&button, paths[i], labels[i], BUTTON_ORIENTATION_VERTICAL, BUTTON_POSITION_FIRST_IMAGE);
     gtk_widget_set_size_request(button.button, 96, 96);
     gtk_widget_set_size_request(button.image, 48, 48);
-    gtk_widget_add_css_class(button.button, "doctors-button");
-    gtk_widget_add_css_class(button.label, "doctors-button-label");
+    gtk_widget_add_css_class(button.button, "button");
+    gtk_widget_add_css_class(button.label, "button-label");
     gtk_grid_attach(GTK_GRID(grid), button.button, i, 0, 1, 1);
 
     switch(i) {
@@ -176,7 +181,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_set_halign(btn.button, GTK_ALIGN_START);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(rigth_box), btn.button);
- // g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonBack), stack);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonBack), stack);
   
   GtkWidget *grid = gtk_grid_new();
   gtk_grid_set_column_spacing(GTK_GRID(grid), 20);
@@ -243,10 +248,11 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_grid_attach(GTK_GRID(grid), label, 0, 3, 1, 1);
   
   GtkStringList *list = loadSpecialty();
-
+  
   GtkWidget *dropdown = gtk_drop_down_new(G_LIST_MODEL(list), NULL);
+  gtk_drop_down_set_show_arrow(GTK_DROP_DOWN(dropdown), true);
   gtk_widget_set_hexpand(dropdown, true);
-  gtk_widget_add_css_class(entry, "form-dropdown");
+  gtk_widget_add_css_class(dropdown, "form-dropdown");
   g_object_set_data(G_OBJECT(rigth_box), "Specialty", dropdown);
   gtk_grid_attach(GTK_GRID(grid), dropdown, 1, 3, 1, 1);
 
@@ -262,4 +268,44 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(rigth_box), btn.button);
   //g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitAdd), doctors);
+}
+static void clickedButtonEdit(GtkButton *button, gpointer data) {
+
+}
+
+static void clickedButtonToggle(GtkButton *button, gpointer data) {
+
+}
+
+static void clickedButtonView(GtkButton *button, gpointer data) {
+
+}
+
+static void clickedButtonBack(GtkButton *button, gpointer data) {
+  (void)button; // unused 
+
+  GtkWidget *stack = (GtkWidget *)data;
+  
+  
+  GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), "AddDoctors");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+   
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "EditDoctors");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ToggleDoctors");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+ 
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ViewDoctors");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+
+  gtk_stack_set_visible_child_name(GTK_STACK(stack), "doctors");
 }
