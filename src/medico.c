@@ -133,10 +133,9 @@ void obterListaTodosMedicos(ST_MEDICO *medicos){
 
 int obterListaMedicosAtivos(ST_MEDICO *doctors, ST_MEDICO **doctors_active){
   int counter = 0;
-  
   *doctors_active = NULL;
 
-  for (int i = 0; i < numeroMedicos(doctors); i++){
+  for (int i = 0; i < numberOf(doctors, TYPE_DOCTORS); i++){
     if(doctors[i].estado) {
       ST_MEDICO *temp = realloc(*doctors_active, (counter + 1) * sizeof(ST_MEDICO));
       if(!temp) {
@@ -149,7 +148,7 @@ int obterListaMedicosAtivos(ST_MEDICO *doctors, ST_MEDICO **doctors_active){
       counter++;
     }
   }
-  return 0;
+  return counter;
 }
 
 void obterListaMedicosEspecialidade(ST_MEDICO *medicos){
@@ -236,7 +235,7 @@ void inserirFicheiroMedico(ST_MEDICO medico){
     printf("Erro.\n");
     return;
   }
-  fprintf(ficheiro, "%u,%s,%s,%s\n", medico.ID, medico.nome, medico.especialidade, medico.estado ? "Disponível" : "Indisponível");
+  fprintf(ficheiro, "%u,%s,%s,%u,%s,%s\n", medico.ID, medico.nome, medico.email, medico.cedula, medico.especialidade, medico.estado ? "Disponível" : "Indisponível");
   fclose(ficheiro);
   return;
 }
@@ -253,9 +252,15 @@ void carregarFicheiroMedico(ST_MEDICO *medicos){
   while(fgets(linha, sizeof(linha), ficheiro) && i < MAX_MEDICOS){
     linha[strcspn(linha, "\n")] = '\0';
     token = strtok(linha, ",");
-    medicos[i].ID = (atoi(token));
+    medicos[i].ID = atoi(token);
     token = strtok(NULL, ",");
-    strncpy(medicos[i].nome, token, STRING_MAX);
+    strncpy(medicos[i].nome, token, STRING_MAX - 1);
+    medicos[i].nome[STRING_MAX - 1] = '\0';
+    token = strtok(NULL, ",");
+    strncpy(medicos[i].email, token, STRING_MAX - 1);
+    medicos[i].email[STRING_MAX - 1] = '\0';
+    token = strtok(NULL, ",");
+    medicos[i].cedula = atoi(token);
     token = strtok(NULL, ",");
     strncpy(medicos[i].especialidade, token, STRING_MAX);
     token = strtok(NULL, ",");
@@ -273,8 +278,8 @@ void atualizarFicheiroMedico(ST_MEDICO *medicos){
     printf("Erro.\n");
     return;
   }
-  for (int i = 0; i < numeroMedicos(medicos); i++){
-    fprintf(ficheiro, "%u,%s,%s,%s\n", medicos[i].ID, medicos[i].nome, medicos[i].especialidade, medicos[i].estado ? "Disponível" : "Indisponível");
+  for (int i = 0; i < numberOf(medicos, TYPE_DOCTORS); i++){
+    fprintf(ficheiro, "%u,%s,%s,%u,%s,%s\n", medicos[i].ID, medicos[i].nome, medicos[i].email, medicos[i].cedula, medicos[i].especialidade, medicos[i].estado ? "Disponível" : "Indisponível");
   }
   fclose(ficheiro);
   return;

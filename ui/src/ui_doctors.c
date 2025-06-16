@@ -6,6 +6,7 @@ static void clickedButtonToggle(GtkButton *button, gpointer data);
 static void clickedButtonView(GtkButton *button, gpointer data);
 
 static void clickedButtonBack(GtkButton *button, gpointer data);
+static void clickedButtonSubmitAdd(GtkButton *button, gpointer data);
 
 void initializeUIDoctors(GtkWidget *stack, ST_MEDICO *doctors) {
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
@@ -47,7 +48,6 @@ void initializeUIDoctors(GtkWidget *stack, ST_MEDICO *doctors) {
 
   ST_MEDICO *doctors_active = NULL;
   int counter = obterListaMedicosAtivos(doctors, &doctors_active);
-  if(counter == 0) return;
   grid = createDoctorTable(doctors_active, counter);
   g_object_set_data(G_OBJECT(rigth_box), "DoctorTable", grid);
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
@@ -114,7 +114,7 @@ void addDoctorButtonsToGrid(GtkWidget *grid, ST_MEDICO *doctors) {
 GtkWidget *createDoctorTable(ST_MEDICO *doctors, int n_doctors) {
   GtkWidget *grid = gtk_grid_new();
   gtk_grid_set_row_spacing(GTK_GRID(grid), 5);
-  gtk_grid_set_column_spacing(GTK_GRID(grid), 10);
+  gtk_grid_set_column_spacing(GTK_GRID(grid), 12);
 
   const char *headers[] = {"ID", "Name", "Email", "License Number", "Specialty", "Status" };
   for (int i = 0; i < 6; i++) {
@@ -267,7 +267,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_set_halign(btn.button, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(rigth_box), btn.button);
-  //g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitAdd), doctors);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitAdd), doctors);
 }
 static void clickedButtonEdit(GtkButton *button, gpointer data) {
 
@@ -307,5 +307,79 @@ static void clickedButtonBack(GtkButton *button, gpointer data) {
     gtk_stack_remove(GTK_STACK(stack), child);
   }
 
+  gtk_stack_set_visible_child_name(GTK_STACK(stack), "doctors");
+}
+
+static void clickedButtonSubmitAdd(GtkButton *button, gpointer data) {
+  ST_MEDICO *doctors = (ST_MEDICO *)data;
+
+  GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(button));
+
+  GtkWidget *entry = g_object_get_data(G_OBJECT(rigth_box), "Name");
+  GtkEntryBuffer *buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+  char name[STRING_MAX];
+  strncpy(name, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
+  name[STRING_MAX - 1] = '\0';
+
+  entry = g_object_get_data(G_OBJECT(rigth_box), "Email");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+  char email[STRING_MAX];
+  strncpy(email, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
+  email[STRING_MAX - 1] = '\0';
+
+  if(!validarEmail(email, doctors, TYPE_DOCTORS)) {
+    gtk_widget_add_css_class(entry, "entry-error");
+    return;
+  }else {
+    gtk_widget_remove_css_class(entry, "entry-error");
+    gtk_widget_add_css_class(entry, "form-entry");
+  }
+  
+  entry = g_object_get_data(G_OBJECT(rigth_box), "LicenseNumber");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+  const char *license_number = gtk_entry_buffer_get_text(buffer);
+  // TODO: Validate license_number
+ 
+  GtkStringList *list = loadSpecialty();
+
+  GtkWidget *dropdown = g_object_get_data(G_OBJECT(rigth_box), "Specialty");
+  int position = gtk_drop_down_get_selected(GTK_DROP_DOWN(dropdown));
+  const char *specialty = gtk_string_list_get_string(list, position);
+
+  ST_MEDICO new_doctor = {
+    .ID = numberOf(doctors, TYPE_DOCTORS) + 1,
+    .cedula = atoi(license_number),
+    .estado = true,
+  };
+
+  strncpy(new_doctor.nome, name, STRING_MAX - 1);
+  new_doctor.nome[STRING_MAX - 1] = '\0';
+
+  strncpy(new_doctor.email, email, STRING_MAX - 1);
+  new_doctor.email[STRING_MAX - 1] = '\0';
+
+  strncpy(new_doctor.especialidade, specialty, STRING_MAX - 1);
+  new_doctor.especialidade[STRING_MAX - 1] = '\0';
+
+  GtkWidget *stack = gtk_widget_get_parent(rigth_box);
+  
+  GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), "AddDoctors");
+  if(child) {
+    // Confirm the new doctor by adding it to the doctors list.
+    confirmarMedicos(doctors, new_doctor);
+
+    // Save the new doctor to the file.
+    inserirFicheiroMedico(new_doctor);
+    
+    // Remove the "AddDoctor" page from the stack.
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+
+  // Remove the "doctor" page from the stack to update the table with new information.
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "doctors");
+  gtk_stack_remove(GTK_STACK(stack), child);
+  
+  // Reinitialize with the updated doctors list.
+  initializeUIDoctors(stack, doctors);
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "doctors");
 }

@@ -19,6 +19,12 @@ typedef enum {
   Realizado = 2
 }ESTADO;
 
+typedef enum {
+ TYPE_CLIENTS,
+ TYPE_DOCTORS,
+ TYPE_APPOINTMENTS
+}TYPE_STRUCT;
+
 typedef struct {
   char rua[STRING_MAX];
   unsigned long int codigo_postal;
