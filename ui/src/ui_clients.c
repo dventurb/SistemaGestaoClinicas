@@ -6,8 +6,8 @@ static void clickedButtonEdit(GtkButton *button, gpointer data);
 static void clickedButtonToggle(GtkButton *button, gpointer data);
 static void clickedButtonView(GtkButton *button, gpointer data);
 
-static void changedSearchClient(GtkSearchEntry *search_entry, gpointer data);
 static void clickedButtonBack(GtkButton *button, gpointer data);
+static void changedSearchClient(GtkSearchEntry *search_entry, gpointer data);
 static void changedEntryPostalCode(GtkEntry *entry, gpointer data);
 static void clickedButtonSubmitAdd(GtkButton *button, gpointer data);
 static void activateSearchEditClient(GtkSearchEntry *search_entry, gpointer data);
@@ -228,7 +228,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_add_css_class(entry, "form-entry-disabled");
 
   char id[15];
-  snprintf(id, sizeof(id), "%d", numeroClientes(clients) + 1);
+  snprintf(id, sizeof(id), "%d", numberOf(clients, TYPE_CLIENTS) + 1);
 
   GtkEntryBuffer *buffer = gtk_entry_buffer_new(id, -1);
   gtk_entry_set_buffer(GTK_ENTRY(entry), buffer);
@@ -700,7 +700,7 @@ static void clickedButtonView(GtkButton *button, gpointer data) {
   gtk_widget_set_vexpand(scrolled, true);
   gtk_box_append(GTK_BOX(rigth_box), scrolled);
   
-  GtkWidget *grid = createClientTable(clients, numeroClientes(clients));
+  GtkWidget *grid = createClientTable(clients, numberOf(clients, TYPE_CLIENTS));
   g_object_set_data(G_OBJECT(rigth_box), "ClientTable", grid);
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);
@@ -920,7 +920,7 @@ static void clickedButtonSubmitAdd(GtkButton *button, gpointer data) {
   strncpy(email, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
   email[STRING_MAX - 1] = '\0';
 
-  if(!validarEmail(email, clients)) {
+  if(!validarEmail(email, clients, TYPE_CLIENTS)) {
     gtk_widget_add_css_class(entry, "entry-error");
     return;
   }else {
@@ -973,7 +973,7 @@ static void clickedButtonSubmitAdd(GtkButton *button, gpointer data) {
   }
  
   ST_CLIENTE new_client = {
-    .ID = numeroClientes(clients) + 1,
+    .ID = numberOf(clients, TYPE_CLIENTS) + 1,
     .NIF = atoi(nif),
     .SNS = atoi(sns),
     .estado = true,
@@ -1144,7 +1144,7 @@ static void clickedButtonSubmitEdit(GtkButton *button, gpointer data) {
   strncpy(email, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
   email[STRING_MAX - 1] = '\0';
 
-  if(!validarEmail(email, clients) && strcmp(email, edit_client->email) != 0) {
+  if(!validarEmail(email, clients, TYPE_CLIENTS) && strcmp(email, edit_client->email) != 0) {
     gtk_widget_add_css_class(entry, "entry-error");
     return;
   }else {
@@ -1402,7 +1402,7 @@ static void changedSearchViewClient(GtkSearchEntry *search_entry, gpointer data)
     gtk_widget_set_vexpand(scrolled, true);
     gtk_box_append(GTK_BOX(rigth_box), scrolled);
   
-    grid = createClientTable(clients, numeroClientes(clients));
+    grid = createClientTable(clients, numberOf(clients, TYPE_CLIENTS));
     g_object_set_data(G_OBJECT(rigth_box), "ClientTable", grid);
     gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
     gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);

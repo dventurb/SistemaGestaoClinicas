@@ -231,6 +231,42 @@ void ativarDesativarCursor(int n){
 #endif
 }
 
+/** 
+ * @brief Returns the total number of elements in a given data.
+ *
+ *  @param data  A pointer to the array of structs (ST_CLIENTE, ST_MEDICO, ST_CONSULTA).
+ *  @param type  The type of data to check (TYPE_CLIENTS, TYPE_DOCTORS, TYPE_APPOINTMENTS). 
+ *
+ *  @return The number of elements in a given data.
+ *
+*/
+int numberOf(void *data, TYPE_STRUCT type) {
+  int i = 0;
+
+  switch (type) {
+    case TYPE_CLIENTS:
+      ST_CLIENTE *clients = (ST_CLIENTE *)data;
+      while (clients[i].ID != 0){
+        i++;
+      }
+      return i;
+    case TYPE_DOCTORS:
+      ST_MEDICO *doctors = (ST_MEDICO *)data;
+      while (doctors[i].ID != 0) {
+        i++;
+      }
+      return i;
+    case TYPE_APPOINTMENTS:
+      ST_CONSULTA *appointments = (ST_CONSULTA *)data;
+      while (appointments[i].ID != 0) {
+        i++;
+      }
+      return i;
+    default:
+      return 0;
+  }
+}
+
 bool validarFormatoData(const char *data) {
   unsigned int dia, mes, ano;
 
@@ -273,15 +309,38 @@ bool validarCodigoPostal(const char *codigo_postal) {
 }
 
 /** 
-  * @brief Validates an email format and check for duplicates in clients. 
+  * @brief Validates an email format and check for duplicates in clients or doctors. 
   *
   * @param email    The email to validate.
-  * @param clients  Pointer to the ST_CLIENTE struct. 
+  * @param data     Pointer to the array of structs (ST_CLIENTE or ST_MEDICO).
+  * @param type     Type of data to check (TYPE_CLIENTS or TYPE_DOCTORS).
   * 
   * @note Requires the regex lib (regex.h). 
   * 
 */
-bool validarEmail(const char *email, ST_CLIENTE *clients) {
+bool validarEmail(const char *email, void *data, TYPE_STRUCT type) {
+  switch (type) {
+    case TYPE_CLIENTS:
+      ST_CLIENTE *clients = (ST_CLIENTE *)data;
+      for(int i = 0; i < numberOf(clients, type); i++) {
+        if(strcmp(email, clients[i].email) == 0) {
+          return false;
+        }
+      }
+      break;
+    case TYPE_DOCTORS:
+      ST_MEDICO *doctors = (ST_MEDICO *)data;      
+      for(int i = 0; i < numberOf(doctors, type); i++) {
+        if(strcmp(email, doctors[i].email) == 0) {
+          return false;
+        }
+      }
+      break;
+    case TYPE_APPOINTMENTS:
+      return false;
+    default:
+      return false;
+  }
   const char *email_regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
   regex_t regex;
@@ -301,11 +360,7 @@ bool validarEmail(const char *email, ST_CLIENTE *clients) {
   }
   regfree(&regex);
 
-  for(int i = 0; i < numeroClientes(clients); i++) {
-    if(strcmp(email, clients[i].email) == 0) {
-      return false;
-    }
-  }
+
 
   return true;
 }

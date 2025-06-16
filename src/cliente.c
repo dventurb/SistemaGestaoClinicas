@@ -156,7 +156,7 @@ int obterListaClientesAtivos(ST_CLIENTE *clients, ST_CLIENTE **clients_found) {
   int counter = 0;
   *clients_found = NULL;
 
-  for (int i = 0; i < numeroClientes(clients); i++){
+  for (int i = 0; i < numberOf(clients, TYPE_CLIENTS); i++){
     if(clients[i].estado) {
       ST_CLIENTE *tmp = realloc(*clients_found, (counter + 1) * sizeof(ST_CLIENTE));
       if(!tmp) {
