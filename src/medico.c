@@ -192,7 +192,8 @@ int procurarMedicosNome(ST_MEDICO *doctors, ST_MEDICO **doctors_found, const cha
         *doctors_found = NULL;
         return 0;
       }
-      *doctors_found = NULL;
+      *doctors_found = temp;
+
       (*doctors_found)[counter] = doctors[i];
       counter++;
     } 
@@ -214,7 +215,7 @@ int procurarMedicosEspecialidade(ST_MEDICO *doctors, ST_MEDICO **doctors_found, 
         *doctors_found = NULL;
         return 0;
       }
-      *doctors_found = NULL;
+      *doctors_found = temp;
       (*doctors_found)[counter] = doctors[i];
       counter++;
     }

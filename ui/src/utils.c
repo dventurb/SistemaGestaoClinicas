@@ -79,6 +79,15 @@ SEARCH_TYPE detectSearchType(const char *input) {
     return SEARCH_BY_EMAIL;
   }
   
+  // Check if the input is specialty of a doctor.
+  GtkStringList *list = loadSpecialty();
+  for(unsigned int i = 0; i < g_list_model_get_n_items(G_LIST_MODEL(list)); i++) {
+    const char *specialty = gtk_string_list_get_string(list, i);
+    if(strncmp(specialty, convertToUppercase(input), 4) == 0) {
+      return SEARCH_BY_SPECIALITY;
+    }
+  }
+  
   // Check if the input is composed of digits.
   int length = strlen(input);
   

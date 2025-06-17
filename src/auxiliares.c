@@ -440,6 +440,35 @@ bool validarSNS(const char *sns, ST_CLIENTE *clients) {
 }
 
 /** 
+  * @brief Validates the license number and check for duplicates in doctors. 
+  * 
+  * @param input      The input string.
+  * @param doctors    Pointer to the ST_MEDICO struct.
+  *
+  *
+*/
+bool validarLicenseNumber(const char *license_number, ST_MEDICO *doctors) {
+  if(strlen(license_number) != 6) {
+    return false;
+  }
+
+  for (int i = 0; i < 9; i++) {
+    if(!isdigit((unsigned char)license_number[i])) return false;
+  }
+
+  for (int i = 0; i < numberOf(doctors, TYPE_DOCTORS); i++) {
+    char str[7];
+    snprintf(str, sizeof(str), "%u", doctors[i].cedula);
+
+    if(strcmp(license_number, str) == 0) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/** 
   * @brief Converts the first letter of each word in uppercase.
   * 
   * @param input   The input string.

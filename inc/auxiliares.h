@@ -38,6 +38,7 @@ bool validarCodigoPostal(const char *codigo_postal);
 bool validarEmail(const char *email, void *data, TYPE_STRUCT type);
 bool validarNIF(const char *nif, ST_CLIENTE *clients);
 bool validarSNS(const char *sns, ST_CLIENTE *clients);
+bool validarLicenseNumber(const char *license_number, ST_MEDICO *doctors);
 const char *convertToUppercase(const char *input);
 
 #endif
