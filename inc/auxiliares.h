@@ -25,6 +25,7 @@ void delay(int num);
 void limparBuffer(void);
 void dataAtual(ST_DATA *data_hora_atual);
 bool obterMorada(ST_CLIENTE *cliente, long  unsigned int codigo_postal);
+const char *obterCidade(int cod_distrito, int cod_concelho);
 void obterEspecialidade(ST_MEDICO *medico);
 void listarEspecialidades(void);
 void pressionarEnter(void);

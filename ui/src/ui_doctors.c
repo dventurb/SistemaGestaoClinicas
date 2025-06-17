@@ -24,7 +24,7 @@ static void changedSearchViewDoctor(GtkSearchEntry *search_entry, gpointer data)
  *
  */
 void initializeUIDoctors(GtkWidget *stack, ST_MEDICO *doctors) {
-  GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+  GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "doctors");
 
   GtkWidget *rigth_top_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
