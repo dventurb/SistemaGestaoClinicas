@@ -36,7 +36,7 @@ void limparBuffer(void){
    FILE *ficheiro;
    char linha[1024], *token;
    int encontrados = 0;
-   ficheiro = fopen("data/codigos_postais.txt", "r");
+   ficheiro = fopen("data/codigos_postais.csv", "r");
    if (ficheiro == NULL){
     printf("Erro\n");
     return false;
@@ -56,7 +56,8 @@ void limparBuffer(void){
         encontrados++;
         strcpy(cliente->morada.rua, tokens[3]);
         cliente->morada.rua[strcspn(cliente->morada.rua, "\n")] = '\0';
-        strcpy(cliente->morada.cidade, tokens[total_tokens - 1]);
+
+        strcpy(cliente->morada.cidade, obterCidade(atoi(tokens[0]), atoi(tokens[1])));
         cliente->morada.cidade[strcspn(cliente->morada.cidade, "\n")] = '\0';
         cliente->morada.codigo_postal = codigo_postal;
         break;
@@ -71,6 +72,52 @@ void limparBuffer(void){
    fclose(ficheiro);
    return true;
  }
+
+const char *obterCidade(int cod_distrito, int cod_concelho) {
+  FILE *file;
+  char row[128];
+  char *token;
+
+  file = fopen("data/concelhos.csv", "r");
+  if(!file) {
+    return NULL;
+  }
+  
+  while(fgets(row, sizeof(row), file)) {
+    token = strtok(row, ",");
+    
+    char **tokens = malloc(3 * sizeof(char *));
+    if(!tokens) {
+      return NULL;
+    }
+
+    int total = 0;
+
+    while(token != NULL && total < 3) {
+      tokens[total] = strdup(token);
+      total++;
+      token = strtok(NULL, ",");
+    }
+    if(atoi(tokens[0]) == cod_distrito && atoi(tokens[1]) == cod_concelho && total == 3) {
+      char *city = strdup(tokens[2]);
+
+      for(int i = 0; i < total; i++) {
+        free(tokens[i]);
+      }
+      free(tokens);
+      fclose(file);
+      
+      return city;
+    }
+
+    for(int i = 0; i < total; i++) {
+      free(tokens[i]);
+    }
+    free(tokens);
+  }
+  fclose(file);
+  return NULL;
+}
 
 void obterEspecialidade(ST_MEDICO *medico){
   FILE *ficheiro;
