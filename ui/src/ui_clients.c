@@ -379,7 +379,7 @@ static void clickedButtonEdit(GtkButton *button, gpointer data) {
   gtk_box_append(GTK_BOX(spacer), label);
  
   ST_BUTTON btn; 
-  createButtonWithImageLabel(&btn, "icon/back.png","BACK", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);  
+  createButtonWithImageLabel(&btn, BACK_ICON_PATH,"BACK", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);  
   gtk_widget_add_css_class(btn.button, "back-button");
   gtk_widget_add_css_class(btn.label, "back-button-label");
   gtk_widget_set_size_request(btn.button, 25, 25);
@@ -911,7 +911,7 @@ static void clickedButtonSubmitAdd(GtkButton *button, gpointer data) {
   GtkWidget *entry = g_object_get_data(G_OBJECT(rigth_box), "Name");
   GtkEntryBuffer *buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
   char name[STRING_MAX];
-  strncpy(name, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
+  strncpy(name, convertToUppercase(gtk_entry_buffer_get_text(buffer)), STRING_MAX - 1);
   name[STRING_MAX - 1] = '\0';
 
   entry = g_object_get_data(G_OBJECT(rigth_box), "Email");
@@ -1135,7 +1135,7 @@ static void clickedButtonSubmitEdit(GtkButton *button, gpointer data) {
   entry = g_object_get_data(G_OBJECT(rigth_box), "Name");
   buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
   char name[STRING_MAX];
-  strncpy(name, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
+  strncpy(name, convertToUppercase(gtk_entry_buffer_get_text(buffer)), STRING_MAX - 1);
   name[STRING_MAX - 1] = '\0';
 
   entry = g_object_get_data(G_OBJECT(rigth_box), "Email");

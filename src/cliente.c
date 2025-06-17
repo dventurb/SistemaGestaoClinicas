@@ -212,12 +212,9 @@ int procurarClientesNome(ST_CLIENTE *clients, ST_CLIENTE **clients_found, const 
   int counter = 0;
   *clients_found = NULL;
  
-  // Converter first char to uppercase
-  char cmp[STRING_MAX];
-  strncpy(cmp, name, STRING_MAX - 1);
-  cmp[STRING_MAX - 1] = '\0';
-  cmp[0] = toupper(cmp[0]);
-
+  // Converter to uppercase
+  const char *cmp = convertToUppercase(name);
+  
   for (int i = 0; i < numeroClientes(clients); i++){
     if (strncmp(clients[i].nome, cmp, 2) == 0){
       ST_CLIENTE *temp = realloc(*clients_found, (counter + 1) * sizeof(ST_CLIENTE));

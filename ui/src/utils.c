@@ -110,6 +110,8 @@ SEARCH_TYPE detectSearchType(const char *input) {
     }else {
       return SEARCH_BY_SNS;
     }
+  }else if(length == 6) {
+    return SEARCH_BY_LICENSE_NUMBER;  // Doctor license numbers typically have 6 digits.
   }else { 
     return SEARCH_BY_ID;  // Assume the input is an ID. 
   }
