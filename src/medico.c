@@ -151,6 +151,77 @@ int obterListaMedicosAtivos(ST_MEDICO *doctors, ST_MEDICO **doctors_active){
   return counter;
 }
 
+ST_MEDICO *procurarMedicosID(ST_MEDICO *doctors, unsigned int id) {
+  for (int i = 0; i < numberOf(doctors, TYPE_DOCTORS); i++) {
+    if(doctors[i].ID == id) {
+      return &doctors[i];
+    }
+  }
+  return NULL;
+}
+
+ST_MEDICO *procurarMedicosEmail(ST_MEDICO *doctors, const char *email) {
+  for (int i = 0; i < numberOf(doctors, TYPE_DOCTORS); i++) {
+    if(strcmp(doctors[i].email, email) == 0) {
+      return &doctors[i];
+    }
+  }
+  return NULL;
+}
+
+ST_MEDICO *procurarMedicosLicenseNumber(ST_MEDICO *doctors, unsigned int cedula) {
+  for (int i = 0; i < numberOf(doctors, TYPE_DOCTORS); i++) {
+    if(doctors[i].cedula == cedula) {
+      return &doctors[i];
+    }   
+  }
+  return NULL;
+}
+
+int procurarMedicosNome(ST_MEDICO *doctors, ST_MEDICO **doctors_found, const char *name) {
+  int counter = 0;
+  *doctors_found = NULL;
+
+  const char *cmp = convertToUppercase(name);
+
+  for (int i = 0; i < numberOf(doctors, TYPE_DOCTORS); i++) {
+    if (strncmp(doctors[i].nome, cmp, 2) == 0) {
+      ST_MEDICO *temp = realloc(*doctors_found, (counter + 1) * sizeof(ST_MEDICO));
+      if(!temp) {
+        free(*doctors_found);
+        *doctors_found = NULL;
+        return 0;
+      }
+      *doctors_found = NULL;
+      (*doctors_found)[counter] = doctors[i];
+      counter++;
+    } 
+  }
+  return counter;
+}
+
+int procurarMedicosEspecialidade(ST_MEDICO *doctors, ST_MEDICO **doctors_found, const char *speciality) {
+  int counter = 0;
+  *doctors_found = NULL;
+
+  const char *cmp = convertToUppercase(speciality);
+
+  for(int i = 0; i < numberOf(doctors, TYPE_DOCTORS); i++) {
+    if (strncmp(doctors[i].especialidade, cmp, 2) == 0) {
+      ST_MEDICO *temp = realloc(*doctors_found, (counter + 1) * sizeof(ST_MEDICO));
+      if(!temp) {
+        free(*doctors_found);
+        *doctors_found = NULL;
+        return 0;
+      }
+      *doctors_found = NULL;
+      (*doctors_found)[counter] = doctors[i];
+      counter++;
+    }
+  }
+  return counter;
+}
+
 void obterListaMedicosEspecialidade(ST_MEDICO *medicos){
   int encontrados = 0;
   char especialidade[STRING_MAX];
@@ -171,30 +242,6 @@ void obterListaMedicosEspecialidade(ST_MEDICO *medicos){
   if (!encontrados){
     clear();
     printf("Não há medicos com a especialidade %s.\a\n", especialidade);
-    delay(1);
-    return;
-  }
-  pressionarEnter();
-}
-
-void procurarMedicosNome(ST_MEDICO *medicos){
-  char nome[STRING_MAX];
-  int encontrados = 0;
-  clear();
-  printf("Nome do médico: ");
-  fgets(nome, STRING_MAX, stdin);
-  nome[strcspn(nome, "\n")] = '\0';
-  nome[0] = toupper(nome[0]);
-  for (int i = 0; i < numeroMedicos(medicos); i++){
-    if(strncmp(medicos[i].nome, nome, 4) == 0){
-      infoMedicos(medicos[i]);
-      printf("\n");
-      encontrados++;
-    }
-  }
-  if(!encontrados){
-    clear();
-    printf("Não há médicos com o nome %s.\a\n", nome);
     delay(1);
     return;
   }

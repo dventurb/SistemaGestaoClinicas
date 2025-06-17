@@ -4,3 +4,4 @@
 4,Diamantino Miranda,4950222,Velhas,LONGOS VALES,22,02,1979,tino.miranda@yahoo.com,212504509,114599151,Inativo
 5,Graça Raimundo,4920201,Vila Nova de Cerveira,VILA NOVA DE CERVEIRA,05,02,1982,graca.raimundo@telecom.pt,264290712,222288810,Ativo
 6,Carlos Abreu,4910222,Moledo,MOLEDO CMN,30,08,1989,car.jorge.abreu@gmail.com,260917281,320111682,Ativo
+7,Diogo Sousa,4950122,Boucinha,CEIVÃES,01,01,2002,diogosousa@gmail.com,241797128,122594281,Ativo
