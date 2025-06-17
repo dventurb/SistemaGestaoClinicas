@@ -31,7 +31,8 @@ typedef enum {
   SEARCH_BY_SNS,
   SEARCH_BY_DATE,
   SEARCH_BY_POSTAL_CODE,
-  SEARCH_BY_LICENSE_NUMBER
+  SEARCH_BY_LICENSE_NUMBER,
+  SEARCH_BY_SPECIALITY
 } SEARCH_TYPE;
 
 void createButtonWithImageLabel(ST_BUTTON *button, const char *pathToImage, const char *text, BUTTON_ORIENTATION orientation, BUTTON_POSITION position);
