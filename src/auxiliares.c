@@ -452,7 +452,7 @@ bool validarLicenseNumber(const char *license_number, ST_MEDICO *doctors) {
     return false;
   }
 
-  for (int i = 0; i < 9; i++) {
+  for (int i = 0; i < 6; i++) {
     if(!isdigit((unsigned char)license_number[i])) return false;
   }
 
