@@ -552,7 +552,7 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
   gtk_box_append(GTK_BOX(spacer), label);
  
   ST_BUTTON btn; 
-  createButtonWithImageLabel(&btn, "icon/back.png","BACK", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);  
+  createButtonWithImageLabel(&btn, BACK_ICON_PATH,"BACK", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);  
   gtk_widget_add_css_class(btn.button, "back-button");
   gtk_widget_add_css_class(btn.label, "back-button-label");
   gtk_widget_set_size_request(btn.button, 25, 25);
@@ -580,6 +580,7 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
   gtk_editable_set_editable(GTK_EDITABLE(entry), false);
   g_object_set_data(G_OBJECT(rigth_box), "ID", entry);
   gtk_widget_add_css_class(entry, "form-entry-disabled");
+  gtk_grid_attach(GTK_GRID(grid), entry, 1, 0, 1, 1);
 
   label = gtk_label_new("Name");
   gtk_widget_add_css_class(label, "form-label");
