@@ -14,9 +14,9 @@
 
 // ESTRUTURAS E ENUMERADORES
 typedef enum {
-  Cancelado = 0,
-  Agendado = 1,
-  Realizado = 2
+  Cancelado = 0,  // Canceled  🔴
+  Agendado  = 1,  // Scheduled 🟡
+  Realizado = 2   // Completed 🟢
 }ESTADO;
 
 typedef enum {

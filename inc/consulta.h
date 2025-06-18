@@ -16,6 +16,7 @@ void agendarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *m
 void desmarcarConsultas(ST_CONSULTA *consultas);
 void marcarConsultasRealizadas(ST_CONSULTA *consultas);
 void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *medicos);
+int obterListaConsultasAgendadas(ST_CONSULTA *appointments, ST_CONSULTA **appointments_found);
 void obterListaConsultasDiaAtualMedico(ST_CONSULTA *consulta, ST_MEDICO *medicos);
 void obterHistoricoConsultasCliente(ST_CONSULTA *consulta, ST_CLIENTE *clientes);
 void confirmarConsultas(ST_CONSULTA *consultas, ST_CONSULTA consulta);

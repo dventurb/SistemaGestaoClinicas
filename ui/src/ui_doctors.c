@@ -122,7 +122,7 @@ void addDoctorButtonsToGrid(GtkWidget *grid, ST_MEDICO *doctors) {
   * @brief Creates a table to display the information for all the doctors.
   *
   * @param doctors      Pointer to the ST_MEDICO struct. 
-  * @param doctors      Total number of doctors.
+  * @param n_doctors    Total number of doctors.
   *
   * @return GtkWidget   GtkGrid widget which represents the table.
   *

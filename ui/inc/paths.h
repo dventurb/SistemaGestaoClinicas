@@ -20,4 +20,6 @@
 
 #define SUBMIT_PATH "icon/submit.png"
 
+#define CALENDAR_PATH "icon/calendar.png"
+
 #endif
