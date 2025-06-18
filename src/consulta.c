@@ -142,6 +142,26 @@ void marcarConsultasRealizadas(ST_CONSULTA *consultas){
   return;
 }
 
+int obterListaConsultasAgendadas(ST_CONSULTA *appointments, ST_CONSULTA **appointments_found) {
+  int counter = 0;
+  *appointments_found = NULL;
+
+  for (int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++){
+    if(appointments[i].estado == Agendado) {
+      ST_CONSULTA *tmp = realloc(*appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
+      if(!tmp) {
+        free(*appointments_found);
+        *appointments_found = NULL;
+        return 0;
+      }
+      *appointments_found = tmp;
+      (*appointments_found)[counter] = appointments[i];
+      counter++;
+    }
+  }
+  return counter;
+}
+
 void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *medicos){
   unsigned int ID, clienteID, medicoID;
   int opcao = 1, tecla;

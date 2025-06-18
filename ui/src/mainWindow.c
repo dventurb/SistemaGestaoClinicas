@@ -23,7 +23,7 @@ void createMainWindow(GtkApplication *app, gpointer data) {
   initializeDashboard(stack, application->clientes);
   initializeUIClients(stack, application->clientes);
   initializeUIDoctors(stack, application->medicos);
-  initializeUIAppointments(stack);
+  initializeUIAppointments(stack, application->consultas);
 
   GtkCssProvider *provider = gtk_css_provider_new();
   GFile *css_file = g_file_new_for_path(STYLE_CSS_PATH);
