@@ -7,14 +7,17 @@ static void clickedButtonToggle(GtkButton *button, gpointer data);
 static void clickedButtonView(GtkButton *button, gpointer data);
 
 static void clickedButtonBack(GtkButton *button, gpointer data);
-static void changedSearchDoctor(GtkSearchEntry *search_entry, gpointer data);
 static void clickedButtonSubmitAdd(GtkButton *button, gpointer data);
-static void activateSearchEditDoctor(GtkSearchEntry *search_entry, gpointer data);
 static void clickedButtonSubmitEdit(GtkButton *button, gpointer data);
-static void activateSearchToggleDoctor(GtkSearchEntry *search_entry, gpointer data);
 static void clickedButtonSubmitToggle(GtkButton *button, gpointer data);
-static void toggledButton(GtkToggleButton *toggle, gpointer data);
+
+static void changedSearchDoctor(GtkSearchEntry *search_entry, gpointer data);
 static void changedSearchViewDoctor(GtkSearchEntry *search_entry, gpointer data); 
+
+static void activateSearchEditDoctor(GtkSearchEntry *search_entry, gpointer data);
+static void activateSearchToggleDoctor(GtkSearchEntry *search_entry, gpointer data);
+
+static void toggledButton(GtkToggleButton *toggle, gpointer data);
 
 /** 
  *  @brief Initializes the interface for the doctors. 

@@ -20,10 +20,10 @@ void createMainWindow(GtkApplication *app, gpointer data) {
   
   initializeLeftBar(left_box, stack);
   
-  initializeDashboard(stack, application->clientes);
-  initializeUIClients(stack, application->clientes);
-  initializeUIDoctors(stack, application->medicos);
-  initializeUIAppointments(stack, application->consultas);
+  initializeDashboard(stack, application->clients);
+  initializeUIClients(stack, application->clients);
+  initializeUIDoctors(stack, application->doctors);
+  initializeUIAppointments(stack, application);
 
   GtkCssProvider *provider = gtk_css_provider_new();
   GFile *css_file = g_file_new_for_path(STYLE_CSS_PATH);

@@ -7,7 +7,7 @@
 #include "structs.h"
 #include "consulta.h"
 
-void initializeUIAppointments(GtkWidget *stack, ST_CONSULTA *appointments);
+void initializeUIAppointments(GtkWidget *stack, ST_APPLICATION *application);
 void addAppointmentButtonsToGrid(GtkWidget *grid, ST_CONSULTA *appointments);
 GtkWidget *createAppointmentTable(ST_CONSULTA *appointments, int n_appointments);
 
