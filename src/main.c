@@ -19,9 +19,9 @@ int main(int argc, char **argv){
   carregarFicheiroConsulta(consultas, clientes, medicos);
 
   ST_APPLICATION application = {
-    .clientes = clientes,
-    .medicos = medicos,
-    .consultas = consultas
+    .clients = clientes,
+    .doctors = medicos,
+    .appointments = consultas
   }; 
     
   app = gtk_application_new("clinica.gestao", G_APPLICATION_DEFAULT_FLAGS);

@@ -7,14 +7,25 @@ static void clickedButtonToggle(GtkButton *button, gpointer data);
 static void clickedButtonView(GtkButton *button, gpointer data);
 
 static void clickedButtonBack(GtkButton *button, gpointer data);
-static void changedSearchAppointment(GtkSearchEntry *search_entry, gpointer data);
 static void clickedButtonSubmitAdd(GtkButton *button, gpointer data);
-static void activateSearchEditAppointment(GtkSearchEntry *search_entry, gpointer data);
 static void clickedButtonSubmitEdit(GtkButton *button, gpointer data);
-static void activateSearchToggleAppointment(GtkSearchEntry *search_entry, gpointer data);
 static void clickedButtonSubmitToggle(GtkButton *button, gpointer data);
-static void toggledButton(GtkToggleButton *toggle, gpointer data);
+
+static void changedSearchAppointment(GtkSearchEntry *search_entry, gpointer data);
 static void changedSearchViewAppointment(GtkSearchEntry *search_entry, gpointer data); 
+
+static void activateSearchEditAppointment(GtkSearchEntry *search_entry, gpointer data);
+static void activateSearchToggleAppointment(GtkSearchEntry *search_entry, gpointer data);
+
+static void toggledButton(GtkToggleButton *toggle, gpointer data);
+
+static void changedEntryClientID(GtkEntry *entry, gpointer data);
+static void changedEntryClientNIF(GtkEntry *entry, gpointer data);
+static void changedEntryDoctorID(GtkEntry *entry, gpointer data);
+static void changedEntryDoctorLicense(GtkEntry *entry, gpointer data);
+static void changedEntryStartDate(GtkEntry *entry, gpointer data);
+static void changedEntryEndDate(GtkEntry *entry, gpointer data);
+
 
 /** 
  *  @brief Initializes the interface for the appointments. 
@@ -23,7 +34,7 @@ static void changedSearchViewAppointment(GtkSearchEntry *search_entry, gpointer 
  *  @param doctors    Pointer to the ST_CONSULTA struct.
  *
  */
-void initializeUIAppointments(GtkWidget *stack, ST_CONSULTA *appointments) {
+void initializeUIAppointments(GtkWidget *stack, ST_APPLICATION *application) {
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "appointments");
 
@@ -37,7 +48,7 @@ void initializeUIAppointments(GtkWidget *stack, ST_CONSULTA *appointments) {
   gtk_widget_add_css_class(search_entry, "search-entry");
   gtk_widget_set_hexpand(search_entry, true);
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
-  g_signal_connect(search_entry, "search-changed", G_CALLBACK(changedSearchAppointment), appointments);
+  g_signal_connect(search_entry, "search-changed", G_CALLBACK(changedSearchAppointment), application->appointments);
 
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 10);
@@ -55,7 +66,7 @@ void initializeUIAppointments(GtkWidget *stack, ST_CONSULTA *appointments) {
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
   gtk_box_append(GTK_BOX(rigth_box), grid);
 
-  addAppointmentButtonsToGrid(grid, appointments);
+  addAppointmentButtonsToGrid(grid, application->appointments);
 
   GtkWidget *scrolled = gtk_scrolled_window_new();
   gtk_widget_set_vexpand(scrolled, true);
@@ -63,7 +74,7 @@ void initializeUIAppointments(GtkWidget *stack, ST_CONSULTA *appointments) {
   gtk_box_append(GTK_BOX(rigth_box), scrolled);
 
   ST_CONSULTA *appointments_scheduled = NULL;
-  int counter = obterListaConsultasAgendadas(appointments, &appointments_scheduled);
+  int counter = obterListaConsultasAgendadas(application->appointments, &appointments_scheduled);
   grid = createAppointmentTable(appointments_scheduled, counter);
   g_object_set_data(G_OBJECT(rigth_box), "AppointmentTable", grid);
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
@@ -246,6 +257,19 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   g_object_set_data(G_OBJECT(rigth_box), "ClientID", entry);
   gtk_widget_add_css_class(entry, "form-entry");
   gtk_grid_attach(GTK_GRID(grid), entry, 1, 1, 1, 1);
+  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryClientID), NULL);
+    
+  label = gtk_label_new("NIF");
+  gtk_widget_add_css_class(label, "form-label");
+  gtk_grid_attach(GTK_GRID(grid), label, 2, 1, 1, 1);
+  
+  entry = gtk_entry_new();
+  gtk_entry_set_input_purpose(GTK_ENTRY(entry), GTK_INPUT_PURPOSE_DIGITS);
+  gtk_entry_set_max_length(GTK_ENTRY(entry), 9);
+  gtk_widget_add_css_class(entry, "form-entry");
+  g_object_set_data(G_OBJECT(rigth_box), "ClientNIF", entry);
+  gtk_grid_attach(GTK_GRID(grid), entry, 3, 1, 1, 1);
+  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryClientNIF), NULL);
   
   label = gtk_label_new("Name");
   gtk_widget_add_css_class(label, "form-label");
@@ -255,22 +279,9 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "Name"); 
   gtk_widget_set_sensitive(entry, false);
   gtk_editable_set_editable(GTK_EDITABLE(entry), false);
-  gtk_entry_set_input_purpose(GTK_ENTRY(entry), GTK_INPUT_PURPOSE_NAME);
-  gtk_entry_set_max_length(GTK_ENTRY(entry), 100);
   gtk_widget_add_css_class(entry, "form-entry-disabled");
   g_object_set_data(G_OBJECT(rigth_box), "ClientName", entry);
-  gtk_grid_attach(GTK_GRID(grid), entry, 1, 2, 8, 1);  
-
-  label = gtk_label_new("NIF");
-  gtk_widget_add_css_class(label, "form-label");
-  gtk_grid_attach(GTK_GRID(grid), label, 10, 2, 1, 1);
-  
-  entry = gtk_entry_new();
-  gtk_entry_set_input_purpose(GTK_ENTRY(entry), GTK_INPUT_PURPOSE_DIGITS);
-  gtk_entry_set_max_length(GTK_ENTRY(entry), 9);
-  gtk_widget_add_css_class(entry, "form-entry");
-  g_object_set_data(G_OBJECT(rigth_box), "ClientNIF", entry);
-  gtk_grid_attach(GTK_GRID(grid), entry, 11, 2, 1, 1);
+  gtk_grid_attach(GTK_GRID(grid), entry, 1, 2, 2, 1);  
   
   label = gtk_label_new("Doctor ID");
   gtk_widget_add_css_class(label, "form-label");
@@ -281,7 +292,19 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_add_css_class(entry, "form-entry");
   g_object_set_data(G_OBJECT(rigth_box), "DoctorID", entry);
   gtk_grid_attach(GTK_GRID(grid), entry, 1, 3, 1, 1);
+  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryDoctorID), NULL);
 
+  label = gtk_label_new("License Number");
+  gtk_widget_add_css_class(label, "form-label");
+  gtk_grid_attach(GTK_GRID(grid), label, 2, 3, 1, 1);
+ 
+  entry = gtk_entry_new();
+  gtk_entry_set_max_length(GTK_ENTRY(entry), 6);
+  gtk_widget_add_css_class(entry, "form-entry");
+  g_object_set_data(G_OBJECT(rigth_box), "LicenseNumber", entry);
+  gtk_grid_attach(GTK_GRID(grid), entry, 3, 3, 1, 1);
+  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryDoctorLicense), NULL);
+  
   label = gtk_label_new("Name");
   gtk_widget_add_css_class(label, "form-label");
   gtk_grid_attach(GTK_GRID(grid), label, 0, 4, 1, 1);
@@ -290,36 +313,64 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "Name");  
   gtk_widget_set_sensitive(entry, false);
   gtk_editable_set_editable(GTK_EDITABLE(entry), false);
-  gtk_entry_set_input_purpose(GTK_ENTRY(entry), GTK_INPUT_PURPOSE_NAME);
-  gtk_entry_set_max_length(GTK_ENTRY(entry), 100);
   gtk_widget_add_css_class(entry, "form-entry-disabled");
   g_object_set_data(G_OBJECT(rigth_box), "DoctorName", entry);
-  gtk_grid_attach(GTK_GRID(grid), entry, 1, 4, 8, 1);
-
-  label = gtk_label_new("License Number");
-  gtk_widget_add_css_class(label, "form-label");
-  gtk_grid_attach(GTK_GRID(grid), label, 0, 5, 1, 1);
- 
-  entry = gtk_entry_new();
-  gtk_entry_set_max_length(GTK_ENTRY(entry), 6);
-  gtk_widget_add_css_class(entry, "form-entry");
-  g_object_set_data(G_OBJECT(rigth_box), "LicenseNumber", entry);
-  gtk_grid_attach(GTK_GRID(grid), entry, 1, 5, 1, 1);
+  gtk_grid_attach(GTK_GRID(grid), entry, 1, 4, 2, 1);
 
   label = gtk_label_new("Specialty");
   gtk_widget_add_css_class(label, "form-label");
-  gtk_grid_attach(GTK_GRID(grid), label, 2, 5, 1, 1);
+  gtk_grid_attach(GTK_GRID(grid), label, 3, 4, 1, 1);
   
-  GtkStringList *list = loadSpecialty();
+  entry = gtk_entry_new();
+  gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "Pediatria");  
+  gtk_widget_set_sensitive(entry, false);
+  gtk_editable_set_editable(GTK_EDITABLE(entry), false);
+  gtk_widget_add_css_class(entry, "form-entry-disabled");
+  g_object_set_data(G_OBJECT(rigth_box), "DoctorSpecialty", entry);
+  gtk_grid_attach(GTK_GRID(grid), entry, 4, 4, 1, 1);
   
-  GtkWidget *dropdown = gtk_drop_down_new(G_LIST_MODEL(list), NULL);  
+  label = gtk_label_new("Start Date");
+  gtk_widget_add_css_class(label, "form-label");
+  gtk_grid_attach(GTK_GRID(grid), label, 0, 6, 1, 1);
+
+  entry = gtk_entry_new();
+  gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "01-01-2025");
+  gtk_entry_set_max_length(GTK_ENTRY(entry), 10);
+  gtk_widget_add_css_class(entry, "form-entry");
+  g_object_set_data(G_OBJECT(rigth_box), "StartDate", entry);
+  gtk_grid_attach(GTK_GRID(grid), entry, 1, 6, 1, 1);  
+  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryStartDate), NULL);
+  
+  const char *start_hour[] = {"10h00", NULL};
+  GtkWidget *dropdown = gtk_drop_down_new_from_strings(start_hour);  
   gtk_widget_set_sensitive(dropdown, false);
-  gtk_editable_set_editable(GTK_EDITABLE(dropdown), false);
   gtk_widget_set_hexpand(dropdown, true);
   gtk_widget_add_css_class(dropdown, "form-dropdown");
-  g_object_set_data(G_OBJECT(rigth_box), "Specialty", dropdown);
-  gtk_grid_attach(GTK_GRID(grid), dropdown, 3, 5, 1, 1);
+  g_object_set_data(G_OBJECT(rigth_box), "StartHour", dropdown);
+  gtk_grid_attach(GTK_GRID(grid), dropdown, 2, 6, 1, 1);
   
+  label = gtk_label_new("End Date");
+  gtk_widget_add_css_class(label, "form-label");
+  gtk_grid_attach(GTK_GRID(grid), label, 3, 6, 1, 1);
+
+  entry = gtk_entry_new();
+  gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "01-01-2025");
+  gtk_widget_set_sensitive(entry, false);
+  gtk_editable_set_editable(GTK_EDITABLE(entry), false);
+  gtk_entry_set_max_length(GTK_ENTRY(entry), 10);
+  gtk_widget_add_css_class(entry, "form-entry-disabled");
+  g_object_set_data(G_OBJECT(rigth_box), "EndDate", entry);
+  gtk_grid_attach(GTK_GRID(grid), entry, 4, 6, 1, 1);  
+  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryEndDate), NULL);
+ 
+  const char *end_hour[] = {"11h00", NULL};
+  dropdown = gtk_drop_down_new_from_strings(end_hour);  
+  gtk_widget_set_sensitive(dropdown, false);
+  gtk_widget_set_hexpand(dropdown, true);
+  gtk_widget_add_css_class(dropdown, "form-dropdown");
+  g_object_set_data(G_OBJECT(rigth_box), "EndHour", dropdown);
+  gtk_grid_attach(GTK_GRID(grid), dropdown, 5, 6, 1, 1);
+
   spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 80);
   gtk_box_append(GTK_BOX(rigth_box), spacer);
@@ -347,7 +398,32 @@ static void clickedButtonView(GtkButton *button, gpointer data) {
 }
 
 static void clickedButtonBack(GtkButton *button, gpointer data) {
+  (void)button; // unused 
 
+  GtkWidget *stack = (GtkWidget *)data;
+  
+  
+  GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), "AddAppointments");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+   
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "EditAppointments");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ToggleAppointments");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+ 
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ViewAppointments");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+
+  gtk_stack_set_visible_child_name(GTK_STACK(stack), "appointments");
 }
 
 static void changedSearchAppointment(GtkSearchEntry *search_entry, gpointer data) {
@@ -381,4 +457,26 @@ static void changedSearchViewAppointment(GtkSearchEntry *search_entry, gpointer 
 
 }
 
+static void changedEntryClientID(GtkEntry *entry, gpointer data) {
 
+}
+
+static void changedEntryClientNIF(GtkEntry *entry, gpointer data) {
+
+}
+
+static void changedEntryDoctorID(GtkEntry *entry, gpointer data) {
+
+}
+
+static void changedEntryDoctorLicense(GtkEntry *entry, gpointer data) {
+
+}
+
+static void changedEntryStartDate(GtkEntry *entry, gpointer data) {
+
+}
+
+static void changedEntryEndDate(GtkEntry *entry, gpointer) {
+
+}

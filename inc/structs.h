@@ -69,9 +69,9 @@ typedef struct {
 
 
 typedef struct {
-  ST_CLIENTE *clientes;
-  ST_MEDICO *medicos;
-  ST_CONSULTA *consultas;
+  ST_CLIENTE *clients;
+  ST_MEDICO *doctors;
+  ST_CONSULTA *appointments;
 } ST_APPLICATION;
 
 #endif
