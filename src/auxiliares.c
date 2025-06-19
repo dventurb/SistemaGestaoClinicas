@@ -331,19 +331,27 @@ bool validarFormatoData(const char *data) {
   
   sscanf(data, "%02u-%02u-%04u", &dia, &mes, &ano);
   
-  ST_DATA data_atual;
-  dataAtual(&data_atual);
-
   if(ano < 1900) return false;
   if(mes < 1 || mes > 12) return false;
   if(dia < 1 || dia > 31) return false;
   
+  return true; 
+}
+
+bool validarData(const char *data) {  
+  unsigned int dia, mes, ano;
+
+  sscanf(data, "%02u-%02u-%04u", &dia, &mes, &ano);
+  
+  ST_DATA data_atual;
+  dataAtual(&data_atual);
+  
   if(ano > data_atual.ano || (ano == data_atual.ano && mes > data_atual.mes) ||
-    (ano == data_atual.ano && dia > data_atual.dia)) {
+    (ano == data_atual.ano && mes == data_atual.mes && dia >= data_atual.dia )) {
     return false;
   }
-
-  return true; 
+  
+  return true;
 }
 
 bool validarCodigoPostal(const char *codigo_postal) {
@@ -514,6 +522,8 @@ bool validarLicenseNumber(const char *license_number, ST_MEDICO *doctors) {
 
   return true;
 }
+
+
 
 /** 
   * @brief Converts the first letter of each word in uppercase.

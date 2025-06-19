@@ -935,7 +935,7 @@ static void clickedButtonSubmitAdd(GtkButton *button, gpointer data) {
   entry = g_object_get_data(G_OBJECT(rigth_box), "BirthDate");
   buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
   const char *birth_date = gtk_entry_buffer_get_text(buffer);
-  if(!validarFormatoData(birth_date)) {
+  if(!validarFormatoData(birth_date) || !validarData(birth_date)) {
     gtk_widget_add_css_class(entry, "entry-error");
     return;
   }else {
@@ -1161,7 +1161,7 @@ static void clickedButtonSubmitEdit(GtkButton *button, gpointer data) {
   const char *birth_date = gtk_entry_buffer_get_text(buffer);
   char date[11];
   snprintf(date, sizeof(date), "%02u-%02u-%04u", edit_client->data_nascimento.dia, edit_client->data_nascimento.mes, edit_client->data_nascimento.ano); 
-  if(!validarFormatoData(birth_date) && strcmp(birth_date, date) != 0) {
+  if(!validarFormatoData(birth_date) || !validarData(birth_date)) {
     gtk_widget_add_css_class(entry, "entry-error");
     return;
   }else {

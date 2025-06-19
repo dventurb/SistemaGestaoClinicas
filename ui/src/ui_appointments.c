@@ -66,7 +66,7 @@ void initializeUIAppointments(GtkWidget *stack, ST_APPLICATION *application) {
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
   gtk_box_append(GTK_BOX(rigth_box), grid);
 
-  addAppointmentButtonsToGrid(grid, application->appointments);
+  addAppointmentButtonsToGrid(grid, application);
 
   GtkWidget *scrolled = gtk_scrolled_window_new();
   gtk_widget_set_vexpand(scrolled, true);
@@ -90,7 +90,7 @@ void initializeUIAppointments(GtkWidget *stack, ST_APPLICATION *application) {
  * @param appointments   Pointer to the ST_CONSULTA struct. 
  *
  */
-void addAppointmentButtonsToGrid(GtkWidget *grid, ST_CONSULTA *appointments) {
+void addAppointmentButtonsToGrid(GtkWidget *grid, ST_APPLICATION *application) {
   ST_BUTTON button;
   
   const char *labels[] = {
@@ -114,16 +114,16 @@ void addAppointmentButtonsToGrid(GtkWidget *grid, ST_CONSULTA *appointments) {
 
     switch(i) {
       case 0:
-        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonAdd), appointments);
+        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonAdd), application);
         break;
       case 1:
-        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonEdit), appointments);
+        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonEdit), application);
         break;
       case 2:
-        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonToggle), appointments);
+        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonToggle), application);
         break;
       case 3:
-        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonView), appointments);
+        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonView), application);
         break;
     }
   }
@@ -191,7 +191,7 @@ GtkWidget *createAppointmentTable(ST_CONSULTA *appointments, int n_appointments)
 }
 
 static void clickedButtonAdd(GtkButton *button, gpointer data) {
-  ST_CONSULTA *appointments = (ST_CONSULTA *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
   
   GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
   if(!stack) {
@@ -241,7 +241,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_add_css_class(entry, "form-entry-disabled");
 
   char id[15];
-  snprintf(id, sizeof(id), "%d", numberOf(appointments, TYPE_APPOINTMENTS) + 1);
+  snprintf(id, sizeof(id), "%d", numberOf(application->appointments, TYPE_APPOINTMENTS) + 1);
 
   GtkEntryBuffer *buffer = gtk_entry_buffer_new(id, -1);
   gtk_entry_set_buffer(GTK_ENTRY(entry), buffer);
@@ -257,7 +257,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   g_object_set_data(G_OBJECT(rigth_box), "ClientID", entry);
   gtk_widget_add_css_class(entry, "form-entry");
   gtk_grid_attach(GTK_GRID(grid), entry, 1, 1, 1, 1);
-  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryClientID), NULL);
+  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryClientID), application->clients);
     
   label = gtk_label_new("NIF");
   gtk_widget_add_css_class(label, "form-label");
@@ -269,7 +269,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_add_css_class(entry, "form-entry");
   g_object_set_data(G_OBJECT(rigth_box), "ClientNIF", entry);
   gtk_grid_attach(GTK_GRID(grid), entry, 3, 1, 1, 1);
-  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryClientNIF), NULL);
+  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryClientNIF), application->clients);
   
   label = gtk_label_new("Name");
   gtk_widget_add_css_class(label, "form-label");
@@ -292,7 +292,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_add_css_class(entry, "form-entry");
   g_object_set_data(G_OBJECT(rigth_box), "DoctorID", entry);
   gtk_grid_attach(GTK_GRID(grid), entry, 1, 3, 1, 1);
-  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryDoctorID), NULL);
+  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryDoctorID), application->doctors);
 
   label = gtk_label_new("License Number");
   gtk_widget_add_css_class(label, "form-label");
@@ -303,7 +303,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_add_css_class(entry, "form-entry");
   g_object_set_data(G_OBJECT(rigth_box), "LicenseNumber", entry);
   gtk_grid_attach(GTK_GRID(grid), entry, 3, 3, 1, 1);
-  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryDoctorLicense), NULL);
+  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryDoctorLicense), application->doctors);
   
   label = gtk_label_new("Name");
   gtk_widget_add_css_class(label, "form-label");
@@ -339,7 +339,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_add_css_class(entry, "form-entry");
   g_object_set_data(G_OBJECT(rigth_box), "StartDate", entry);
   gtk_grid_attach(GTK_GRID(grid), entry, 1, 6, 1, 1);  
-  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryStartDate), NULL);
+  g_signal_connect(entry, "changed", G_CALLBACK(changedEntryStartDate), application);
   
   const char *start_hour[] = {"10h00", NULL};
   GtkWidget *dropdown = gtk_drop_down_new_from_strings(start_hour);  
@@ -382,7 +382,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_set_halign(btn.button, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(rigth_box), btn.button);
-  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitAdd), appointments);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitAdd), application->appointments);
 }
 
 static void clickedButtonEdit(GtkButton *button, gpointer data) {
@@ -458,23 +458,252 @@ static void changedSearchViewAppointment(GtkSearchEntry *search_entry, gpointer 
 }
 
 static void changedEntryClientID(GtkEntry *entry, gpointer data) {
+  ST_CLIENTE *clients = (ST_CLIENTE *)data; 
+  
+  ST_CLIENTE *clients_active = NULL;
+  int counter = obterListaClientesAtivos(clients, &clients_active);
+  
+  GtkWidget *grid = gtk_widget_get_parent(GTK_WIDGET(entry));
+  GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(grid));
+  
+  GtkEntryBuffer *buffer = gtk_entry_get_buffer(entry);
+  const char *input = gtk_entry_buffer_get_text(buffer);
+  if(detectSearchType(input) != SEARCH_BY_ID) {
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "entry-error");
+    return;
+  }else {
+    gtk_widget_remove_css_class(GTK_WIDGET(entry), "entry-error");
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "form-entry");
+  }
 
+  ST_CLIENTE *client_found = procurarClientesID(clients_active, atoi(input));
+  if(!client_found) {
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "entry-error");
+    return;
+  }else {
+    gtk_widget_remove_css_class(GTK_WIDGET(entry), "entry-error");
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "form-entry");
+  }
+
+  GtkWidget *entry_st = g_object_get_data(G_OBJECT(rigth_box), "ClientNIF");
+  g_signal_handlers_disconnect_by_func(entry_st, G_CALLBACK(changedEntryClientNIF), clients);  // Temporarily disconnect the signal to set the text for NIF GtkEntry. 
+
+  char nif[10];
+  snprintf(nif, sizeof(nif), "%lu", client_found->NIF);
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+  gtk_entry_buffer_set_text(buffer, nif, -1);
+  gtk_widget_remove_css_class(entry_st, "entry-error");
+  gtk_widget_add_css_class(entry_st, "form-entry");
+
+  g_signal_connect(entry_st, "changed", G_CALLBACK(changedEntryClientNIF), clients); 
+
+  entry_st = g_object_get_data(G_OBJECT(rigth_box), "ClientName");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+  gtk_entry_buffer_set_text(buffer, client_found->nome, -1);
 }
 
 static void changedEntryClientNIF(GtkEntry *entry, gpointer data) {
+  ST_CLIENTE *clients = (ST_CLIENTE *)data; 
+  
+  ST_CLIENTE *clients_active = NULL;
+  int counter = obterListaClientesAtivos(clients, &clients_active);
+  
+  GtkWidget *grid = gtk_widget_get_parent(GTK_WIDGET(entry));
+  GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(grid));
+  
+  GtkEntryBuffer *buffer = gtk_entry_get_buffer(entry);
+  const char *input = gtk_entry_buffer_get_text(buffer);
+  if(detectSearchType(input) != SEARCH_BY_NIF) {
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "entry-error");    
+    return;
+  }else {
+    gtk_widget_remove_css_class(GTK_WIDGET(entry), "entry-error");
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "form-entry");
+  }
 
+  ST_CLIENTE *client_found = procurarClientesNIF(clients_active, atoi(input));
+  if(!client_found) {
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "entry-error");
+    return;
+  }else {
+    gtk_widget_remove_css_class(GTK_WIDGET(entry), "entry-error");
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "form-entry");
+  }
+
+  GtkWidget *entry_st = g_object_get_data(G_OBJECT(rigth_box), "ClientID");
+  g_signal_handlers_disconnect_by_func(entry_st, G_CALLBACK(changedEntryClientID), clients);  // Temporarily disconnect the signal to set the text for ID GtkEntry. 
+  
+  char id[10];
+  snprintf(id, sizeof(id), "%u", client_found->ID);
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+  gtk_entry_buffer_set_text(buffer, id, -1);
+  gtk_widget_remove_css_class(entry_st, "entry-error");
+  gtk_widget_add_css_class(entry_st, "form-entry");
+
+  g_signal_connect(entry_st, "changed", G_CALLBACK(changedEntryClientID), clients); 
+  
+  entry_st = g_object_get_data(G_OBJECT(rigth_box), "ClientName");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+  gtk_entry_buffer_set_text(buffer, client_found->nome, -1);    
 }
 
 static void changedEntryDoctorID(GtkEntry *entry, gpointer data) {
+  ST_MEDICO *doctors = (ST_MEDICO *)data; 
+  
+  ST_MEDICO *doctors_active = NULL;
+  int counter = obterListaMedicosAtivos(doctors, &doctors_active);
+  
+  GtkWidget *grid = gtk_widget_get_parent(GTK_WIDGET(entry));
+  GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(grid));
+  
+  GtkEntryBuffer *buffer = gtk_entry_get_buffer(entry);
+  const char *input = gtk_entry_buffer_get_text(buffer);
+  if(detectSearchType(input) != SEARCH_BY_ID) {
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "entry-error");
+    return;
+  }else {
+    gtk_widget_remove_css_class(GTK_WIDGET(entry), "entry-error");
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "form-entry");
+  }
 
+  ST_MEDICO *doctor_found = procurarMedicosID(doctors_active, atoi(input));
+  if(!doctor_found) {
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "entry-error");
+    return;
+  }else {
+    gtk_widget_remove_css_class(GTK_WIDGET(entry), "entry-error");
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "form-entry");
+  }
+
+  GtkWidget *entry_st = g_object_get_data(G_OBJECT(rigth_box), "LicenseNumber");
+  g_signal_handlers_disconnect_by_func(entry_st, G_CALLBACK(changedEntryDoctorLicense), doctors);  // Temporarily disconnect the signal to set the text for NIF GtkEntry. 
+
+  char license_number[7];
+  snprintf(license_number, sizeof(license_number), "%u", doctor_found->cedula);
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+  gtk_entry_buffer_set_text(buffer, license_number, -1);
+  gtk_widget_remove_css_class(entry_st, "entry-error");
+  gtk_widget_add_css_class(entry_st, "form-entry");
+
+  g_signal_connect(entry_st, "changed", G_CALLBACK(changedEntryDoctorLicense), doctors); 
+
+  entry_st = g_object_get_data(G_OBJECT(rigth_box), "DoctorName");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+  gtk_entry_buffer_set_text(buffer, doctor_found->nome, -1);
+
+  entry_st = g_object_get_data(G_OBJECT(rigth_box), "DoctorSpecialty");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+  gtk_entry_buffer_set_text(buffer, doctor_found->especialidade, -1);
 }
 
 static void changedEntryDoctorLicense(GtkEntry *entry, gpointer data) {
+  ST_MEDICO *doctors = (ST_MEDICO *)data; 
+  
+  ST_MEDICO *doctors_active = NULL;
+  int counter = obterListaMedicosAtivos(doctors, &doctors_active);
+  
+  GtkWidget *grid = gtk_widget_get_parent(GTK_WIDGET(entry));
+  GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(grid));
+  
+  GtkEntryBuffer *buffer = gtk_entry_get_buffer(entry);
+  const char *input = gtk_entry_buffer_get_text(buffer);
+  if(detectSearchType(input) != SEARCH_BY_LICENSE_NUMBER) {
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "entry-error");
+    return;
+  }else {
+    gtk_widget_remove_css_class(GTK_WIDGET(entry), "entry-error");
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "form-entry");
+  }
 
+  ST_MEDICO *doctor_found = procurarMedicosLicenseNumber(doctors_active, atoi(input));
+  if(!doctor_found) {
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "entry-error");
+    return;
+  }else {
+    gtk_widget_remove_css_class(GTK_WIDGET(entry), "entry-error");
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "form-entry");
+  }
+
+  GtkWidget *entry_st = g_object_get_data(G_OBJECT(rigth_box), "DoctorID");
+  g_signal_handlers_disconnect_by_func(entry_st, G_CALLBACK(changedEntryDoctorID), doctors);  // Temporarily disconnect the signal to set the text for NIF GtkEntry. 
+
+  char id[10];
+  snprintf(id, sizeof(id), "%u", doctor_found->ID);
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+  gtk_entry_buffer_set_text(buffer, id, -1);
+  gtk_widget_remove_css_class(entry_st, "entry-error");
+  gtk_widget_add_css_class(entry_st, "form-entry");
+
+  g_signal_connect(entry_st, "changed", G_CALLBACK(changedEntryDoctorID), doctors); 
+
+  entry_st = g_object_get_data(G_OBJECT(rigth_box), "DoctorName");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+  gtk_entry_buffer_set_text(buffer, doctor_found->nome, -1);  
+
+  entry_st = g_object_get_data(G_OBJECT(rigth_box), "DoctorSpecialty");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+  gtk_entry_buffer_set_text(buffer, doctor_found->especialidade, -1);
 }
 
 static void changedEntryStartDate(GtkEntry *entry, gpointer data) {
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+  
+  ST_CLIENTE *clients = application->clients;
+  ST_MEDICO *doctors = application->doctors;
+  ST_CONSULTA *appointments = application->appointments;
+  
+  GtkWidget *grid = gtk_widget_get_parent(GTK_WIDGET(entry));
+  GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(grid));
+  
+  ST_CLIENTE *clients_active = NULL;
+  int counter = obterListaClientesAtivos(clients, &clients_active);
 
+  ST_CLIENTE *client_found = NULL;
+  
+  GtkWidget *entry_st = g_object_get_data(G_OBJECT(rigth_box), "ClientID");
+  GtkEntryBuffer *buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+  if(detectSearchType(gtk_entry_buffer_get_text(buffer)) != SEARCH_BY_ID) {
+    return;
+  }else {
+    client_found = procurarClientesID(clients_active, atoi(gtk_entry_buffer_get_text(buffer)));
+    if(client_found) {
+      entry_st = g_object_get_data(G_OBJECT(rigth_box), "ClientNIF");
+      buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+      if(client_found->NIF != atoi(gtk_entry_buffer_get_text(buffer))) {
+        return;
+      }
+    }
+  }
+  
+  ST_MEDICO *doctors_active = NULL;
+  counter = obterListaMedicosAtivos(doctors, &doctors_active);
+  
+  ST_MEDICO *doctor_found = NULL;
+  
+  entry_st = g_object_get_data(G_OBJECT(rigth_box), "DoctorID");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+  if(detectSearchType(gtk_entry_buffer_get_text(buffer)) != SEARCH_BY_ID) {
+    return;
+  }else {
+    doctor_found = procurarMedicosID(doctors_active, atoi(gtk_entry_buffer_get_text(buffer)));
+    if(doctor_found) {
+      entry_st = g_object_get_data(G_OBJECT(rigth_box), "LicenseNumber");
+      buffer = gtk_entry_get_buffer(GTK_ENTRY(entry_st));
+      if(doctor_found->cedula != atoi(gtk_entry_buffer_get_text(buffer))) {
+        return;
+      }
+    }
+  }
+  
+  buffer = gtk_entry_get_buffer(entry);
+  const char *start_date = gtk_entry_buffer_get_text(buffer);
+  if(!validarFormatoData(start_date) || validarData(start_date)) {
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "entry-error");
+    return;
+  }else {
+    gtk_widget_remove_css_class(GTK_WIDGET(entry), "entry-error");
+    gtk_widget_add_css_class(GTK_WIDGET(entry), "form-entry");
+  }
 }
 
 static void changedEntryEndDate(GtkEntry *entry, gpointer) {

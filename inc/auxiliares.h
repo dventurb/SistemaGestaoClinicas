@@ -35,6 +35,7 @@ int getKey(void);
 void ativarDesativarCursor(int n);
 int numberOf(void *data, TYPE_STRUCT type);
 bool validarFormatoData(const char *data);
+bool validarData(const char *data);
 bool validarCodigoPostal(const char *codigo_postal);
 bool validarEmail(const char *email, void *data, TYPE_STRUCT type);
 bool validarNIF(const char *nif, ST_CLIENTE *clients);
