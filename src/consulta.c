@@ -329,7 +329,7 @@ void confirmarConsultas(ST_CONSULTA *consultas, ST_CONSULTA consulta){
   consultas[numeroConsultas(consultas)] = consulta;
 }
 
-// TODO: Still need to make the logic.
+// TODO: Lets see if thats work.
 const char **obterHorario(ST_CONSULTA *appointments, const char *data) {
   unsigned int dia, mes, ano;
 
@@ -352,14 +352,33 @@ const char **obterHorario(ST_CONSULTA *appointments, const char *data) {
     }
   }
 
-  char **str = NULL;
-  bool occupied_hour[10] = {0};
+  bool occupied_hour[12] = {0};
 
   for(int i = 0; i < counter; i++) {
     if(appointments_found[i]->data_inicial.hora >= 8 && appointments_found[i]->data_inicial.hora <= 18) {
-        hour[i] = j;
+      int index = appointments_found[i].data_inicial.hora - 8;
+      occupied_hour[index] = true;
     }
   }
+
+  char **str = malloc(11 * sizeof(char *));
+  if(!str) {
+    return NULL;
+  }
+
+  counter = 0;
+  for(int i = 0; i < 11; i++) {
+    if(!occupied_hour[i]) {
+      char hour[6];
+      snprintf(hour, sizeof(hour), "%dh00", i + 8);
+      str[counter] = strdup(hour);
+      counter++;
+    }
+  }
+
+  str[counter] = NULL;
+
+  return str;
 }
 
 bool verificarDisponibilidade(ST_CONSULTA *consultas,ST_CONSULTA *consulta){
