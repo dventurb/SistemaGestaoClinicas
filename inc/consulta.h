@@ -19,7 +19,7 @@ void atualizarConsultas(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO 
 int obterListaConsultasAgendadas(ST_CONSULTA *appointments, ST_CONSULTA **appointments_found);
 void obterListaConsultasDiaAtualMedico(ST_CONSULTA *consulta, ST_MEDICO *medicos);
 void obterHistoricoConsultasCliente(ST_CONSULTA *consulta, ST_CLIENTE *clientes);
-const char **obterHorario(ST_CONSULTA *appointments, const char *data);
+char **obterHorario(ST_CONSULTA *appointments, ST_CLIENTE *client, ST_MEDICO *doctor, const char *data);
 void confirmarConsultas(ST_CONSULTA *consultas, ST_CONSULTA consulta);
 bool verificarDisponibilidade(ST_CONSULTA *consultas, ST_CONSULTA *consulta);
 void infoConsultas(ST_CONSULTA consultas);
