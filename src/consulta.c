@@ -329,11 +329,11 @@ void confirmarConsultas(ST_CONSULTA *consultas, ST_CONSULTA consulta){
   consultas[numeroConsultas(consultas)] = consulta;
 }
 
-char **obterHorario(ST_CONSULTA *appointments, ST_CLIENTE *client, ST_MEDICO *doctor, const char *data) {
+char **obterHorario(ST_CONSULTA *appointments, ST_CLIENTE *client, ST_MEDICO *doctor, const char *date) {
   unsigned int dia, mes, ano;
 
-  sscanf(data, "%02u-%02u-%04u", &dia, &mes, &ano);
-  
+  sscanf(date, "%02u-%02u-%04u", &dia, &mes, &ano);
+ 
   int counter = 0;
   ST_CONSULTA *appointments_found = NULL;
 
@@ -352,11 +352,20 @@ char **obterHorario(ST_CONSULTA *appointments, ST_CLIENTE *client, ST_MEDICO *do
   }
 
   bool occupied_hour[12] = {0};
-
+  
+  ST_DATA data;
+  dataAtual(&data);
+  
   for(int i = 0; i < counter; i++) {
-    if(appointments_found[i].data_inicial.hora >= 8 && appointments_found[i].data_inicial.hora <= 18) {
-      int index = appointments_found[i].data_inicial.hora - 8;
-      occupied_hour[index] = true;
+    int index = appointments_found[i].data_inicial.hora - 8;
+    occupied_hour[index] = true;
+  }
+
+  for(unsigned int i = 0; i < 11; i++) {
+    if(ano == data.ano && mes == data.mes && dia == data.dia) {
+      if(data.hora >= i) {
+        occupied_hour[i] = true;
+      }
     }
   }
 
@@ -382,9 +391,16 @@ char **obterHorario(ST_CONSULTA *appointments, ST_CLIENTE *client, ST_MEDICO *do
   return str;
 }
 
-bool verificarDisponibilidade(ST_CONSULTA *consultas,ST_CONSULTA *consulta){
+bool verificarDisponibilidade(ST_CONSULTA *consultas,ST_CONSULTA *consulta) {
   ST_DATA data;
   dataAtual(&data);
+  
+  if (consulta->data_inicial.ano == data.ano && 
+    consulta->data_inicial.mes == data.mes && 
+    consulta->data_inicial.dia == data.dia && 
+    consulta->data_inicial.hora <= data.hora) {
+      return false;
+  }
 
   for(int i = 0; i < numberOf(consultas, TYPE_APPOINTMENTS); i++){
     if(consultas[i].medico == consulta->medico && 
@@ -405,15 +421,13 @@ bool verificarDisponibilidade(ST_CONSULTA *consultas,ST_CONSULTA *consulta){
         return false;
     }
   }
-
-  if(consulta->data_inicial.hora > data.hora) {
-    if(consulta->medico->estado && consulta->cliente->estado) {
-      consulta->data_final.ano = consulta->data_inicial.ano;
-      consulta->data_final.mes = consulta->data_inicial.mes;
-      consulta->data_final.dia = consulta->data_inicial.dia;
-      consulta->data_final.hora = consulta->data_inicial.hora + 1;
-      return true;
-    }
+  
+  if(consulta->medico->estado && consulta->cliente->estado) {
+    consulta->data_final.ano = consulta->data_inicial.ano;
+    consulta->data_final.mes = consulta->data_inicial.mes;
+    consulta->data_final.dia = consulta->data_inicial.dia;
+    consulta->data_final.hora = consulta->data_inicial.hora + 1;
+    return true;
   }
 
   return false;

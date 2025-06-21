@@ -906,15 +906,21 @@ static void changedEntryStartDate(GtkEntry *entry, gpointer data) {
     gtk_widget_remove_css_class(GTK_WIDGET(entry), "entry-error");
     gtk_widget_add_css_class(GTK_WIDGET(entry), "form-entry");
   }
- 
+  
+  GtkWidget *dropdown = g_object_get_data(G_OBJECT(rigth_box), "StartHour");
+  
   char **start_hour = obterHorario(appointments, clients, doctors, start_date);
+  if(start_hour[0] == NULL) {
+    gtk_widget_set_sensitive(dropdown, false);
+    return;
+  }
+
   GtkStringList *list = gtk_string_list_new(NULL);
 
   for(int i = 0; start_hour[i] != NULL; i++) {
     gtk_string_list_append(list, start_hour[i]);  
   }
 
-  GtkWidget *dropdown = g_object_get_data(G_OBJECT(rigth_box), "StartHour");
   gtk_drop_down_set_model(GTK_DROP_DOWN(dropdown), G_LIST_MODEL(list));  
   gtk_widget_set_sensitive(dropdown, true);
   
