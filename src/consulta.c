@@ -329,8 +329,7 @@ void confirmarConsultas(ST_CONSULTA *consultas, ST_CONSULTA consulta){
   consultas[numeroConsultas(consultas)] = consulta;
 }
 
-// TODO: Lets see if thats work.
-const char **obterHorario(ST_CONSULTA *appointments, const char *data) {
+char **obterHorario(ST_CONSULTA *appointments, ST_CLIENTE *client, ST_MEDICO *doctor, const char *data) {
   unsigned int dia, mes, ano;
 
   sscanf(data, "%02u-%02u-%04u", &dia, &mes, &ano);
@@ -339,14 +338,14 @@ const char **obterHorario(ST_CONSULTA *appointments, const char *data) {
   ST_CONSULTA *appointments_found = NULL;
 
   for(int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
-    if(appointments[i]->cliente.ID == client->ID || appointments[i]->medico.ID == doctor->ID && appointments[i]->data_inicial.ano == ano && appointments[i]->data_inicial.mes == mes && appointments[i]->data_inicial.dia == dia) {
+    if(appointments[i].cliente->ID == client->ID && appointments[i].medico->ID == doctor->ID && appointments[i].data_inicial.ano == ano && appointments[i].data_inicial.mes == mes && appointments[i].data_inicial.dia == dia) {
       ST_CONSULTA *temp = realloc(appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
       if(!temp) {
         free(appointments_found);
         appointments_found = NULL;
         return NULL;
       }
-      appointments = temp;
+      appointments_found = temp;
       appointments_found[counter] = appointments[i];
       counter++;
     }
@@ -355,13 +354,13 @@ const char **obterHorario(ST_CONSULTA *appointments, const char *data) {
   bool occupied_hour[12] = {0};
 
   for(int i = 0; i < counter; i++) {
-    if(appointments_found[i]->data_inicial.hora >= 8 && appointments_found[i]->data_inicial.hora <= 18) {
+    if(appointments_found[i].data_inicial.hora >= 8 && appointments_found[i].data_inicial.hora <= 18) {
       int index = appointments_found[i].data_inicial.hora - 8;
       occupied_hour[index] = true;
     }
   }
 
-  char **str = malloc(11 * sizeof(char *));
+  char **str = malloc(12 * sizeof(char *));
   if(!str) {
     return NULL;
   }
@@ -370,14 +369,16 @@ const char **obterHorario(ST_CONSULTA *appointments, const char *data) {
   for(int i = 0; i < 11; i++) {
     if(!occupied_hour[i]) {
       char hour[6];
-      snprintf(hour, sizeof(hour), "%dh00", i + 8);
+      snprintf(hour, sizeof(hour), "%02dh00", i + 8);
       str[counter] = strdup(hour);
       counter++;
     }
   }
-
   str[counter] = NULL;
-
+  
+  free(appointments_found);
+  appointments_found = NULL;
+  
   return str;
 }
 
@@ -386,30 +387,32 @@ bool verificarDisponibilidade(ST_CONSULTA *consultas,ST_CONSULTA *consulta){
   dataAtual(&data);
 
   for(int i = 0; i < numberOf(consultas, TYPE_APPOINTMENTS); i++){
-    if(consultas[i].medico == consulta->medico && consultas[i].data_inicial.ano == consulta->data_inicial.ano && consultas[i].data_inicial.mes == consulta->data_inicial.mes && consultas[i].data_inicial.dia == consulta->data_inicial.dia && consultas[i].data_inicial.hora == consulta->data_inicial.hora){
-      return false;
+    if(consultas[i].medico == consulta->medico && 
+      consultas[i].data_inicial.ano == consulta->data_inicial.ano && 
+      consultas[i].data_inicial.mes == consulta->data_inicial.mes && 
+      consultas[i].data_inicial.dia == consulta->data_inicial.dia && 
+      consultas[i].data_inicial.hora == consulta->data_inicial.hora) {
+        return false;
     }
   }
 
   for(int i = 0; i < numberOf(consultas, TYPE_APPOINTMENTS); i++){
-    if(consultas[i].cliente == consulta->cliente && consultas[i].data_inicial.ano == consulta->data_inicial.ano && consultas[i].data_inicial.mes == consulta->data_inicial.mes && consultas[i].data_inicial.dia == consulta->data_inicial.dia && consultas[i].data_inicial.hora == consulta->data_inicial.hora){
-      return false;
+    if(consultas[i].cliente == consulta->cliente && 
+      consultas[i].data_inicial.ano == consulta->data_inicial.ano && 
+      consultas[i].data_inicial.mes == consulta->data_inicial.mes && 
+      consultas[i].data_inicial.dia == consulta->data_inicial.dia && 
+      consultas[i].data_inicial.hora == consulta->data_inicial.hora) {
+        return false;
     }
   }
 
-  if(consulta->data_inicial.ano > data.ano || (consulta->data_inicial.ano == data.ano && consulta->data_inicial.mes > data.mes) || 
-    (consulta->data_inicial.ano == data.ano && consulta->data_inicial.mes == data.mes && consulta->data_inicial.dia > data.dia) || 
-    (consulta->data_inicial.ano == data.ano && consulta->data_inicial.mes == data.mes && consulta->data_inicial.dia == data.dia && consulta->data_inicial.hora > data.hora)){
-    
-    if(consulta->data_inicial.hora >= 8 && consulta->data_inicial.hora <= 18){
-      
-      if(consulta->medico->estado && consulta->cliente->estado){
-        consulta->data_final.ano = consulta->data_inicial.ano;
-        consulta->data_final.mes = consulta->data_inicial.mes;
-        consulta->data_final.dia = consulta->data_inicial.dia;
-        consulta->data_final.hora = consulta->data_inicial.hora + 1;
-        return true;
-      }
+  if(consulta->data_inicial.hora > data.hora) {
+    if(consulta->medico->estado && consulta->cliente->estado) {
+      consulta->data_final.ano = consulta->data_inicial.ano;
+      consulta->data_final.mes = consulta->data_inicial.mes;
+      consulta->data_final.dia = consulta->data_inicial.dia;
+      consulta->data_final.hora = consulta->data_inicial.hora + 1;
+      return true;
     }
   }
 
