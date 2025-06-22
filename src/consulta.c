@@ -363,7 +363,7 @@ char **obterHorario(ST_CONSULTA *appointments, ST_CLIENTE *client, ST_MEDICO *do
 
   for(unsigned int i = 0; i < 11; i++) {
     if(ano == data.ano && mes == data.mes && dia == data.dia) {
-      if(data.hora >= i) {
+      if(data.hora >= (i + 8)) {
         occupied_hour[i] = true;
       }
     }
@@ -471,7 +471,6 @@ int i = 0;
 FILE *ficheiro;
 ficheiro = fopen("data/consultas.txt", "r");
 if (ficheiro == NULL){
-  printf("Erro\n");
   return;
 }
 while(fgets(linha, sizeof(linha), ficheiro) && i < MAX_CONSULTAS){
@@ -498,13 +497,24 @@ while(fgets(linha, sizeof(linha), ficheiro) && i < MAX_CONSULTAS){
   token = strtok(NULL, ",");
   consultas[i].data_final.hora = (atoi(token));
   token = strtok(NULL, ",");
+
   if(strcmp(token, "Cancelado") == 0){
-    consultas[i].estado = 0;
+    consultas[i].estado = Cancelado;
   }else if(strcmp(token, "Agendado") == 0){
-    consultas[i].estado = 1;
+    consultas[i].estado = Agendado;
   }else if(strcmp(token, "Realizado") == 0){
-    consultas[i].estado = 2;
+    consultas[i].estado = Realizado;
   }
+
+  ST_DATA date;
+  dataAtual(&date);
+  if(date.ano >= consultas[i].data_inicial.ano && 
+      date.mes >= consultas[i].data_inicial.mes && 
+      date.dia >= consultas[i].data_inicial.hora && 
+      date.hora > consultas[i].data_final.hora) {
+        consultas[i].estado = Realizado;
+  }
+
   consultas[i].data_final.dia = consultas[i].data_inicial.dia;
   consultas[i].data_final.mes = consultas[i].data_inicial.mes;
   consultas[i].data_final.ano = consultas[i].data_inicial.ano;
