@@ -1,0 +1,18 @@
+.rigth_top_box {
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.search-entry {
+  background-color: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: #333333;
+  box-shadow: 0 0 0 0 transparent;
+}
+
+.search-entry text {
+  color: #999999;
+}
+

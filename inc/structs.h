@@ -14,10 +14,16 @@
 
 // ESTRUTURAS E ENUMERADORES
 typedef enum {
-  Cancelado = 0,
-  Agendado = 1,
-  Realizado = 2
+  Cancelado = 0,  // Canceled  🔴
+  Agendado  = 1,  // Scheduled 🟡
+  Realizado = 2   // Completed 🟢
 }ESTADO;
+
+typedef enum {
+ TYPE_CLIENTS,
+ TYPE_DOCTORS,
+ TYPE_APPOINTMENTS
+}TYPE_STRUCT;
 
 typedef struct {
   char rua[STRING_MAX];
@@ -46,6 +52,8 @@ typedef struct {
 typedef struct {
   unsigned int ID;
   char nome[STRING_MAX];
+  char email[STRING_MAX];
+  unsigned int cedula;
   char especialidade[STRING_MAX];
   bool estado;
 }ST_MEDICO;
@@ -58,5 +66,12 @@ typedef struct {
   ST_DATA data_final;
   ESTADO estado;
 }ST_CONSULTA;
+
+
+typedef struct {
+  ST_CLIENTE *clients;
+  ST_MEDICO *doctors;
+  ST_CONSULTA *appointments;
+} ST_APPLICATION;
 
 #endif

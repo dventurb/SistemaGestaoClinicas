@@ -1,30 +1,25 @@
 CC = gcc
-CFLAGS = -Wall -Iinc
 
-SRC_DIR = src
-INC_DIR = inc
-OBJ_DIR = obj
-EXEC = executavel
+CFLAGS = $(shell pkg-config --cflags gtk4) -Iinc -Iui/inc -Iui/lib -Wall -Wextra -g
+LDFLAGS = $(shell pkg-config --libs gtk4)
 
-SRC_FILES = main.c $(SRC_DIR)/menu.c $(SRC_DIR)/cliente.c $(SRC_DIR)/medico.c $(SRC_DIR)/consulta.c $(SRC_DIR)/auxiliares.c
-OBJ_FILES = $(patsubst %.c, $(OBJ_DIR)/%.o, $(notdir $(SRC_FILES)))
+SRC = $(wildcard src/*.c) $(wildcard ui/src/*.c) $(wildcard ui/lib/*.c)
+OBJ = $(SRC:.c=.o)
+BIN = executavel
 
-all: $(OBJ_DIR) $(EXEC)
+all: $(BIN)
 
-$(EXEC): $(OBJ_FILES)
-	$(CC) $(OBJ_FILES) -o $(EXEC)
+$(BIN): $(OBJ)
+	$(CC) $(OBJ) -o $@ $(LDFLAGS)
 
-$(OBJ_DIR)/%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+%.o: %.c 
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 ifeq ($(OS),Windows_NT)
-	del /f $(OBJ_DIR)\*.o $(EXEC)
+	del /f $(OBJ)\*.o $(BIN)
 else
-	rm -f $(OBJ_DIR)/*.o $(EXEC)
+	rm -f src/*.o ui/src/*.o  ui/lib/*.o $(BIN)
 endif
 
 rebuild: clean all

@@ -15,7 +15,7 @@ void inserirClientes(ST_CLIENTE *clientes){
     printf("Nome do cliente: ");
     fgets(cliente.nome, STRING_MAX, stdin);
     cliente.nome[strcspn(cliente.nome, "\n")] = '\0';
-    obterMorada(&cliente);
+    //obterMorada(&cliente);
     printf("Rua: %s\n", cliente.morada.rua);
     printf("Cidade: %s\n", cliente.morada.cidade);
     printf("Data de nascimento (dd-mm-aaaa): ");
@@ -79,7 +79,7 @@ void alterarDadosClientes(ST_CLIENTE *clientes){
           cliente->nome[strcspn(cliente->nome, "\n")] = '\0';
           break;
         case 2:
-          obterMorada(cliente);
+          //obterMorada(cliente);
           printf("Rua: %s\n", cliente->morada.rua);
           printf("Cidade: %s\n", cliente->morada.cidade);
           delay(1);
@@ -152,50 +152,128 @@ void consultarDadosClientes(ST_CLIENTE *clientes){
   return;
 }
 
-void obterListaClientesAtivos(ST_CLIENTE *clientes){
-  int encontrados = 0;
-  clear();
-  printf("Lista de Clientes Ativos:\n");
-  for (int i = 0; i < numeroClientes(clientes); i++){
-    if (clientes[i].estado){
-      infoClientes(clientes[i]);
-      printf("\n");
-      encontrados++;
+int obterListaClientesAtivos(ST_CLIENTE *clients, ST_CLIENTE **clients_found) {
+  int counter = 0;
+  *clients_found = NULL;
+
+  for (int i = 0; i < numberOf(clients, TYPE_CLIENTS); i++){
+    if(clients[i].estado) {
+      ST_CLIENTE *tmp = realloc(*clients_found, (counter + 1) * sizeof(ST_CLIENTE));
+      if(!tmp) {
+        free(*clients_found);
+        *clients_found = NULL;
+        return 0;
+      }
+      *clients_found = tmp;
+      (*clients_found)[counter] = clients[i];
+      counter++;
     }
   }
-  if (!encontrados){
-    clear();
-    printf("Não existe clientes ativos.\a\n");
-    delay(1);
-    return;
-  }
-  pressionarEnter();
+  return counter;
 }
 
-void procurarClientesNome(ST_CLIENTE *clientes){
-  char nome[STRING_MAX];
-  int encontrados = 0;
-  clear();
-  printf("Nome do cliente: ");
-  fgets(nome, STRING_MAX, stdin);
-  nome[strcspn(nome, "\n")] = '\0';
-  nome[0] = toupper(nome[0]);
-  for (int i = 0; i < numeroClientes(clientes); i++){
-    if (strncmp(clientes[i].nome, nome, 2) == 0){
-      infoClientes(clientes[i]);
-      printf("\n");
-      encontrados++;
+ST_CLIENTE *procurarClientesID(ST_CLIENTE *clients, unsigned int id) {
+  for (int i = 0; i < numeroClientes(clients); i++) {
+    if(id == clients[i].ID) {
+      return &clients[i];
     }
   }
-  if (!encontrados){
-    clear();
-    printf("Não existe clientes com o nome.\a\n");
-    delay(1);
-    return;
-  }
-  pressionarEnter();
+  return NULL;
 }
 
+ST_CLIENTE *procurarClientesEmail(ST_CLIENTE *clients, const char *email) {
+  for (int i = 0; i < numeroClientes(clients); i++) {
+    if(strcmp(email, clients[i].email) == 0) {
+      return &clients[i];
+    }
+  }
+  return NULL;
+}
+
+ST_CLIENTE *procurarClientesNIF(ST_CLIENTE *clients, unsigned int nif) {
+  for (int i = 0; i < numeroClientes(clients); i++) {
+    if(nif == clients[i].NIF) {
+      return &clients[i];
+    }
+  }
+  return NULL;
+}
+
+ST_CLIENTE *procurarClientesSNS(ST_CLIENTE *clients, unsigned int sns) {
+  for (int i = 0; i < numeroClientes(clients); i++) {
+    if(sns == clients[i].SNS) {
+      return &clients[i];
+    }
+  }
+  return NULL;
+}
+
+int procurarClientesNome(ST_CLIENTE *clients, ST_CLIENTE **clients_found, const char *name){
+  int counter = 0;
+  *clients_found = NULL;
+ 
+  // Converter to uppercase
+  const char *cmp = convertToUppercase(name);
+  
+  for (int i = 0; i < numberOf(clients, TYPE_CLIENTS); i++){
+    if (strncmp(clients[i].nome, cmp, 2) == 0){
+      ST_CLIENTE *temp = realloc(*clients_found, (counter + 1) * sizeof(ST_CLIENTE));
+      if(!temp) {
+        free(*clients_found);
+        *clients_found = NULL;
+        return 0;
+      }
+      *clients_found = temp;
+
+      (*clients_found)[counter] = clients[i];
+      counter++;
+    }
+  }
+  return counter;
+}
+
+int procurarClientesData(ST_CLIENTE *clients, ST_CLIENTE **clients_found, const char *data) {
+  int counter = 0;
+  *clients_found = NULL;
+  
+  unsigned int day, month, year;
+  sscanf(data, "%02u-%02u-%04u", &day, &month, &year);
+
+  for(int i = 0; i < numeroClientes(clients); i++) {
+    if(clients[i].data_nascimento.dia == day && clients[i].data_nascimento.mes == month && clients[i].data_nascimento.ano == year) {
+      ST_CLIENTE *temp = realloc(*clients_found, (counter + 1) * sizeof(ST_CLIENTE));
+      if(!temp) {
+        free(*clients_found);
+        *clients_found = NULL;
+        return 0;
+      }
+      *clients_found = temp;
+      (*clients_found)[counter] = clients[i];
+      counter++;
+    }
+  }
+  return counter;
+}
+
+int procurarClientesCodigoPostal(ST_CLIENTE *clients, ST_CLIENTE **clients_found, const char *input) {
+  int counter = 0;
+  *clients_found = NULL;
+
+  for(int i = 0; i < numeroClientes(clients); i++) {
+    if(clients[i].morada.codigo_postal == strtoul(input, NULL, 10)) {
+      ST_CLIENTE *temp = realloc(*clients_found, (counter + 1) * sizeof(ST_CLIENTE));
+      if(!temp) {
+        free(*clients_found);
+        *clients_found = NULL;
+        return 0;
+      }
+      *clients_found = temp;
+      (*clients_found)[counter] = clients[i];
+      counter++;
+    }
+  }
+  return counter;
+}
 
 void confirmarClientes(ST_CLIENTE *clientes, ST_CLIENTE cliente){
   clientes[numeroClientes(clientes)] = cliente;
@@ -213,7 +291,7 @@ void infoClientes(ST_CLIENTE clientes){
   printf("ID: %u\n", clientes.ID);
   printf("Nome: %s\n", clientes.nome);
   printf("Código Postal: %lu | Rua: %s | Cidade: %s\n", clientes.morada.codigo_postal, clientes.morada.rua, clientes.morada.cidade);
-  printf("Data de Nascimento: %2u-%2u-%4u\n", clientes.data_nascimento.dia, clientes.data_nascimento.mes, clientes.data_nascimento.ano);
+  printf("Data de Nascimento: %02u-%02u-%04u\n", clientes.data_nascimento.dia, clientes.data_nascimento.mes, clientes.data_nascimento.ano);
   printf("E-Mail: %s\n", clientes.email);
   printf("NIF: %lu\n", clientes.NIF);
   printf("SNS: %lu\n", clientes.SNS);
@@ -235,7 +313,7 @@ void inserirFicheiroCliente(ST_CLIENTE cliente){
     printf("Erro.\n");
     return;
   }
-  fprintf(ficheiro, "%u,%s,%lu,%s,%s,%2u,%2u,%4u,%s,%9lu,%9lu,%s\n", cliente.ID, cliente.nome, cliente.morada.codigo_postal, cliente.morada.rua, cliente.morada.cidade, cliente.data_nascimento.dia, cliente.data_nascimento.mes, cliente.data_nascimento.ano, cliente.email, cliente.NIF, cliente.SNS, cliente.estado ? "Ativo" : "Inativo");
+  fprintf(ficheiro, "%u,%s,%lu,%s,%s,%02u,%02u,%04u,%s,%9lu,%9lu,%s\n", cliente.ID, cliente.nome, cliente.morada.codigo_postal, cliente.morada.rua, cliente.morada.cidade, cliente.data_nascimento.dia, cliente.data_nascimento.mes, cliente.data_nascimento.ano, cliente.email, cliente.NIF, cliente.SNS, cliente.estado ? "Ativo" : "Inativo");
   fclose(ficheiro);
   return;
 }
@@ -288,7 +366,7 @@ void atualizarFicheiroCliente(ST_CLIENTE *clientes){
     return;
   }
   for (int i = 0; i < numeroClientes(clientes); i++){
-   fprintf(ficheiro, "%u,%s,%lu,%s,%s,%2u,%2u,%4u,%s,%9lu,%9lu,%s\n", clientes[i].ID, clientes[i].nome, clientes[i].morada.codigo_postal, clientes[i].morada.rua, clientes[i].morada.cidade, clientes[i].data_nascimento.dia, clientes[i].data_nascimento.mes, clientes[i].data_nascimento.ano, clientes[i].email, clientes[i].NIF, clientes[i].SNS, clientes[i].estado ? "Ativo" : "Inativo");
+   fprintf(ficheiro, "%u,%s,%lu,%s,%s,%02u,%02u,%04u,%s,%9lu,%9lu,%s\n", clientes[i].ID, clientes[i].nome, clientes[i].morada.codigo_postal, clientes[i].morada.rua, clientes[i].morada.cidade, clientes[i].data_nascimento.dia, clientes[i].data_nascimento.mes, clientes[i].data_nascimento.ano, clientes[i].email, clientes[i].NIF, clientes[i].SNS, clientes[i].estado ? "Ativo" : "Inativo");
   }
   fclose(ficheiro);
   return;
