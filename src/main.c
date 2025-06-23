@@ -13,7 +13,7 @@ int main(int argc, char **argv){
   ST_CLIENTE clientes[MAX_CLIENTES] = {0};
   ST_MEDICO medicos[MAX_MEDICOS] = {0};
   ST_CONSULTA consultas[MAX_CONSULTAS] = {0};
-    
+  
   carregarFicheiroCliente(clientes);
   carregarFicheiroMedico(medicos);
   carregarFicheiroConsulta(consultas, clientes, medicos);

@@ -142,6 +142,15 @@ void marcarConsultasRealizadas(ST_CONSULTA *consultas){
   return;
 }
 
+ST_CONSULTA *procurarConsultasID(ST_CONSULTA *appointments, unsigned int id) {
+  for (int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
+    if(id == appointments[i].ID) {
+      return &appointments[i];
+    }
+  }
+  return NULL;
+}
+
 int obterListaConsultasAgendadas(ST_CONSULTA *appointments, ST_CONSULTA **appointments_found) {
   int counter = 0;
   *appointments_found = NULL;
@@ -331,36 +340,28 @@ void confirmarConsultas(ST_CONSULTA *consultas, ST_CONSULTA consulta){
 
 char **obterHorario(ST_CONSULTA *appointments, ST_CLIENTE *client, ST_MEDICO *doctor, const char *date) {
   unsigned int dia, mes, ano;
-
+  
   sscanf(date, "%02u-%02u-%04u", &dia, &mes, &ano);
- 
-  int counter = 0;
-  ST_CONSULTA *appointments_found = NULL;
+
+  bool occupied_hour[12] = {0};
 
   for(int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
-    if(appointments[i].cliente->ID == client->ID && appointments[i].medico->ID == doctor->ID && appointments[i].data_inicial.ano == ano && appointments[i].data_inicial.mes == mes && appointments[i].data_inicial.dia == dia) {
-      ST_CONSULTA *temp = realloc(appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
-      if(!temp) {
-        free(appointments_found);
-        appointments_found = NULL;
-        return NULL;
+    if(appointments[i].data_inicial.ano == ano && 
+      appointments[i].data_inicial.mes == mes && 
+      appointments[i].data_inicial.dia == dia) {
+      
+      int index = appointments[i].data_inicial.hora - 8;
+
+      if(appointments[i].medico->ID == doctor->ID || appointments[i].cliente->ID == client->ID) {
+          
+        occupied_hour[index] = true;
       }
-      appointments_found = temp;
-      appointments_found[counter] = appointments[i];
-      counter++;
     }
   }
 
-  bool occupied_hour[12] = {0};
-  
   ST_DATA data;
   dataAtual(&data);
   
-  for(int i = 0; i < counter; i++) {
-    int index = appointments_found[i].data_inicial.hora - 8;
-    occupied_hour[index] = true;
-  }
-
   for(unsigned int i = 0; i < 11; i++) {
     if(ano == data.ano && mes == data.mes && dia == data.dia) {
       if(data.hora >= (i + 8)) {
@@ -374,7 +375,7 @@ char **obterHorario(ST_CONSULTA *appointments, ST_CLIENTE *client, ST_MEDICO *do
     return NULL;
   }
 
-  counter = 0;
+  int counter = 0;
   for(int i = 0; i < 11; i++) {
     if(!occupied_hour[i]) {
       char hour[6];
@@ -384,9 +385,6 @@ char **obterHorario(ST_CONSULTA *appointments, ST_CLIENTE *client, ST_MEDICO *do
     }
   }
   str[counter] = NULL;
-  
-  free(appointments_found);
-  appointments_found = NULL;
   
   return str;
 }
@@ -459,14 +457,13 @@ void inserirFicheiroConsulta(ST_CONSULTA consulta){
     printf("Erro.\n");
     return;
   }
-  fprintf(ficheiro, "%u,%u,%s,%u,%s,%s,%2u,%2u,%4u,%2u,%2u,%s\n", consulta.ID, consulta.cliente->ID, consulta.cliente->nome, consulta.medico->ID, consulta.medico->nome, consulta.medico->especialidade, consulta.data_inicial.dia, consulta.data_inicial.mes, consulta.data_inicial.ano, consulta.data_inicial.hora, consulta.data_final.hora, estadoConsulta[consulta.estado]);
+  fprintf(ficheiro, "%u,%u,%s,%u,%s,%s,%02u,%02u,%04u,%02u,%02u,%s\n", consulta.ID, consulta.cliente->ID, consulta.cliente->nome, consulta.medico->ID, consulta.medico->nome, consulta.medico->especialidade, consulta.data_inicial.dia, consulta.data_inicial.mes, consulta.data_inicial.ano, consulta.data_inicial.hora, consulta.data_final.hora, estadoConsulta[consulta.estado]);
   fclose(ficheiro);
   return;
 }
 
 void carregarFicheiroConsulta(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *medicos){
 char linha[1024], *token;
-unsigned int clienteID, medicoID;
 int i = 0;
 FILE *ficheiro;
 ficheiro = fopen("data/consultas.txt", "r");
@@ -478,12 +475,10 @@ while(fgets(linha, sizeof(linha), ficheiro) && i < MAX_CONSULTAS){
   token = strtok(linha, ",");
   consultas[i].ID = (atoi(token));
   token = strtok(NULL, ",");
-  clienteID = (atoi(token));
-  consultas[i].cliente = obterCliente(clientes, clienteID);
+  consultas[i].cliente = procurarClientesID(clientes, atoi(token));
   token = strtok(NULL, ",");
   token = strtok(NULL, ",");
-  medicoID = (atoi(token));
-  consultas[i].medico = obterMedico(medicos, medicoID);
+  consultas[i].medico = procurarMedicosID(medicos, atoi(token));
   token = strtok(NULL, ",");
   token = strtok(NULL, ",");
   token = strtok(NULL, ",");
@@ -510,7 +505,7 @@ while(fgets(linha, sizeof(linha), ficheiro) && i < MAX_CONSULTAS){
   dataAtual(&date);
   if(date.ano >= consultas[i].data_inicial.ano && 
       date.mes >= consultas[i].data_inicial.mes && 
-      date.dia >= consultas[i].data_inicial.hora && 
+      date.dia >= consultas[i].data_inicial.dia && 
       date.hora > consultas[i].data_final.hora) {
         consultas[i].estado = Realizado;
   }
@@ -533,7 +528,19 @@ void atualizarFicheiroConsulta(ST_CONSULTA *consultas){
     return;
   }
   for (int i = 0; i < numeroConsultas(consultas); i++){
-    fprintf(ficheiro, "%u,%u,%s,%u,%s,%s,%2u,%2u,%4u,%2u,%2u,%s\n", consultas[i].ID, consultas[i].cliente->ID, consultas[i].cliente->nome, consultas[i].medico->ID, consultas[i].medico->nome, consultas[i].medico->especialidade, consultas[i].data_inicial.dia, consultas[i].data_inicial.mes, consultas[i].data_inicial.ano, consultas[i].data_inicial.hora, consultas[i].data_final.hora, estadoConsulta[consultas[i].estado]);
+    fprintf(ficheiro, "%u,%u,%s,%u,%s,%s,%02u,%02u,%04u,%02u,%02u,%s\n", 
+            consultas[i].ID, 
+            consultas[i].cliente->ID, 
+            consultas[i].cliente->nome, 
+            consultas[i].medico->ID, 
+            consultas[i].medico->nome, 
+            consultas[i].medico->especialidade, 
+            consultas[i].data_inicial.dia, 
+            consultas[i].data_inicial.mes, 
+            consultas[i].data_inicial.ano, 
+            consultas[i].data_inicial.hora, 
+            consultas[i].data_final.hora, 
+            estadoConsulta[consultas[i].estado]);
   }
   fclose(ficheiro);
   return;
