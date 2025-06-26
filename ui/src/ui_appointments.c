@@ -122,7 +122,7 @@ void addAppointmentButtonsToGrid(GtkWidget *grid, ST_APPLICATION *application) {
         g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonToggle), application->appointments);
         break;
       case 3:
-        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonView), application);
+        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonView), application->appointments);
         break;
     }
   }
@@ -755,7 +755,59 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
 }
 
 static void clickedButtonView(GtkButton *button, gpointer data) {
+  ST_CONSULTA *appointments = (ST_CONSULTA *)data;
 
+  GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
+  if(!stack) {
+    return;
+  }
+
+  GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_stack_add_named(GTK_STACK(stack), rigth_box, "ViewAppointments");
+  gtk_stack_set_visible_child_name(GTK_STACK(stack), "ViewAppointments");
+ 
+  GtkWidget *rigth_top_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_widget_add_css_class(rigth_top_box, "rigth_top_box");
+  gtk_widget_set_size_request(rigth_top_box, -1, 60);
+  gtk_box_append(GTK_BOX(rigth_box), rigth_top_box);
+  
+  GtkWidget *search_entry = gtk_search_entry_new();
+  gtk_search_entry_set_placeholder_text(GTK_SEARCH_ENTRY(search_entry), "Search for appointments");
+  gtk_widget_add_css_class(search_entry, "search-entry");
+  gtk_widget_set_hexpand(search_entry, true);
+  gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
+  g_signal_connect(search_entry, "search-changed", G_CALLBACK(changedSearchViewAppointment), appointments);
+  
+  GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_widget_set_size_request(spacer, -1, 15);
+  gtk_widget_set_halign(spacer, GTK_ALIGN_CENTER);
+  gtk_box_append(GTK_BOX(rigth_box), spacer);
+
+  GtkWidget *label = gtk_label_new("");
+  gtk_widget_add_css_class(label, "label-error");
+  gtk_widget_set_visible(label, false);
+  g_object_set_data(G_OBJECT(rigth_box), "label-error", label);
+  gtk_box_append(GTK_BOX(spacer), label);
+
+  ST_BUTTON btn; 
+  createButtonWithImageLabel(&btn, BACK_ICON_PATH,"BACK", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);  
+  gtk_widget_add_css_class(btn.button, "back-button");
+  gtk_widget_add_css_class(btn.label, "back-button-label");
+  gtk_widget_set_size_request(btn.button, 25, 25);
+  gtk_widget_set_halign(btn.button, GTK_ALIGN_START);
+  gtk_widget_set_hexpand(btn.button, false);
+  gtk_box_append(GTK_BOX(rigth_box), btn.button);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonBack), stack);
+  
+  GtkWidget *scrolled = gtk_scrolled_window_new();
+  g_object_set_data(G_OBJECT(rigth_box), "Scrolled", scrolled);
+  gtk_widget_set_vexpand(scrolled, true);
+  gtk_box_append(GTK_BOX(rigth_box), scrolled);
+  
+  GtkWidget *grid = createAppointmentTable(appointments, numberOf(appointments, TYPE_APPOINTMENTS));
+  g_object_set_data(G_OBJECT(rigth_box), "AppointmentTable", grid);
+  gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);
 }
 
 static void clickedButtonBack(GtkButton *button, gpointer data) {
