@@ -1437,6 +1437,7 @@ static void changedSearchViewClient(GtkSearchEntry *search_entry, gpointer data)
       break;
     case SEARCH_BY_POSTAL_CODE:
       counter = procurarClientesCodigoPostal(clients, &clients_found, input);
+      break;
     default:
       break;
   }

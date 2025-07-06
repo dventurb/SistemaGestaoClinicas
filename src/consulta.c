@@ -151,6 +151,97 @@ ST_CONSULTA *procurarConsultasID(ST_CONSULTA *appointments, unsigned int id) {
   return NULL;
 }
 
+int procurarConsultasNome(ST_CONSULTA *appointments, ST_CONSULTA **appointments_found, const char *name) {
+  int counter = 0;
+  *appointments_found = NULL;
+ 
+  // Converter to uppercase
+  const char *cmp = convertToUppercase(name);
+  
+  for (int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
+    if (strncmp(appointments[i].cliente->nome, cmp, 2) == 0 || strncmp(appointments[i].medico->nome, cmp, 2) == 0) {
+      ST_CONSULTA *temp = realloc(*appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
+      if(!temp) {
+        free(*appointments_found);
+        *appointments_found = NULL;
+        return 0;
+      }
+      *appointments_found = temp;
+
+      (*appointments_found)[counter] = appointments[i];
+      counter++;
+    }
+  }
+  return counter;
+}
+
+int procurarConsultasCliente(ST_CONSULTA *appointments, ST_CONSULTA **appointments_found, ST_CLIENTE *client, int numberClients) {
+  int counter = 0;
+  *appointments_found = NULL;
+
+  for (int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
+    for (int j = 0; j < numberClients; j++) {
+      if(client[j].ID == appointments[i].cliente->ID) {
+        ST_CONSULTA *temp = realloc(*appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
+        if(!temp) {
+          free(*appointments_found);
+          *appointments_found = NULL;
+          return 0;
+        }
+        *appointments_found = temp;
+        (*appointments_found)[counter] = appointments[i];
+        counter++;
+      }
+    }
+  }
+  return counter;
+}
+
+int procurarConsultasMedico(ST_CONSULTA *appointments, ST_CONSULTA **appointments_found, ST_MEDICO *doctor, int numberDoctors) {
+  int counter = 0;
+  *appointments_found = NULL;
+
+  for (int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
+    for(int j = 0; j < numberDoctors; j++) {
+      if(doctor[j].ID == appointments[i].medico) {
+        ST_CONSULTA *temp = realloc(*appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
+        if(!temp) {
+          free(*appointments_found);
+          *appointments_found = NULL;
+          return 0;
+        }
+        *appointments_found = temp;
+        (*appointments_found)[counter] = appointments[i];
+        counter++;
+      }
+    }
+  }
+  return counter;
+}
+
+int procurarConsultasData(ST_CONSULTA *appointments, ST_CONSULTA **appointments_found, const char *data) {
+  int counter = 0;
+  *appointments_found = NULL;
+  
+  unsigned int day, month, year;
+  sscanf(data, "%02u-%02u-%04u", &day, &month, &year);
+
+  for(int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
+    if(appointments[i].data_inicial.dia == day && appointments[i].data_inicial.mes == month && appointments[i].data_inicial.ano == year) {
+      ST_CONSULTA *temp = realloc(*appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
+      if(!temp) {
+        free(*appointments_found);
+        *appointments_found = NULL;
+        return 0;
+      }
+      *appointments_found = temp;
+      (*appointments_found)[counter] = appointments[i];
+      counter++;
+    }
+  }
+  return counter;
+}
+
 int obterListaConsultasAgendadas(ST_CONSULTA *appointments, ST_CONSULTA **appointments_found) {
   int counter = 0;
   *appointments_found = NULL;

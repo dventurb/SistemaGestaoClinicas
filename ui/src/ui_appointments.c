@@ -119,10 +119,10 @@ void addAppointmentButtonsToGrid(GtkWidget *grid, ST_APPLICATION *application) {
         g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonEdit), application);
         break;
       case 2:
-        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonToggle), application->appointments);
+        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonToggle), application);
         break;
       case 3:
-        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonView), application->appointments);
+        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonView), application);
         break;
     }
   }
@@ -599,7 +599,9 @@ static void clickedButtonEdit(GtkButton *button, gpointer data) {
 }
 
 static void clickedButtonToggle(GtkButton *button, gpointer data) {
-  ST_CONSULTA *appointments = (ST_CONSULTA *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
+  ST_CONSULTA *appointments = application->appointments;
 
   GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
   if(!stack) {
@@ -751,11 +753,13 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
   gtk_widget_set_halign(btn.button, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(rigth_box), btn.button);
-  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitToggle), appointments);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitToggle), application);
 }
 
 static void clickedButtonView(GtkButton *button, gpointer data) {
-  ST_CONSULTA *appointments = (ST_CONSULTA *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
+  ST_CONSULTA *appointments = application->appointments;
 
   GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
   if(!stack) {
@@ -776,7 +780,7 @@ static void clickedButtonView(GtkButton *button, gpointer data) {
   gtk_widget_add_css_class(search_entry, "search-entry");
   gtk_widget_set_hexpand(search_entry, true);
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
-  g_signal_connect(search_entry, "search-changed", G_CALLBACK(changedSearchViewAppointment), appointments);
+  g_signal_connect(search_entry, "search-changed", G_CALLBACK(changedSearchViewAppointment), application);
   
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_set_size_request(spacer, -1, 15);
@@ -938,7 +942,7 @@ static void clickedButtonSubmitAdd(GtkButton *button, gpointer data) {
     gtk_widget_add_css_class(GTK_WIDGET(entry), "form-entry");
   }
 
-  if(client_found->ID != atoi(client_id) || doctor_found->ID != atoi(doctor_id)) {
+  if(client_found->ID != strtoul(client_id, NULL, 10) || doctor_found->ID != strtoul(doctor_id, NULL, 10)) {
     return;
   }
   
@@ -1233,7 +1237,7 @@ static void clickedButtonSubmitEdit(GtkButton *button, gpointer data) {
     gtk_widget_add_css_class(GTK_WIDGET(entry), "form-entry");
   }
 
-  if(client_found->ID != atoi(client_id) || doctor_found->ID != atoi(doctor_id)) {
+  if(client_found->ID != strtoul(client_id, NULL, 10) || doctor_found->ID != strtoul(doctor_id, NULL, 10)) {
     return;
   }
 
@@ -1358,7 +1362,9 @@ static void activateSearchToggleAppointment(GtkSearchEntry *search_entry, gpoint
   }
 }
 static void clickedButtonSubmitToggle(GtkButton *button, gpointer data) {
-  ST_CONSULTA *appointments = (ST_CONSULTA *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
+  ST_CONSULTA *appointments = application->appointments;
 
   GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(button));
 
@@ -1389,7 +1395,7 @@ static void clickedButtonSubmitToggle(GtkButton *button, gpointer data) {
   gtk_stack_remove(GTK_STACK(stack), child);
   
   // Reinitialize with the updated appointments list.
-  initializeUIDoctors(stack, appointments);
+  initializeUIAppointments(stack, application);
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "appointments");
 }
 
@@ -1401,7 +1407,133 @@ static void toggledButton(GtkToggleButton *toggle, gpointer data) {
 }
 
 static void changedSearchViewAppointment(GtkSearchEntry *search_entry, gpointer data) {
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+  
+  ST_CLIENTE *clients = application->clients;
+  ST_MEDICO *doctors = application->doctors;
+  ST_CONSULTA *appointments = application->appointments;
+  
+  ST_CONSULTA *appointments_found = NULL;
+  ST_CLIENTE *clients_found = NULL;
+  ST_MEDICO *doctors_found = NULL;
+  int counter;
+  
+  GtkWidget *rigth_top_box = gtk_widget_get_parent(GTK_WIDGET(search_entry));
+  GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(rigth_top_box));
+  
+  GtkWidget *label = g_object_get_data(G_OBJECT(rigth_box), "label-error");
+  gtk_label_set_text(GTK_LABEL(label), "");
+  gtk_widget_set_visible(label, false);
+  
+  const char *input = gtk_editable_get_text(GTK_EDITABLE(search_entry));
+  if(strlen(input) == 0) {
+    GtkWidget *grid = g_object_get_data(G_OBJECT(rigth_box), "AppointmentTable");
+    GtkWidget *scrolled = g_object_get_data(G_OBJECT(rigth_box), "Scrolled");
+    gtk_box_remove(GTK_BOX(rigth_box), scrolled);
+    
+    scrolled = gtk_scrolled_window_new();
+    g_object_set_data(G_OBJECT(rigth_box), "Scrolled", scrolled);
+    gtk_widget_set_vexpand(scrolled, true);
+    gtk_box_append(GTK_BOX(rigth_box), scrolled);
+  
+    grid = createAppointmentTable(appointments, numberOf(appointments, TYPE_APPOINTMENTS));
+    g_object_set_data(G_OBJECT(rigth_box), "AppointmentTable", grid);
+    gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);
+    return;
+  }
 
+  SEARCH_TYPE type = detectSearchType(input);
+  
+  switch(type) {
+    case SEARCH_BY_ID:
+      appointments_found = procurarConsultasID(appointments, atoi(input));
+      counter = 1; // unique identifier
+      break;
+    case SEARCH_BY_EMAIL:
+      clients_found = procurarClientesEmail(clients, input);
+      if(clients_found) {
+        counter = procurarConsultasCliente(appointments, &appointments_found, clients_found, 1);
+      }else {
+        doctors_found = procurarMedicosEmail(doctors, input);
+        if(doctors_found) {
+          counter = procurarConsultasMedico(appointments, &appointments_found, doctors_found, 1);
+        }
+      }
+      break;
+    case SEARCH_BY_NIF:
+      clients_found = procurarClientesNIF(clients, atoi(input));
+      if(clients_found) {
+        counter = procurarConsultasCliente(appointments, &appointments_found, clients_found, 1);
+      }
+      break;
+    case SEARCH_BY_SNS:
+      clients_found = procurarClientesSNS(clients, atoi(input));
+      if(clients_found) {
+        counter = procurarConsultasCliente(appointments, &appointments_found, clients_found, 1);
+      }
+      break;
+    case SEARCH_BY_POSTAL_CODE:
+      counter = procurarClientesCodigoPostal(clients, &clients_found, input);
+      if(clients_found) {
+        counter = procurarConsultasCliente(appointments, &appointments_found, clients_found, numberOf(clients_found, TYPE_CLIENTS));
+      }
+      break;
+    case SEARCH_BY_LICENSE_NUMBER:
+      doctors_found = procurarMedicosLicenseNumber(doctors, atoi(input));
+      if(doctors_found) {
+        counter = procurarConsultasMedico(appointments, &appointments_found, doctors_found, 1);
+      }
+      break;
+    case SEARCH_BY_SPECIALITY:
+      counter = procurarMedicosEspecialidade(doctors, &doctors_found, input);
+      if(doctors_found) {
+        counter = procurarConsultasMedico(appointments, &appointments_found, doctors_found, numberOf(doctors_found, TYPE_DOCTORS));
+      }
+      break;
+    case SEARCH_BY_DATE:
+      counter = procurarConsultasData(appointments, &appointments_found, input); 
+      break;
+    default:
+      break;
+  }
+
+  if(appointments_found) {
+    GtkWidget *grid = g_object_get_data(G_OBJECT(rigth_box), "AppointmentTable");
+    GtkWidget *scrolled = g_object_get_data(G_OBJECT(rigth_box), "Scrolled");
+    gtk_box_remove(GTK_BOX(rigth_box), scrolled);
+    
+    scrolled = gtk_scrolled_window_new();
+    g_object_set_data(G_OBJECT(rigth_box), "Scrolled", scrolled);
+    gtk_widget_set_vexpand(scrolled, true);
+    gtk_box_append(GTK_BOX(rigth_box), scrolled);
+   
+    grid = createAppointmentTable(appointments_found, counter);
+    gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
+    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid); 
+    g_object_set_data(G_OBJECT(rigth_box), "AppointmentTable", grid);
+  }else {
+    counter = procurarConsultasNome(appointments, &appointments_found, input);
+    if(counter > 0) {
+      GtkWidget *grid = g_object_get_data(G_OBJECT(rigth_box), "AppointmentTable");
+      GtkWidget *scrolled = g_object_get_data(G_OBJECT(rigth_box), "Scrolled");
+      gtk_box_remove(GTK_BOX(rigth_box), scrolled);
+
+      scrolled = gtk_scrolled_window_new();
+      g_object_set_data(G_OBJECT(rigth_box), "Scrolled", scrolled);
+      gtk_widget_set_vexpand(scrolled, true);
+      gtk_box_append(GTK_BOX(rigth_box), scrolled);
+   
+      grid = createAppointmentTable(appointments_found, counter);
+      gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
+      gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid); 
+      g_object_set_data(G_OBJECT(rigth_box), "AppointmentTable", grid);
+    }else {
+        label = g_object_get_data(G_OBJECT(rigth_box), "label-error");
+        gtk_label_set_text(GTK_LABEL(label), "No appointment found with the provided input. Please check and try again.");
+        gtk_widget_set_visible(label, true);
+    }
+  }
 }
 
 static void changedEntryClientID(GtkEntry *entry, gpointer data) {
