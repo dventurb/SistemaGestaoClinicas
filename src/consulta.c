@@ -157,8 +157,9 @@ int procurarConsultasNome(ST_CONSULTA *appointments, ST_CONSULTA **appointments_
  
   // Converter to uppercase
   const char *cmp = convertToUppercase(name);
-  
+
   for (int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
+    if(appointments[i].cliente && appointments[i].medico) {
     if (strncmp(appointments[i].cliente->nome, cmp, 2) == 0 || strncmp(appointments[i].medico->nome, cmp, 2) == 0) {
       ST_CONSULTA *temp = realloc(*appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
       if(!temp) {
@@ -171,6 +172,7 @@ int procurarConsultasNome(ST_CONSULTA *appointments, ST_CONSULTA **appointments_
       (*appointments_found)[counter] = appointments[i];
       counter++;
     }
+  }
   }
   return counter;
 }
@@ -203,7 +205,7 @@ int procurarConsultasMedico(ST_CONSULTA *appointments, ST_CONSULTA **appointment
 
   for (int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
     for(int j = 0; j < numberDoctors; j++) {
-      if(doctor[j].ID == appointments[i].medico) {
+      if(doctor[j].ID == appointments[i].medico->ID) {
         ST_CONSULTA *temp = realloc(*appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
         if(!temp) {
           free(*appointments_found);
