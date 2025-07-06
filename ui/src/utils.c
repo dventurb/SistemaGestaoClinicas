@@ -143,3 +143,72 @@ GtkStringList *loadSpecialty() {
   fclose(file);
   return list;
 }
+
+/**
+  * @brief Removes dynamic pages from the GtkStack.
+  *
+  * This function checks for and removes stack pages from the GtkStack. 
+  *
+  * @param stack    A pointer to the GtkStack. 
+  *
+  */
+void clearStackPages(GtkWidget *stack) {
+  GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), "AddClients");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+   
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "EditClients");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ToggleClients");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+ 
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ViewClients");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+  
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "AddDoctors");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+   
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "EditDoctors");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ToggleDoctors");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+ 
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ViewDoctors");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "AddAppointments");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+   
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "EditAppointments");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ToggleAppointments");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+ 
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ViewAppointments");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+}

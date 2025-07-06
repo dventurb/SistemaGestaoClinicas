@@ -51,6 +51,8 @@ void clickedButtonDashboard(GtkButton *button, gpointer user_data) {
   (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)user_data;
 
+  clearStackPages(stack);
+
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "dashboard");
 }
 
@@ -58,6 +60,8 @@ void clickedButtonClients(GtkButton *button, gpointer user_data) {
   (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)user_data;
 
+  clearStackPages(stack);
+  
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
 }
 
@@ -72,6 +76,8 @@ void clickedButtonAppointments(GtkButton *button, gpointer user_data) {
   (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)user_data;
 
+  clearStackPages(stack);
+  
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "appointments");
 }
 
@@ -79,5 +85,7 @@ void clickedButtonSettings(GtkButton *button, gpointer user_data) {
   (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)user_data;
 
+  clearStackPages(stack);
+  
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "settings");
 }
