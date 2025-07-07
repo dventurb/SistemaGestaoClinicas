@@ -47,43 +47,43 @@ void initializeLeftBar(GtkWidget *left_box, GtkWidget *stack) {
   g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonSettings), stack);
 }
 
-void clickedButtonDashboard(GtkButton *button, gpointer user_data) {
+void clickedButtonDashboard(GtkButton *button, gpointer data) {
   (void)button; // unused parameter 
-  GtkWidget *stack = (GtkWidget *)user_data;
+  GtkWidget *stack = (GtkWidget *)data;
 
   clearStackPages(stack);
 
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "dashboard");
 }
 
-void clickedButtonClients(GtkButton *button, gpointer user_data) {
+void clickedButtonClients(GtkButton *button, gpointer data) {
   (void)button; // unused parameter 
-  GtkWidget *stack = (GtkWidget *)user_data;
+  GtkWidget *stack = (GtkWidget *)data;
 
   clearStackPages(stack);
   
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
 }
 
-void clickedButtonDoctors(GtkButton *button, gpointer user_data) {
+void clickedButtonDoctors(GtkButton *button, gpointer data) {
   (void)button; // unused parameter 
-  GtkWidget *stack = (GtkWidget *)user_data;
+  GtkWidget *stack = (GtkWidget *)data;
 
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "doctors");
 }
 
-void clickedButtonAppointments(GtkButton *button, gpointer user_data) {
+void clickedButtonAppointments(GtkButton *button, gpointer data) {
   (void)button; // unused parameter 
-  GtkWidget *stack = (GtkWidget *)user_data;
+  GtkWidget *stack = (GtkWidget *)data;
 
   clearStackPages(stack);
   
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "appointments");
 }
 
-void clickedButtonSettings(GtkButton *button, gpointer user_data) {
+void clickedButtonSettings(GtkButton *button, gpointer data) {
   (void)button; // unused parameter 
-  GtkWidget *stack = (GtkWidget *)user_data;
+  GtkWidget *stack = (GtkWidget *)data;
 
   clearStackPages(stack);
   

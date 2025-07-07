@@ -30,7 +30,7 @@ void createMainWindow(GtkApplication *app, gpointer data) {
   gtk_css_provider_load_from_file(provider, css_file);
   gtk_style_context_add_provider_for_display(gdk_display_get_default(), GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-  gtk_window_present(GTK_WINDOW(window));
+  //gtk_window_present(GTK_WINDOW(window));
 
   g_object_unref(css_file);
 }

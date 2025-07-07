@@ -6,11 +6,10 @@
 
 // CONSTANTES
 #define STRING_MAX 100
+#define MAX_FUNCIONARIOS 50
 #define MAX_CLIENTES 1000
 #define MAX_MEDICOS 100
 #define MAX_CONSULTAS 5000
-#define GREEN "\x1B[32m"
-#define RESET "\x1B[0m"
 
 // ESTRUTURAS E ENUMERADORES
 typedef enum {
@@ -67,11 +66,16 @@ typedef struct {
   ESTADO estado;
 }ST_CONSULTA;
 
+typedef struct {
+  char username[STRING_MAX];
+  char password[STRING_MAX];
+}ST_FUNCIONARIO;
 
 typedef struct {
+  ST_FUNCIONARIO *staff;
   ST_CLIENTE *clients;
   ST_MEDICO *doctors;
   ST_CONSULTA *appointments;
-} ST_APPLICATION;
+}ST_APPLICATION;
 
 #endif
