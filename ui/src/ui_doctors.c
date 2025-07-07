@@ -222,7 +222,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_add_css_class(entry, "form-entry-disabled");
 
   char id[15];
-  snprintf(id, sizeof(id), "%d", numeroMedicos(doctors) + 1);
+  snprintf(id, sizeof(id), "%d", numberOf(doctors, TYPE_DOCTORS) + 1);
 
   GtkEntryBuffer *buffer = gtk_entry_buffer_new(id, -1);
   gtk_entry_set_buffer(GTK_ENTRY(entry), buffer);
