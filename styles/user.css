@@ -1,0 +1,15 @@
+.user-button {
+  background-color: rgba(185, 217, 235, 0.5);
+  border: none;
+  border-radius: 0;
+}
+
+.user-button:hover {
+  transform: scale(1.05);
+}
+
+.user-button-label {
+  font-family: sans-serif;
+  color: black;
+  font-size: 14px;
+}

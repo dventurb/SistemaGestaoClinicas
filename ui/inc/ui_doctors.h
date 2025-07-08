@@ -6,9 +6,10 @@
 #include "utils.h"
 #include "structs.h"
 #include "medico.h"
+#include "userMenu.h"
 
-void initializeUIDoctors(GtkWidget *stack, ST_MEDICO *doctors);
-void addDoctorButtonsToGrid(GtkWidget *grid, ST_MEDICO *doctors);
+void initializeUIDoctors(GtkWidget *stack, ST_APPLICATION *application);
+void addDoctorButtonsToGrid(GtkWidget *grid, ST_APPLICATION *application);
 GtkWidget *createDoctorTable(ST_MEDICO *doctors, int n_doctors);
 
 #endif

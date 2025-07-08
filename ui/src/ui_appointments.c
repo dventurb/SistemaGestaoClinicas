@@ -36,7 +36,7 @@ static void changedDropdownStartHour(GtkDropDown *dropdown, GParamSpec *pspec, g
 void initializeUIAppointments(GtkWidget *stack, ST_APPLICATION *application) {
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "appointments");
-
+  
   GtkWidget *rigth_top_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_add_css_class(rigth_top_box, "rigth_top_box");
   gtk_widget_set_size_request(rigth_top_box, -1, 60);
@@ -48,7 +48,9 @@ void initializeUIAppointments(GtkWidget *stack, ST_APPLICATION *application) {
   gtk_widget_set_hexpand(search_entry, true);
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
   g_signal_connect(search_entry, "search-changed", G_CALLBACK(changedSearchAppointment), application);
-
+  
+  initializeUserMenu(rigth_top_box, application);
+  
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 10);
   gtk_box_append(GTK_BOX(rigth_box), spacer);
@@ -208,7 +210,13 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_set_size_request(rigth_top_box, -1, 60);
   gtk_box_append(GTK_BOX(rigth_box), rigth_top_box);
  
-  GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_widget_set_hexpand(spacer, true);
+  gtk_box_append(GTK_BOX(rigth_top_box), spacer);
+  
+  initializeUserMenu(rigth_top_box, application);
+
+  spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 30);
   gtk_box_append(GTK_BOX(rigth_box), spacer);
 
@@ -416,6 +424,8 @@ static void clickedButtonEdit(GtkButton *button, gpointer data) {
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
   g_signal_connect(search_entry, "activate", G_CALLBACK(activateSearchEditAppointment), application);
 
+  initializeUserMenu(rigth_top_box, application);
+  
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 30);
   gtk_box_append(GTK_BOX(rigth_box), spacer);
@@ -625,6 +635,8 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
   g_signal_connect(search_entry, "activate", G_CALLBACK(activateSearchToggleAppointment), appointments);
   
+  initializeUserMenu(rigth_top_box, application);
+  
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 30);
   gtk_box_append(GTK_BOX(rigth_box), spacer);
@@ -782,6 +794,8 @@ static void clickedButtonView(GtkButton *button, gpointer data) {
   gtk_widget_set_hexpand(search_entry, true);
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
   g_signal_connect(search_entry, "search-changed", G_CALLBACK(changedSearchViewAppointment), application);
+  
+  initializeUserMenu(rigth_top_box, application);
   
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_set_size_request(spacer, -1, 15);

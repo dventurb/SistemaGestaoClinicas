@@ -319,7 +319,8 @@ static void clickedButtonLogin(GtkButton *button, gpointer data) {
       GtkWindow *window = GTK_WINDOW(native);
       
       GtkApplication *app = g_object_get_data(G_OBJECT(window), "app");
-      
+     
+      application->staff = getCurrentUser(staff, username); 
       createMainWindow(app, application);
       
       gtk_window_destroy(window);

@@ -14,6 +14,7 @@ bool authValidate(ST_FUNCIONARIO *staff, const char *username, const char *passw
 bool usernameValidate(ST_FUNCIONARIO *staff, const char *username);
 bool encryptPassword(ST_FUNCIONARIO *new, const char *password);
 void createUser(ST_FUNCIONARIO *staff, ST_FUNCIONARIO new);
+ST_FUNCIONARIO *getCurrentUser(ST_FUNCIONARIO *staff, const char *username);
 void insertUserFile(ST_FUNCIONARIO *new);
 void loadUserFile(ST_FUNCIONARIO *staff);
 void updateUserFile(ST_FUNCIONARIO *staff);

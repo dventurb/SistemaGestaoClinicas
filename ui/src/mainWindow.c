@@ -20,9 +20,9 @@ void createMainWindow(GtkApplication *app, gpointer data) {
   
   initializeLeftBar(left_box, stack);
   
-  initializeDashboard(stack, application->clients);
-  initializeUIClients(stack, application->clients);
-  initializeUIDoctors(stack, application->doctors);
+  initializeDashboard(stack, application);
+  initializeUIClients(stack, application);
+  initializeUIDoctors(stack, application);
   initializeUIAppointments(stack, application);
 
   GtkCssProvider *provider = gtk_css_provider_new();

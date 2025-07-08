@@ -4,7 +4,7 @@
  </p>
 
 <div align="center" style="text-align: center">
-<img src="https://i.imgur.com/Wm9CGei.png" alt="script">
+<img src="https://i.imgur.com/Ed3PrZQ.gif" alt="script">
 </div>
 
 ## 👷 Autor

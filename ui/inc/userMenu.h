@@ -1,0 +1,10 @@
+#ifndef USER_MENU_H 
+#define USER_MENU_H 
+
+#include <gtk/gtk.h>
+#include "structs.h"
+#include "utils.h"
+
+void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application);
+
+#endif

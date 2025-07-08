@@ -32,7 +32,7 @@ bool encryptPassword(ST_FUNCIONARIO *new, const char *password) {
   generateSalt(salt, sizeof(salt));
 
   char full[20];
-  snprintf(full, sizeof(full), "$5$%s", salt); // SHA-256 
+  snprintf(full, sizeof(full), "$5$%s", salt); // $5$ -> SHA-256 
 
   char *output = crypt_rn(password, full, &data, sizeof(data));
   if(!output) {
@@ -48,6 +48,15 @@ bool encryptPassword(ST_FUNCIONARIO *new, const char *password) {
 void createUser(ST_FUNCIONARIO *staff, ST_FUNCIONARIO new) {
   staff[numberOf(staff, TYPE_STAFF)] = new;
 }
+
+ST_FUNCIONARIO *getCurrentUser(ST_FUNCIONARIO *staff, const char *username) {
+  for(int i = 0; i < numberOf(staff, TYPE_STAFF); i++) {
+    if(strcmp(staff[i].username, username) == 0) {
+      return &staff[i];
+    }
+  }
+  return NULL;
+} 
 
 void insertUserFile(ST_FUNCIONARIO *new) {
   FILE *file = fopen("data/staff.dat", "a");
