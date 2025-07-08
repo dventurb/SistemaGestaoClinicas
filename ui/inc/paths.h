@@ -20,6 +20,9 @@
 
 #define SUBMIT_PATH "icon/submit.png"
 
-#define CALENDAR_PATH "icon/calendar.png"
+#define USER_IMAGE_1_PATH "icon/1.png"
+#define USER_IMAGE_2_PATH "icon/2.png"
+#define USER_IMAGE_3_PATH "icon/3.png"
+#define USER_IMAGE_4_PATH "icon/4.png"
 
 #endif

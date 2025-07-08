@@ -59,17 +59,17 @@ ST_FUNCIONARIO *getCurrentUser(ST_FUNCIONARIO *staff, const char *username) {
 } 
 
 void insertUserFile(ST_FUNCIONARIO *new) {
-  FILE *file = fopen("data/staff.dat", "a");
+  FILE *file = fopen("data/staff.txt", "a");
   if(!file) {
     return;
   }
 
-  fprintf(file, "%u,%s,%s,%s\n", new->ID, new->nome, new->username, new->password);
+  fprintf(file, "%u,%s,%s,%s,%s\n", new->ID, new->nome, new->username, new->password, new->pathToImage);
   fclose(file);
 }
 
 void loadUserFile(ST_FUNCIONARIO *staff) {
-  FILE *file = fopen("data/staff.dat", "r");
+  FILE *file = fopen("data/staff.txt", "r");
   if(!file) {
     return;
   }
@@ -94,6 +94,10 @@ void loadUserFile(ST_FUNCIONARIO *staff) {
     strncpy(staff[i].password, token, PASSWORD_MAX - 1);
     staff[i].password[PASSWORD_MAX - 1] = '\0';
     
+    token = strtok(NULL, ",");
+    strncpy(staff[i].pathToImage, token, STRING_MAX - 1);
+    staff[i].pathToImage[STRING_MAX - 1] = '\0';
+
     i++;
   }
 
@@ -102,13 +106,13 @@ void loadUserFile(ST_FUNCIONARIO *staff) {
 
 void updateUserFile(ST_FUNCIONARIO *staff) {
   FILE *file;
-  file = fopen("data/staff.dat", "w");
+  file = fopen("data/staff.txt", "w");
   if(!file) {
     return;
   }
 
   for(int i = 0; i < numberOf(staff, TYPE_STAFF); i++) {
-    fprintf(file, "%u,%s,%s,%s\n", staff[i].ID, staff[i].nome, staff[i].username, staff[i].password);
+    fprintf(file, "%u,%s,%s,%s,%s\n", staff[i].ID, staff[i].nome, staff[i].username, staff[i].password, staff[i].pathToImage);
   }
   fclose(file);
 }

@@ -74,6 +74,7 @@ typedef struct {
   char nome[STRING_MAX];
   char username[STRING_MAX];
   char password[PASSWORD_MAX];
+  char pathToImage[STRING_MAX];
 }ST_FUNCIONARIO;
 
 typedef struct {

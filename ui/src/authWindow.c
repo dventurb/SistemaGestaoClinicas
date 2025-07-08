@@ -357,7 +357,7 @@ static void clickedButtonRegister(GtkButton *button, gpointer data) {
   ST_FUNCIONARIO new = {
     .ID = numberOf(staff, TYPE_STAFF) + 1,
   };
-
+  
   strncpy(new.nome, name, STRING_MAX - 1);
   new.nome[STRING_MAX - 1] = '\0';
 
@@ -365,6 +365,28 @@ static void clickedButtonRegister(GtkButton *button, gpointer data) {
   new.username[STRING_MAX - 1] = '\0';
   
   if(!encryptPassword(&new, password)) return;
+  
+  int image = (new.ID % 4) + 1;
+  switch (image) {
+    case 1:
+      strncpy(new.pathToImage, USER_IMAGE_1_PATH, STRING_MAX - 1);
+      new.pathToImage[STRING_MAX - 1] = '\0';
+      break;
+    case 2:
+      strncpy(new.pathToImage, USER_IMAGE_2_PATH, STRING_MAX - 1);
+      new.pathToImage[STRING_MAX - 1] = '\0';
+      break;
+    case 3:
+      strncpy(new.pathToImage, USER_IMAGE_3_PATH, STRING_MAX - 1);
+      new.pathToImage[STRING_MAX - 1] = '\0';
+      break;
+    case 4:
+      strncpy(new.pathToImage, USER_IMAGE_4_PATH, STRING_MAX - 1);
+      new.pathToImage[STRING_MAX - 1] = '\0';
+      break;
+    default:
+      break;
+  }
 
   GtkWidget *stack = gtk_widget_get_parent(left_box);
   

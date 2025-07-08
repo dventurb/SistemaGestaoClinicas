@@ -8,7 +8,7 @@ void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application) {
 
   ST_BUTTON button;
   
-  createButtonWithImageLabel(&button, "icon/1.png", user->nome, BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);
+  createButtonWithImageLabel(&button, user->pathToImage, user->nome, BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);
   gtk_widget_add_css_class(button.button, "user-button");
   gtk_widget_add_css_class(button.label, "user-button-label");
   gtk_widget_set_size_request(button.image, 20, 20);
