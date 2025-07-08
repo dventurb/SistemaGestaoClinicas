@@ -15,6 +15,7 @@ int main(int argc, char **argv){
   ST_MEDICO medicos[MAX_MEDICOS] = {0};
   ST_CONSULTA consultas[MAX_CONSULTAS] = {0};
   
+  loadUserFile(funcionarios);
   carregarFicheiroCliente(clientes);
   carregarFicheiroMedico(medicos);
   carregarFicheiroConsulta(consultas, clientes, medicos);
@@ -26,6 +27,8 @@ int main(int argc, char **argv){
     .appointments = consultas
   }; 
     
+  srand(time(NULL));
+  
   app = gtk_application_new("clinica.gestao", G_APPLICATION_DEFAULT_FLAGS);
   g_signal_connect(app, "activate", G_CALLBACK(createAuthWindow), &application);
   int status = g_application_run(G_APPLICATION(app), argc, argv);

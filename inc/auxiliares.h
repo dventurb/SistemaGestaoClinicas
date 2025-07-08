@@ -27,5 +27,6 @@ bool validarNIF(const char *nif, ST_CLIENTE *clients);
 bool validarSNS(const char *sns, ST_CLIENTE *clients);
 bool validarLicenseNumber(const char *license_number, ST_MEDICO *doctors);
 const char *convertToUppercase(const char *input);
+void generateSalt(char *string, size_t length);
 
 #endif

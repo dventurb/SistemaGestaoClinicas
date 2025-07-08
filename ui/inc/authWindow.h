@@ -10,11 +10,13 @@
 #include "ui_doctors.h"
 #include "ui_appointments.h"
 #include "structs.h"
+#include "funcionario.h"
+#include "mainWindow.h"
 
 // PROTÓTIPOS DAS FUNÇÕES MENUS
 void createAuthWindow(GtkApplication *app, gpointer data);
 void createRightBox(GtkWidget *main_box);
-void createLoginForm(GtkWidget *stack);
-void createRegisterForm(GtkWidget *stack);
+void createLoginForm(ST_APPLICATION *application, GtkWidget *stack);
+void createRegisterForm(ST_APPLICATION *application, GtkWidget *stack);
 
 #endif

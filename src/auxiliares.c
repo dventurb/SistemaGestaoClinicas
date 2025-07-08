@@ -129,6 +129,12 @@ int numberOf(void *data, TYPE_STRUCT type) {
         i++;
       }
       return i;
+    case TYPE_STAFF:
+      ST_FUNCIONARIO *staff = (ST_FUNCIONARIO *)data;
+      while(staff[i].ID != 0) {
+        i++;
+      }
+      return i;
     default:
       return 0;
   }
@@ -370,4 +376,19 @@ const char *convertToUppercase(const char *input) {
     }
   }
   return upper;
+}
+
+void generateSalt(char *string, size_t length) {
+  const char alphanum[] =
+  "0123456789"
+  "!@#$%^&*"
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  "abcdefghijklmnopqrstuvwxyz";
+
+  int len = sizeof(alphanum) - 1;
+  
+  for (size_t i = 0; i < length - 1; i++) {
+    string[i] = alphanum[rand() % len];
+  }
+  string[length - 1] = '\0';
 }

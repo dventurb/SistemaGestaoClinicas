@@ -23,7 +23,7 @@ int obterListaClientesAtivos(ST_CLIENTE *clients, ST_CLIENTE **clients_found) {
 }
 
 ST_CLIENTE *procurarClientesID(ST_CLIENTE *clients, unsigned int id) {
-  for (int i = 0; i < numeroClientes(clients); i++) {
+  for (int i = 0; i < numberOf(clients, TYPE_CLIENTS); i++) {
     if(id == clients[i].ID) {
       return &clients[i];
     }
@@ -32,7 +32,7 @@ ST_CLIENTE *procurarClientesID(ST_CLIENTE *clients, unsigned int id) {
 }
 
 ST_CLIENTE *procurarClientesEmail(ST_CLIENTE *clients, const char *email) {
-  for (int i = 0; i < numeroClientes(clients); i++) {
+  for (int i = 0; i < numberOf(clients, TYPE_CLIENTS); i++) {
     if(strcmp(email, clients[i].email) == 0) {
       return &clients[i];
     }
@@ -41,7 +41,7 @@ ST_CLIENTE *procurarClientesEmail(ST_CLIENTE *clients, const char *email) {
 }
 
 ST_CLIENTE *procurarClientesNIF(ST_CLIENTE *clients, unsigned int nif) {
-  for (int i = 0; i < numeroClientes(clients); i++) {
+  for (int i = 0; i < numberOf(clients, TYPE_CLIENTS); i++) {
     if(nif == clients[i].NIF) {
       return &clients[i];
     }
@@ -50,7 +50,7 @@ ST_CLIENTE *procurarClientesNIF(ST_CLIENTE *clients, unsigned int nif) {
 }
 
 ST_CLIENTE *procurarClientesSNS(ST_CLIENTE *clients, unsigned int sns) {
-  for (int i = 0; i < numeroClientes(clients); i++) {
+  for (int i = 0; i < numberOf(clients, TYPE_CLIENTS); i++) {
     if(sns == clients[i].SNS) {
       return &clients[i];
     }
@@ -89,7 +89,7 @@ int procurarClientesData(ST_CLIENTE *clients, ST_CLIENTE **clients_found, const 
   unsigned int day, month, year;
   sscanf(data, "%02u-%02u-%04u", &day, &month, &year);
 
-  for(int i = 0; i < numeroClientes(clients); i++) {
+  for(int i = 0; i < numberOf(clients, TYPE_CLIENTS); i++) {
     if(clients[i].data_nascimento.dia == day && clients[i].data_nascimento.mes == month && clients[i].data_nascimento.ano == year) {
       ST_CLIENTE *temp = realloc(*clients_found, (counter + 1) * sizeof(ST_CLIENTE));
       if(!temp) {
@@ -109,7 +109,7 @@ int procurarClientesCodigoPostal(ST_CLIENTE *clients, ST_CLIENTE **clients_found
   int counter = 0;
   *clients_found = NULL;
 
-  for(int i = 0; i < numeroClientes(clients); i++) {
+  for(int i = 0; i < numberOf(clients, TYPE_CLIENTS); i++) {
     if(clients[i].morada.codigo_postal == strtoul(input, NULL, 10)) {
       ST_CLIENTE *temp = realloc(*clients_found, (counter + 1) * sizeof(ST_CLIENTE));
       if(!temp) {
@@ -126,7 +126,7 @@ int procurarClientesCodigoPostal(ST_CLIENTE *clients, ST_CLIENTE **clients_found
 }
 
 void confirmarClientes(ST_CLIENTE *clientes, ST_CLIENTE cliente){
-  clientes[numeroClientes(clientes)] = cliente;
+  clientes[numberOf(clientes, TYPE_CLIENTS)] = cliente;
 }
 
 int numeroClientes(ST_CLIENTE *clientes){
@@ -137,19 +137,8 @@ int numeroClientes(ST_CLIENTE *clientes){
   return i;
 }
 
-void infoClientes(ST_CLIENTE clientes){
-  printf("ID: %u\n", clientes.ID);
-  printf("Nome: %s\n", clientes.nome);
-  printf("Código Postal: %lu | Rua: %s | Cidade: %s\n", clientes.morada.codigo_postal, clientes.morada.rua, clientes.morada.cidade);
-  printf("Data de Nascimento: %02u-%02u-%04u\n", clientes.data_nascimento.dia, clientes.data_nascimento.mes, clientes.data_nascimento.ano);
-  printf("E-Mail: %s\n", clientes.email);
-  printf("NIF: %lu\n", clientes.NIF);
-  printf("SNS: %lu\n", clientes.SNS);
-  printf("Estado: %s\n", clientes.estado ? "Ativo" : "Inativo");
-}
-
 ST_CLIENTE *obterCliente(ST_CLIENTE *clientes, unsigned int ID){
-  for (int i = 0; i < numeroClientes(clientes); i++){
+  for (int i = 0; i < numberOf(clientes, TYPE_CLIENTS); i++){
     if(clientes[i].ID == ID){
       return &clientes[i];
     }

@@ -1,6 +1,9 @@
 #include "authWindow.h"
 
 // CALLBACKS
+static void clickedButtonLogin(GtkButton *button, gpointer data);
+static void clickedButtonRegister(GtkButton *button, gpointer data);
+
 static void pressedGestureLogin(GtkGestureClick *gesture, int n_press, double x, double y, gpointer data);
 static void pressedGestureRegister(GtkGestureClick *gesture, int n_press, double x, double y, gpointer data);
 
@@ -20,6 +23,8 @@ void createAuthWindow(GtkApplication *app, gpointer data) {
   gtk_window_set_default_size(GTK_WINDOW(window), 1100, 700);
   gtk_widget_add_css_class(window, "window");
 
+  g_object_set_data(G_OBJECT(window), "app", app);
+
   GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_window_set_child(GTK_WINDOW(window), main_box);
 
@@ -28,8 +33,8 @@ void createAuthWindow(GtkApplication *app, gpointer data) {
   gtk_box_append(GTK_BOX(main_box), stack);
 
   createRightBox(main_box);
-  createLoginForm(stack);
-  createRegisterForm(stack);
+  createLoginForm(application, stack);
+  createRegisterForm(application, stack);
 
   GtkCssProvider *provider = gtk_css_provider_new();
   GFile *css_file = g_file_new_for_path(STYLE_CSS_PATH);
@@ -82,7 +87,7 @@ void createRightBox(GtkWidget *main_box) {
  *  @param stack    Pointer to the GtkStack.
  *
  */
-void createLoginForm(GtkWidget *stack) {
+void createLoginForm(ST_APPLICATION *application, GtkWidget *stack) {
   GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
   gtk_widget_set_halign(left_box, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(left_box, true);
@@ -113,6 +118,7 @@ void createLoginForm(GtkWidget *stack) {
 
   GtkWidget *entry = gtk_entry_new();
   g_object_set_data(G_OBJECT(left_box), "Username", entry);
+  gtk_entry_set_max_length(GTK_ENTRY(entry), 100);
   gtk_widget_add_css_class(entry, "login-entry");
   gtk_widget_set_halign(entry, GTK_ALIGN_CENTER);
   gtk_grid_attach(GTK_GRID(grid), entry, 0, 1, 1, 1);
@@ -124,6 +130,9 @@ void createLoginForm(GtkWidget *stack) {
 
   entry = gtk_entry_new();
   g_object_set_data(G_OBJECT(left_box), "Password", entry);
+  gtk_entry_set_max_length(GTK_ENTRY(entry), 100);
+  gtk_entry_set_visibility(GTK_ENTRY(entry), false);
+  gtk_entry_set_invisible_char(GTK_ENTRY(entry), '*');
   gtk_widget_add_css_class(entry, "login-entry");
   gtk_widget_set_halign(entry, GTK_ALIGN_CENTER);
   gtk_grid_attach(GTK_GRID(grid), entry, 0, 3, 1, 1);
@@ -140,7 +149,7 @@ void createLoginForm(GtkWidget *stack) {
   gtk_widget_set_halign(btn.box, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(left_box), btn.button);
-  //TODO: g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonBack), stack);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonLogin), application);
   
   GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
   gtk_box_append(GTK_BOX(left_box), box);
@@ -157,7 +166,13 @@ void createLoginForm(GtkWidget *stack) {
   GtkGesture *gesture = gtk_gesture_click_new();
   gtk_widget_add_controller(label, GTK_EVENT_CONTROLLER(gesture));
   g_signal_connect(gesture, "pressed", G_CALLBACK(pressedGestureLogin), stack);  
-
+  
+  label = gtk_label_new("");
+  gtk_widget_add_css_class(label, "label-error");
+  gtk_widget_set_visible(label, false);
+  g_object_set_data(G_OBJECT(left_box), "label-error", label);
+  gtk_box_append(GTK_BOX(left_box), label);
+  
   spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_vexpand(spacer, true);
   gtk_box_append(GTK_BOX(left_box), spacer);
@@ -171,7 +186,7 @@ void createLoginForm(GtkWidget *stack) {
  *  @param stack    Pointer to the GtkStack.
  *
  */
-void createRegisterForm(GtkWidget *stack) {
+void createRegisterForm(ST_APPLICATION *application, GtkWidget *stack) {
   GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
   gtk_widget_set_halign(left_box, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(left_box, true);
@@ -202,6 +217,7 @@ void createRegisterForm(GtkWidget *stack) {
 
   GtkWidget *entry = gtk_entry_new();
   g_object_set_data(G_OBJECT(left_box), "Name", entry);
+  gtk_entry_set_max_length(GTK_ENTRY(entry), 100);
   gtk_widget_add_css_class(entry, "login-entry");
   gtk_widget_set_halign(entry, GTK_ALIGN_CENTER);
   gtk_grid_attach(GTK_GRID(grid), entry, 0, 1, 1, 1);
@@ -213,6 +229,7 @@ void createRegisterForm(GtkWidget *stack) {
 
   entry = gtk_entry_new();
   g_object_set_data(G_OBJECT(left_box), "Username", entry);
+  gtk_entry_set_max_length(GTK_ENTRY(entry), 100);
   gtk_widget_add_css_class(entry, "login-entry");
   gtk_widget_set_halign(entry, GTK_ALIGN_CENTER);
   gtk_grid_attach(GTK_GRID(grid), entry, 0, 3, 1, 1);
@@ -224,6 +241,9 @@ void createRegisterForm(GtkWidget *stack) {
 
   entry = gtk_entry_new();
   g_object_set_data(G_OBJECT(left_box), "Password", entry);
+  gtk_entry_set_visibility(GTK_ENTRY(entry), false);
+  gtk_entry_set_invisible_char(GTK_ENTRY(entry), '*');
+  gtk_entry_set_max_length(GTK_ENTRY(entry), 100);
   gtk_widget_add_css_class(entry, "login-entry");
   gtk_widget_set_halign(entry, GTK_ALIGN_CENTER);
   gtk_grid_attach(GTK_GRID(grid), entry, 0, 5, 1, 1);
@@ -240,7 +260,7 @@ void createRegisterForm(GtkWidget *stack) {
   gtk_widget_set_halign(btn.box, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(left_box), btn.button);
-  //TODO:g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonBack), stack);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonRegister), application);
   
   GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
   gtk_box_append(GTK_BOX(left_box), box);
@@ -257,10 +277,103 @@ void createRegisterForm(GtkWidget *stack) {
   GtkGesture *gesture = gtk_gesture_click_new();
   gtk_widget_add_controller(label, GTK_EVENT_CONTROLLER(gesture));
   g_signal_connect(gesture, "pressed", G_CALLBACK(pressedGestureRegister), stack);  
-
+  
+  label = gtk_label_new("");
+  gtk_widget_add_css_class(label, "label-error");
+  gtk_widget_set_visible(label, false);
+  g_object_set_data(G_OBJECT(left_box), "label-error", label);
+  gtk_box_append(GTK_BOX(left_box), label);
+  
   spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_vexpand(spacer, true);
   gtk_box_append(GTK_BOX(left_box), spacer);
+}
+
+static void clickedButtonLogin(GtkButton *button, gpointer data) {
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
+  ST_FUNCIONARIO *staff = application->staff;
+
+  GtkWidget *left_box = gtk_widget_get_parent(GTK_WIDGET(button));
+
+  GtkWidget *entry = g_object_get_data(G_OBJECT(left_box), "Username");
+  GtkEntryBuffer *buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+  char username[STRING_MAX];
+  strncpy(username, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
+  username[STRING_MAX - 1] = '\0';
+
+  entry = g_object_get_data(G_OBJECT(left_box), "Password");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+  char password[STRING_MAX];
+  strncpy(password, gtk_entry_buffer_get_text(buffer), STRING_MAX - 1);
+  password[STRING_MAX - 1] = '\0';
+  
+  if(!authValidate(staff, username, password)) {
+    GtkWidget *label = g_object_get_data(G_OBJECT(left_box), "label-error");
+    gtk_label_set_text(GTK_LABEL(label), "Invalid username or password.\n\t Please try again.");
+    gtk_widget_set_visible(label, true);
+    return;
+  }else {
+    GtkNative *native = gtk_widget_get_native(left_box);
+    if(GTK_IS_WINDOW(native)) {
+      GtkWindow *window = GTK_WINDOW(native);
+      
+      GtkApplication *app = g_object_get_data(G_OBJECT(window), "app");
+      
+      createMainWindow(app, application);
+      
+      gtk_window_destroy(window);
+    }
+  }
+}
+
+static void clickedButtonRegister(GtkButton *button, gpointer data) {
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
+  ST_FUNCIONARIO *staff = application->staff;
+
+  GtkWidget *left_box = gtk_widget_get_parent(GTK_WIDGET(button));
+  
+  GtkWidget *entry = g_object_get_data(G_OBJECT(left_box), "Name");
+  GtkEntryBuffer *buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+  const char *name = gtk_entry_buffer_get_text(buffer);
+
+  entry = g_object_get_data(G_OBJECT(left_box), "Username");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+  const char *username = gtk_entry_buffer_get_text(buffer);
+  
+  entry = g_object_get_data(G_OBJECT(left_box), "Password");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+  const char *password = gtk_entry_buffer_get_text(buffer);
+  
+  if(!usernameValidate(staff, username) || (strlen(username) < 3 || strlen(password) < 5)) {
+    GtkWidget *label = g_object_get_data(G_OBJECT(left_box), "label-error");
+    gtk_label_set_text(GTK_LABEL(label), "Username or password not available.\n\t\tPlease try another.");
+    gtk_widget_set_visible(label, true);
+    return;
+  }
+
+  ST_FUNCIONARIO new = {
+    .ID = numberOf(staff, TYPE_STAFF) + 1,
+  };
+
+  strncpy(new.nome, name, STRING_MAX - 1);
+  new.nome[STRING_MAX - 1] = '\0';
+
+  strncpy(new.username, username, STRING_MAX - 1);
+  new.username[STRING_MAX - 1] = '\0';
+  
+  if(!encryptPassword(&new, password)) return;
+
+  GtkWidget *stack = gtk_widget_get_parent(left_box);
+  
+  // Confirm the new user by adding it to the staff list.
+  createUser(staff, new);
+
+  // Save the new user to the file.
+  insertUserFile(&new);
+
+  gtk_stack_set_visible_child_name(GTK_STACK(stack), "login");
 }
 
 static void pressedGestureLogin(GtkGestureClick *gesture, int n_press, double x, double y, gpointer data) {
