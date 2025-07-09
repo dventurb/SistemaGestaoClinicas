@@ -124,6 +124,53 @@ int obterListaConsultasAgendadas(ST_CONSULTA *appointments, ST_CONSULTA **appoin
   return counter;
 }
 
+int obterListaConsultasMesAtual(ST_CONSULTA *appointments, ST_CONSULTA **appointments_found) {
+  int counter = 0;
+  *appointments_found = NULL;
+  
+  ST_DATA data;
+  dataAtual(&data);
+
+  for (int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++){
+    if(appointments[i].estado == Realizado) {
+      if(appointments[i].data_inicial.ano == data.ano && appointments[i].data_inicial.mes == data.mes) {
+        ST_CONSULTA *tmp = realloc(*appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
+        if(!tmp) {
+          free(*appointments_found);
+          *appointments_found = NULL;
+          return 0;
+        }
+        *appointments_found = tmp;
+        (*appointments_found)[counter] = appointments[i];
+        counter++;
+      }
+    }
+  }
+  return counter;
+}
+
+int obterNumeroConsultasMedico(ST_CONSULTA *appointments, ST_MEDICO *doctor) {
+  int counter = 0;
+
+  for (int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
+    if(appointments[i].medico->ID == doctor->ID) {
+      counter++;
+    }
+  }
+  return counter;
+}
+
+int obterNumeroConsultasEspecialidade(ST_CONSULTA *appointments, const char *speciality) {
+  int counter = 0;
+
+  for (int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
+    if(strcmp(appointments[i].medico->especialidade, speciality) == 0) {
+      counter++;
+    }
+  }
+  return counter;
+}
+
 void confirmarConsultas(ST_CONSULTA *consultas, ST_CONSULTA consulta){
   consultas[numberOf(consultas, TYPE_APPOINTMENTS)] = consulta;
 }

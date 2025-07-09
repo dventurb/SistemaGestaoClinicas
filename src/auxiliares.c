@@ -11,6 +11,17 @@
    data_hora_atual->ano = tm.tm_year + 1900; 
  }
 
+const char *getMonthString(int month) {
+  const char *strings[] = {
+    "January", "February", "March",
+    "April", "May", "June", 
+    "July", "August","September",
+    "October", "November", "December"
+  };
+  
+  return strings[month - 1]; // Index 0 it's January
+}
+
  bool obterMorada(ST_CLIENTE *cliente, long unsigned int codigo_postal){
    FILE *ficheiro;
    char linha[1024], *token;
@@ -349,7 +360,46 @@ bool validarLicenseNumber(const char *license_number, ST_MEDICO *doctors) {
   return true;
 }
 
+//TODO: Continue....
+void createReportPDF() {
+  HPDF_Doc pdf = HPDF_New(NULL, NULL);
 
+  HPDF_Page cover = HPDF_AddPage(pdf);
+  HPDF_Image image = HPDF_LoadPngImageFromFile(pdf, MONTHLY_REPORT_COVER);
+
+  HPDF_Page_DrawImage(cover, image, 0, 0, HPDF_Image_GetWidth(image), HPDF_Image_GetHeight(image));
+  
+  HPDF_Page page = HPDF_AddPage(pdf);
+  HPDF_Page_BeginText(page);
+  HPDF_Page_SetFontAndSize(page, font, 20);
+  
+  const char *title = "Hospital Management Monthly Report";
+  
+  HPDF_Page_TextRect(page, 50, 750, 550, 700, title, HPDF_TALIGN_LEFT, NULL);
+  HPDF_Page_EndText(page);
+
+  HPDF_Page_BeginText(page);
+  HPDF_Page_SetFontAndSize(page, font, 18);
+
+  const char *subtitle_1 = "Overview";
+
+  HPDF_Page_TextRect(page, )
+
+  ST_DATA date;
+  dataAtual(&date);
+  char month[10] = getMonthString(date.mes);
+
+  char text[512];
+
+  snprintf(text, sizeof(text), "This report provides a comprehensive overview of the hospital operations for the %s %u, "
+           "focusing on the appointments managed by our doctors. Detailed insights into the "
+           "appointment counts for each doctor and their respective specialities are provided "
+           "to ensure a clear understanding of team performance.", month, date.ano);
+
+
+
+
+}
 
 /** 
   * @brief Converts the first letter of each word in uppercase.

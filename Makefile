@@ -1,7 +1,7 @@
 CC = gcc
 
 CFLAGS = $(shell pkg-config --cflags gtk4) -Iinc -Iui/inc -Iui/lib -Wall -Wextra -g
-LDFLAGS = $(shell pkg-config --libs gtk4) -lcrypt
+LDFLAGS = $(shell pkg-config --libs gtk4) -lcrypt -lhpdf
 
 SRC = $(wildcard src/*.c) $(wildcard ui/src/*.c) $(wildcard ui/lib/*.c)
 OBJ = $(SRC:.c=.o)

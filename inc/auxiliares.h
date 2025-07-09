@@ -14,6 +14,7 @@
 
 // PROTÓTIPOS DAS FUNÇÕES AUXILIARES
 void dataAtual(ST_DATA *data_hora_atual);
+const char *getMonthString(int month);
 bool obterMorada(ST_CLIENTE *cliente, long  unsigned int codigo_postal);
 const char *obterCidade(int cod_distrito, int cod_concelho);
 void obterEspecialidade(ST_MEDICO *medico);
