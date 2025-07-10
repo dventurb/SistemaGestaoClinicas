@@ -9,8 +9,14 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <regex.h>
+#include <hpdf.h>
+#include <gtk/gtk.h>
 #include "structs.h"
 #include "cliente.h"
+#include "consulta.h"
+#include "paths.h"
+#include "hpdftbl.h"
+#include "utils.h"
 
 // PROTÓTIPOS DAS FUNÇÕES AUXILIARES
 void dataAtual(ST_DATA *data_hora_atual);
@@ -27,6 +33,8 @@ bool validarEmail(const char *email, void *data, TYPE_STRUCT type);
 bool validarNIF(const char *nif, ST_CLIENTE *clients);
 bool validarSNS(const char *sns, ST_CLIENTE *clients);
 bool validarLicenseNumber(const char *license_number, ST_MEDICO *doctors);
+void createReportPDF(ST_APPLICATION *application);
+void createTablePDF(ST_CONSULTA *appointments, ST_MEDICO *doctors, HPDF_Doc *pdf, HPDF_Page *page, float *ypos);
 const char *convertToUppercase(const char *input);
 void generateSalt(char *string, size_t length);
 

@@ -20,7 +20,7 @@ int procurarConsultasData(ST_CONSULTA *appointments, ST_CONSULTA **appointments_
 void obterListaConsultasDiaAtualMedico(ST_CONSULTA *consulta, ST_MEDICO *medicos);
 void obterHistoricoConsultasCliente(ST_CONSULTA *consulta, ST_CLIENTE *clientes);
 int obterListaConsultasMesAtual(ST_CONSULTA *appointments, ST_CONSULTA **appointments_found);
-int obterNumeroConsultasMedico(ST_CONSULTA *appointments, ST_MEDICO *doctor);
+int obterNumeroConsultasMedico(ST_CONSULTA *appointments, ST_MEDICO doctor);
 int obterNumeroConsultasEspecialidade(ST_CONSULTA *appointments, const char *speciality);
 char **obterHorario(ST_CONSULTA *appointments, ST_CLIENTE *client, ST_MEDICO *doctor, const char *date);
 void confirmarConsultas(ST_CONSULTA *consultas, ST_CONSULTA consulta);

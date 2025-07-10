@@ -149,11 +149,11 @@ int obterListaConsultasMesAtual(ST_CONSULTA *appointments, ST_CONSULTA **appoint
   return counter;
 }
 
-int obterNumeroConsultasMedico(ST_CONSULTA *appointments, ST_MEDICO *doctor) {
+int obterNumeroConsultasMedico(ST_CONSULTA *appointments, ST_MEDICO doctor) {
   int counter = 0;
 
   for (int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
-    if(appointments[i].medico->ID == doctor->ID) {
+    if(appointments[i].medico->ID == doctor.ID) {
       counter++;
     }
   }
@@ -290,60 +290,62 @@ void inserirFicheiroConsulta(ST_CONSULTA consulta){
 }
 
 void carregarFicheiroConsulta(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_MEDICO *medicos){
-char linha[1024], *token;
-int i = 0;
-FILE *ficheiro;
-ficheiro = fopen("data/consultas.txt", "r");
-if (ficheiro == NULL){
-  return;
-}
-while(fgets(linha, sizeof(linha), ficheiro) && i < MAX_CONSULTAS){
-  linha[strcspn(linha, "\n")] = '\0';
-  token = strtok(linha, ",");
-  consultas[i].ID = (atoi(token));
-  token = strtok(NULL, ",");
-  consultas[i].cliente = procurarClientesID(clientes, atoi(token));
-  token = strtok(NULL, ",");
-  token = strtok(NULL, ",");
-  consultas[i].medico = procurarMedicosID(medicos, atoi(token));
-  token = strtok(NULL, ",");
-  token = strtok(NULL, ",");
-  token = strtok(NULL, ",");
-  consultas[i].data_inicial.dia = (atoi(token));
-  token = strtok(NULL, ",");
-  consultas[i].data_inicial.mes = (atoi(token));
-  token = strtok(NULL, ",");
-  consultas[i].data_inicial.ano = (atoi(token));
-  token = strtok(NULL, ",");
-  consultas[i].data_inicial.hora = (atoi(token));
-  token = strtok(NULL, ",");
-  consultas[i].data_final.hora = (atoi(token));
-  token = strtok(NULL, ",");
-
-  if(strcmp(token, "Cancelado") == 0){
-    consultas[i].estado = Cancelado;
-  }else if(strcmp(token, "Agendado") == 0){
-    consultas[i].estado = Agendado;
-  }else if(strcmp(token, "Realizado") == 0){
-    consultas[i].estado = Realizado;
+  char linha[1024], *token;
+  int i = 0;
+  FILE *ficheiro;
+  ficheiro = fopen("data/consultas.txt", "r");
+  if (ficheiro == NULL){
+    return;
   }
+  while(fgets(linha, sizeof(linha), ficheiro) && i < MAX_CONSULTAS){
+    linha[strcspn(linha, "\n")] = '\0';
+    token = strtok(linha, ",");
+    consultas[i].ID = (atoi(token));
+    token = strtok(NULL, ",");
+    consultas[i].cliente = procurarClientesID(clientes, atoi(token));
+    token = strtok(NULL, ",");
+    token = strtok(NULL, ",");
+    consultas[i].medico = procurarMedicosID(medicos, atoi(token));
+    token = strtok(NULL, ",");
+    token = strtok(NULL, ",");
+    token = strtok(NULL, ",");
+    consultas[i].data_inicial.dia = (atoi(token));
+    token = strtok(NULL, ",");
+    consultas[i].data_inicial.mes = (atoi(token));
+    token = strtok(NULL, ",");
+    consultas[i].data_inicial.ano = (atoi(token));
+    token = strtok(NULL, ",");
+    consultas[i].data_inicial.hora = (atoi(token));
+    token = strtok(NULL, ",");
+    consultas[i].data_final.hora = (atoi(token));
+    token = strtok(NULL, ",");
 
-  ST_DATA date;
-  dataAtual(&date);
-  if(date.ano >= consultas[i].data_inicial.ano && 
+    if(strcmp(token, "Cancelado") == 0){
+      consultas[i].estado = Cancelado;
+    }else if(strcmp(token, "Agendado") == 0){
+      consultas[i].estado = Agendado;
+    }else if(strcmp(token, "Realizado") == 0){
+    consultas[i].estado = Realizado;
+    }
+
+    ST_DATA date;
+    dataAtual(&date);
+    if(date.ano >= consultas[i].data_inicial.ano && 
       date.mes >= consultas[i].data_inicial.mes && 
       date.dia >= consultas[i].data_inicial.dia && 
-      date.hora > consultas[i].data_final.hora) {
+      date.hora >= consultas[i].data_final.hora) {
         consultas[i].estado = Realizado;
+    }
+
+    consultas[i].data_final.dia = consultas[i].data_inicial.dia;
+    consultas[i].data_final.mes = consultas[i].data_inicial.mes;
+    consultas[i].data_final.ano = consultas[i].data_inicial.ano;
+    i++;
   }
 
-  consultas[i].data_final.dia = consultas[i].data_inicial.dia;
-  consultas[i].data_final.mes = consultas[i].data_inicial.mes;
-  consultas[i].data_final.ano = consultas[i].data_inicial.ano;
-  i++;
-}
-fclose(ficheiro);
-return;
+  atualizarFicheiroConsulta(consultas);
+
+  fclose(ficheiro);
 }
 
 void atualizarFicheiroConsulta(ST_CONSULTA *consultas){

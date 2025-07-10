@@ -14,7 +14,8 @@
 #define BACK_ICON_PATH "assets/icons/actions/back.png"
 
 #define ADD_CLIENT_PATH "assets/icons/actions/add-client.png"
-#define EDIT_CLIENT_PATH "assets/icons/actionsedit-client.png"
+#undef EDIT_CLIENT_PATH
+#define EDIT_CLIENT_PATH "assets/icons/actions/edit-client.png"
 #define TOGGLE_CLIENT_PATH "assets/icons/actions/toggle-client.png"
 #define VIEW_CLIENT_PATH "assets/icons/actions/view-client.png"
 

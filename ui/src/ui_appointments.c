@@ -81,6 +81,9 @@ void initializeUIAppointments(GtkWidget *stack, ST_APPLICATION *application) {
   g_object_set_data(G_OBJECT(rigth_box), "AppointmentTable", grid);
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);
+
+  
+  createReportPDF(application);
 }
 
 /** 
@@ -106,7 +109,7 @@ void addAppointmentButtonsToGrid(GtkWidget *grid, ST_APPLICATION *application) {
     VIEW_CLIENT_PATH
   };
   
-  for (int i = 0; i <= 3; i++) {
+  for (int i = 0; i < 4; i++) {
     createButtonWithImageLabel(&button, paths[i], labels[i], BUTTON_ORIENTATION_VERTICAL, BUTTON_POSITION_FIRST_IMAGE);
     gtk_widget_set_size_request(button.button, 96, 96);
     gtk_widget_set_size_request(button.image, 48, 48);
