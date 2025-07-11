@@ -96,7 +96,9 @@ void clickedButtonClients(GtkButton *button, gpointer data) {
     GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
   
     GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
-    gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
+    if(image) {
+      gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
+    }
   }
   
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
@@ -120,7 +122,9 @@ void clickedButtonDoctors(GtkButton *button, gpointer data) {
     GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
   
     GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
-    gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
+    if(image) {
+      gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
+    }
   }
 
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "doctors");
@@ -146,7 +150,9 @@ void clickedButtonAppointments(GtkButton *button, gpointer data) {
     GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
   
     GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
-    gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
+    if(image) {
+      gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
+    }
   }
   
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "appointments");

@@ -301,7 +301,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_set_halign(btn.button, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(rigth_box), btn.button);
-  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitAdd), doctors);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitAdd), application);
 }
 
 static void clickedButtonEdit(GtkButton *button, gpointer data) {
@@ -429,7 +429,7 @@ static void clickedButtonEdit(GtkButton *button, gpointer data) {
   gtk_widget_set_halign(btn.button, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(rigth_box), btn.button);
-  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitEdit), doctors);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitEdit), application);
 }
 
 static void clickedButtonToggle(GtkButton *button, gpointer data) {
@@ -555,7 +555,7 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
   gtk_widget_set_halign(btn.button, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(rigth_box), btn.button);
-  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitToggle), doctors);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitToggle), application);
 }
 
 static void clickedButtonView(GtkButton *button, gpointer data) {
@@ -741,7 +741,9 @@ static void clickedButtonBack(GtkButton *button, gpointer data) {
 }
 
 static void clickedButtonSubmitAdd(GtkButton *button, gpointer data) {
-  ST_MEDICO *doctors = (ST_MEDICO *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
+  ST_MEDICO *doctors = application->doctors;
 
   GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(button));
 
@@ -815,8 +817,6 @@ static void clickedButtonSubmitAdd(GtkButton *button, gpointer data) {
   child = gtk_stack_get_child_by_name(GTK_STACK(stack), "doctors");
   gtk_stack_remove(GTK_STACK(stack), child);
   
-  ST_APPLICATION *application = g_object_get_data(G_OBJECT(rigth_box), "application");
-
   // Reinitialize with the updated doctors list.
   initializeUIDoctors(stack, application);
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "doctors");
@@ -904,7 +904,9 @@ static void activateSearchEditDoctor(GtkSearchEntry *search_entry, gpointer data
 }
 
 static void clickedButtonSubmitEdit(GtkButton *button, gpointer data) {
-  ST_MEDICO *doctors = (ST_MEDICO *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
+  ST_MEDICO *doctors = application->doctors;  
 
   GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(button));
 
@@ -980,8 +982,6 @@ static void clickedButtonSubmitEdit(GtkButton *button, gpointer data) {
   child = gtk_stack_get_child_by_name(GTK_STACK(stack), "doctors");
   gtk_stack_remove(GTK_STACK(stack), child);
   
-  ST_APPLICATION *application = g_object_get_data(G_OBJECT(rigth_box), "application");
-
   // Reinitialize with the updated doctors list.
   initializeUIDoctors(stack, application);
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "doctors");
@@ -1063,7 +1063,9 @@ static void activateSearchToggleDoctor(GtkSearchEntry *search_entry, gpointer da
 }
 
 static void clickedButtonSubmitToggle(GtkButton *button, gpointer data) {
-  ST_MEDICO *doctors = (ST_MEDICO *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
+  ST_MEDICO *doctors = application->doctors;
 
   GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(button));
 
@@ -1093,8 +1095,6 @@ static void clickedButtonSubmitToggle(GtkButton *button, gpointer data) {
   child = gtk_stack_get_child_by_name(GTK_STACK(stack), "doctors");
   gtk_stack_remove(GTK_STACK(stack), child);
   
-  ST_APPLICATION *application = g_object_get_data(G_OBJECT(rigth_box), "application");
-
   // Reinitialize with the updated doctors list.
   initializeUIDoctors(stack, application);
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "doctors");
