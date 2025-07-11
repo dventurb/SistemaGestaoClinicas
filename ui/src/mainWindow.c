@@ -8,6 +8,8 @@ void createMainWindow(GtkApplication *app, gpointer data) {
   gtk_window_set_default_size(GTK_WINDOW(window), 1100, 700);
   gtk_widget_add_css_class(window, "window");
   
+  g_object_set_data(G_OBJECT(window), "app", app);
+  
   GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_window_set_child(GTK_WINDOW(window), main_box);
 

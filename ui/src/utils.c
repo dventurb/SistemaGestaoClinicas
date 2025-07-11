@@ -211,4 +211,9 @@ void clearStackPages(GtkWidget *stack) {
   if(child) {
     gtk_stack_remove(GTK_STACK(stack), child);
   }
+
+  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "userInterface");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
 }

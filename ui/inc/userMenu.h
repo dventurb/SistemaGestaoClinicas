@@ -4,7 +4,9 @@
 #include <gtk/gtk.h>
 #include "structs.h"
 #include "utils.h"
+#include "authWindow.h"
 
 void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application);
+void initializeUserInterface(GtkWidget *stack, ST_APPLICATION *application, const char *current);
 
 #endif
