@@ -1,6 +1,6 @@
 #include "leftbar.h"
 
-void initializeLeftBar(GtkWidget *left_box, GtkWidget *stack) {
+void initializeLeftBar(GtkWidget *left_box, GtkWidget *stack, ST_APPLICATION *application) {
   GtkWidget *image = gtk_image_new_from_file(LOGOTIPO_PATH);
   gtk_widget_set_size_request(image, 64, 64);
   gtk_widget_set_margin_start(image, 10);
@@ -9,9 +9,10 @@ void initializeLeftBar(GtkWidget *left_box, GtkWidget *stack) {
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 40);
   gtk_box_append(GTK_BOX(left_box), spacer);
+  
+  g_object_set_data(G_OBJECT(stack), "application", application);
 
   ST_BUTTON button;
-  
   createButtonWithImageLabel(&button, DASHBOARD_ICON_PATH, "DASHBOARD", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);
   gtk_widget_add_css_class(button.button, "leftbar-button");
   gtk_widget_add_css_class(button.label, "leftbar-button-label");
@@ -50,8 +51,25 @@ void initializeLeftBar(GtkWidget *left_box, GtkWidget *stack) {
 void clickedButtonDashboard(GtkButton *button, gpointer data) {
   (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)data;
+  
+  ST_APPLICATION *application = g_object_get_data(G_OBJECT(stack), "application");
 
   clearStackPages(stack);
+
+  const char *strings[] = { 
+    "dashboard", 
+    "clients", 
+    "doctors", 
+    "appointments"
+  };
+  
+  // Update the Image of UserMenu in every Stack page.
+  for (int i = 0; i < 4; i++) {
+    GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
+  
+    GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
+    gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
+  }
 
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "dashboard");
 }
@@ -60,7 +78,24 @@ void clickedButtonClients(GtkButton *button, gpointer data) {
   (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)data;
 
+  ST_APPLICATION *application = g_object_get_data(G_OBJECT(stack), "application");
+  
   clearStackPages(stack);
+
+  const char *strings[] = { 
+    "dashboard", 
+    "clients", 
+    "doctors", 
+    "appointments"
+  };
+  
+  // Update the Image of UserMenu in every Stack page.
+  for (int i = 0; i < 4; i++) {
+    GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
+  
+    GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
+    gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
+  }
   
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
 }
@@ -69,6 +104,23 @@ void clickedButtonDoctors(GtkButton *button, gpointer data) {
   (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)data;
 
+  ST_APPLICATION *application = g_object_get_data(G_OBJECT(stack), "application");
+ 
+  const char *strings[] = { 
+    "dashboard", 
+    "clients", 
+    "doctors", 
+    "appointments"
+  };
+  
+  // Update the Image of UserMenu in every Stack page.
+  for (int i = 0; i < 4; i++) {
+    GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
+  
+    GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
+    gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
+  }
+
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "doctors");
 }
 
@@ -76,7 +128,24 @@ void clickedButtonAppointments(GtkButton *button, gpointer data) {
   (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)data;
 
+  ST_APPLICATION *application = g_object_get_data(G_OBJECT(stack), "application");
+  
   clearStackPages(stack);
+
+  const char *strings[] = { 
+    "dashboard", 
+    "clients", 
+    "doctors", 
+    "appointments"
+  };
+  
+  // Update the Image of UserMenu in every Stack page.
+  for (int i = 0; i < 4; i++) {
+    GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
+  
+    GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
+    gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
+  }
   
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "appointments");
 }
@@ -85,6 +154,8 @@ void clickedButtonSettings(GtkButton *button, gpointer data) {
   (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)data;
 
+  //ST_APPLICATION *application = g_object_get_data(G_OBJECT(stack), "application");
+  
   clearStackPages(stack);
   
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "settings");

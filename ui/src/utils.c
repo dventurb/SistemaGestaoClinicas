@@ -145,7 +145,8 @@ GtkStringList *loadSpecialty() {
 }
 
 bool validationTypeSizeDimensions(GFile *file) {
-  GFileInfo *info = g_file_query_info(file, "standard::size", G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  GFileInfo *info = g_file_query_info(file, "standard::size,standard::content-type", G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  if(!info) return false;
   
   // 1MB 
   if(g_file_info_get_size(info) > (1024 * 1024)) {

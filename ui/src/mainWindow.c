@@ -20,7 +20,7 @@ void createMainWindow(GtkApplication *app, gpointer data) {
   gtk_stack_set_transition_type(GTK_STACK(stack), GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT);
   gtk_box_append(GTK_BOX(main_box), stack);
   
-  initializeLeftBar(left_box, stack);
+  initializeLeftBar(left_box, stack, application);
   
   initializeDashboard(stack, application);
   initializeUIClients(stack, application);
