@@ -1,10 +1,11 @@
 #include "userMenu.h"
 
 // CALLBACKS
-static void clickedButtonUserSettings(GtkButton *button, gpointer data);
+static void clickedButtonUserInterface(GtkButton *button, gpointer data);
 static void clickedButtonLogout(GtkButton *button, gpointer data);
 static void clickedButtonBack(GtkButton *button, gpointer data);
 static void clickedButtonUploudImage(GtkButton *button, gpointer data);
+static void clickedButtonDeleteImage(GtkButton *button, gpointer data);
 
 static void choosePathImage(GObject *source, GAsyncResult *res, gpointer data);
 
@@ -31,7 +32,7 @@ void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application, const char 
   gtk_widget_set_margin_top(button.button, 10);
   gtk_widget_set_margin_bottom(button.button, 10);
   gtk_box_append(GTK_BOX(user_box), button.button);
-  g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonUserSettings), application);
+  g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonUserInterface), application);
 
   GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(box), GTK_TYPE_STACK);
   if(!stack) return;
@@ -41,7 +42,7 @@ void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application, const char 
   g_object_set_data(G_OBJECT(child), "Image", button.image);
 }
 
-static void clickedButtonUserSettings(GtkButton *button, gpointer data) {
+static void clickedButtonUserInterface(GtkButton *button, gpointer data) {
   ST_APPLICATION *application = (ST_APPLICATION *)data;
 
   GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
@@ -121,10 +122,10 @@ void initializeUserInterface(GtkWidget *stack, ST_APPLICATION *application, cons
   gtk_widget_set_size_request(btn.image, 15, 15);
   gtk_widget_set_size_request(btn.button, 15, 15);
   gtk_grid_attach(GTK_GRID(grid), btn.button, 6, 1, 1, 1); 
-  //g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonBack), current);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonDeleteImage), application->staff);
   
   GtkWidget *label = gtk_label_new("Max 1MB (128x128px)");
-  gtk_widget_add_css_class(label, "label");
+  gtk_widget_add_css_class(label, "info-label");
   gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
   gtk_grid_attach(GTK_GRID(grid), label, 4, 2, 3, 1);
   
@@ -234,7 +235,12 @@ static void clickedButtonBack(GtkButton *button, gpointer data) {
     GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
     gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
   }
-
+  
+  GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), "userInterface");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+  
   gtk_stack_set_visible_child_name(GTK_STACK(stack), current);
 }
 
@@ -254,6 +260,51 @@ static void clickedButtonUploudImage(GtkButton *button, gpointer data) {
 
     gtk_file_dialog_open(dialog, window, NULL, choosePathImage, rigth_box);
   }
+}
+
+static void clickedButtonDeleteImage(GtkButton *button, gpointer data) {
+  ST_FUNCIONARIO *user = (ST_FUNCIONARIO *)data;
+
+  GtkWidget *rigth_box = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_BOX);
+  if(!rigth_box) return;
+
+  ST_FUNCIONARIO temp[MAX_FUNCIONARIOS] = {0};
+  loadUserFile(temp);
+
+  int number = (user->ID % 4) + 1;
+  switch (number) {
+    case 1:
+      strncpy(temp[user->ID - 1].pathToImage, USER_IMAGE_1_PATH, STRING_MAX - 1);
+      temp[user->ID - 1].pathToImage[STRING_MAX - 1] = '\0';
+      strncpy(user->pathToImage, USER_IMAGE_1_PATH, STRING_MAX - 1);
+      user->pathToImage[STRING_MAX - 1] = '\0';
+      break;
+    case 2:
+      strncpy(temp[user->ID - 1].pathToImage, USER_IMAGE_2_PATH, STRING_MAX - 1);
+      temp[user->ID - 1].pathToImage[STRING_MAX - 1] = '\0';
+      strncpy(user->pathToImage, USER_IMAGE_2_PATH, STRING_MAX - 1);
+      user->pathToImage[STRING_MAX - 1] = '\0';
+      break;
+    case 3:
+      strncpy(temp[user->ID - 1].pathToImage, USER_IMAGE_3_PATH, STRING_MAX - 1);
+      temp[user->ID - 1].pathToImage[STRING_MAX - 1] = '\0';
+      strncpy(user->pathToImage, USER_IMAGE_3_PATH, STRING_MAX - 1);
+      user->pathToImage[STRING_MAX - 1] = '\0';
+      break;
+    case 4:
+      strncpy(temp[user->ID - 1].pathToImage, USER_IMAGE_4_PATH, STRING_MAX - 1);
+      temp[user->ID - 1].pathToImage[STRING_MAX - 1] = '\0';
+      strncpy(user->pathToImage, USER_IMAGE_4_PATH, STRING_MAX - 1);
+      user->pathToImage[STRING_MAX - 1] = '\0';
+      break;
+    default:
+      break;
+  }
+  
+  updateUserFile(temp);
+
+  GtkWidget *image = g_object_get_data(G_OBJECT(rigth_box), "Image");
+  gtk_image_set_from_file(GTK_IMAGE(image), user->pathToImage);
 }
 
 static void choosePathImage(GObject *source, GAsyncResult *res, gpointer data) {
