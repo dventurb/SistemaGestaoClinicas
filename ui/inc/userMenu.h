@@ -6,7 +6,7 @@
 #include "utils.h"
 #include "authWindow.h"
 
-void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application);
+void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application, const char *current);
 void initializeUserInterface(GtkWidget *stack, ST_APPLICATION *application, const char *current);
 
 #endif

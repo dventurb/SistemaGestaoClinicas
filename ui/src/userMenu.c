@@ -4,6 +4,9 @@
 static void clickedButtonUserSettings(GtkButton *button, gpointer data);
 static void clickedButtonLogout(GtkButton *button, gpointer data);
 static void clickedButtonBack(GtkButton *button, gpointer data);
+static void clickedButtonUploudImage(GtkButton *button, gpointer data);
+
+static void choosePathImage(GObject *source, GAsyncResult *res, gpointer data);
 
 /** 
  *  @brief Initializes the userMenu in the topbox. 
@@ -12,14 +15,13 @@ static void clickedButtonBack(GtkButton *button, gpointer data);
  *  @param application  A pointer for the ST_APPLICATION struct.
  *
  */
-void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application) {
+void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application, const char *current) {
   ST_FUNCIONARIO *user = application->staff; // Current user 
  
   GtkWidget *user_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
   gtk_box_append(GTK_BOX(box), user_box);
 
   ST_BUTTON button;
-  
   createButtonWithImageLabel(&button, user->pathToImage, user->nome, BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);
   gtk_widget_add_css_class(button.button, "user-button");
   gtk_widget_add_css_class(button.label, "user-button-label");
@@ -30,6 +32,13 @@ void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application) {
   gtk_widget_set_margin_bottom(button.button, 10);
   gtk_box_append(GTK_BOX(user_box), button.button);
   g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonUserSettings), application);
+
+  GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(box), GTK_TYPE_STACK);
+  if(!stack) return;
+  
+  GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), current);
+
+  g_object_set_data(G_OBJECT(child), "Image", button.image);
 }
 
 static void clickedButtonUserSettings(GtkButton *button, gpointer data) {
@@ -49,6 +58,8 @@ void initializeUserInterface(GtkWidget *stack, ST_APPLICATION *application, cons
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "userInterface");
+
+  g_object_set_data(G_OBJECT(rigth_box), "application", application);
   
   GtkWidget *rigth_top_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_add_css_class(rigth_top_box, "rigth_top_box");
@@ -92,6 +103,7 @@ void initializeUserInterface(GtkWidget *stack, ST_APPLICATION *application, cons
   
   GtkWidget *image = gtk_image_new_from_file(user->pathToImage);
   gtk_widget_set_size_request(image, 64, 64);
+  g_object_set_data(G_OBJECT(rigth_box), "Image", image);
   gtk_grid_attach(GTK_GRID(grid), image, 0, 0, 2, 4);
 
   createButtonWithImageLabel(&btn, NULL, "Uploud Image", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);  
@@ -102,7 +114,7 @@ void initializeUserInterface(GtkWidget *stack, ST_APPLICATION *application, cons
   gtk_widget_set_size_request(btn.box, 15, 30);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_grid_attach(GTK_GRID(grid), btn.button, 4, 1, 2, 1); 
-  //g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonBack), current);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonUploudImage), application->staff);
  
   createButtonWithImageLabel(&btn, DELETE_PATH, NULL, BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);  
   gtk_widget_add_css_class(btn.button, "delete-photo-button");
@@ -111,7 +123,7 @@ void initializeUserInterface(GtkWidget *stack, ST_APPLICATION *application, cons
   gtk_grid_attach(GTK_GRID(grid), btn.button, 6, 1, 1, 1); 
   //g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonBack), current);
   
-  GtkWidget *label = gtk_label_new("Max 5MB (128x128px)");
+  GtkWidget *label = gtk_label_new("Max 1MB (128x128px)");
   gtk_widget_add_css_class(label, "label");
   gtk_widget_set_halign(label, GTK_ALIGN_CENTER);
   gtk_grid_attach(GTK_GRID(grid), label, 4, 2, 3, 1);
@@ -203,7 +215,75 @@ static void clickedButtonBack(GtkButton *button, gpointer data) {
   GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
   if(!stack) return;
 
-  clearStackPages(stack);
+  GtkWidget *rigth_box = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_BOX);
+  if(!rigth_box) return;
+
+  ST_APPLICATION *application = g_object_get_data(G_OBJECT(rigth_box), "application");
+
+  const char *strings[] = { 
+    "dashboard", 
+    "clients", 
+    "doctors", 
+    "appointments"
+  };
   
+  // Update the Image of UserMenu in every Stack page.
+  for (int i = 0; i < 4; i++) {
+    GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
+  
+    GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
+    gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
+  }
+
   gtk_stack_set_visible_child_name(GTK_STACK(stack), current);
+}
+
+static void clickedButtonUploudImage(GtkButton *button, gpointer data) {
+  ST_FUNCIONARIO *user = (ST_FUNCIONARIO *)data;
+
+  GtkWidget *rigth_box = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_BOX);
+  if(!rigth_box) return;
+
+  g_object_set_data(G_OBJECT(rigth_box), "user", user);
+
+  GtkFileDialog *dialog = gtk_file_dialog_new();
+
+  GtkNative *native = gtk_widget_get_native(GTK_WIDGET(button));
+  if(GTK_IS_WINDOW(native)) {
+    GtkWindow *window = GTK_WINDOW(native);
+
+    gtk_file_dialog_open(dialog, window, NULL, choosePathImage, rigth_box);
+  }
+}
+
+static void choosePathImage(GObject *source, GAsyncResult *res, gpointer data) {
+  GtkWidget *rigth_box = (GtkWidget *)data;
+
+  ST_FUNCIONARIO *user = g_object_get_data(G_OBJECT(rigth_box), "user");
+
+  GtkFileDialog *dialog = GTK_FILE_DIALOG(source);
+  
+  GFile *file = gtk_file_dialog_open_finish(dialog, res, NULL);
+  if(!file) return;
+
+  if(!validationTypeSizeDimensions(file)) {
+    GtkWidget *label = g_object_get_data(G_OBJECT(rigth_box), "label-error");
+    gtk_label_set_text(GTK_LABEL(label), "Please select a valid image (PNG or JPEG), under 1MB and no larger than 128x128 pixels.");
+    gtk_widget_set_visible(label, true);
+    return;
+  }
+
+  const char *path = g_file_get_path(file);
+
+  ST_FUNCIONARIO temp[MAX_FUNCIONARIOS] = {0};
+  loadUserFile(temp);
+
+  strcpy(temp[user->ID - 1].pathToImage, path);
+  
+  updateUserFile(temp);
+
+  strcpy(user->pathToImage, path);
+  
+  GtkWidget *image = g_object_get_data(G_OBJECT(rigth_box), "Image");
+  gtk_image_set_from_file(GTK_IMAGE(image), path);
 }

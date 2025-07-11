@@ -38,6 +38,7 @@ typedef enum {
 void createButtonWithImageLabel(ST_BUTTON *button, const char *pathToImage, const char *text, BUTTON_ORIENTATION orientation, BUTTON_POSITION position);
 SEARCH_TYPE detectSearchType(const char *input);
 GtkStringList *loadSpecialty();
+bool validationTypeSizeDimensions(GFile *file);
 void clearStackPages(GtkWidget *stack);
 
 #endif

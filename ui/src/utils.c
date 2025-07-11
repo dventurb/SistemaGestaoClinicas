@@ -144,6 +144,40 @@ GtkStringList *loadSpecialty() {
   return list;
 }
 
+bool validationTypeSizeDimensions(GFile *file) {
+  GFileInfo *info = g_file_query_info(file, "standard::size", G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  
+  // 1MB 
+  if(g_file_info_get_size(info) > (1024 * 1024)) {
+    g_object_unref(info);
+    return false;
+  }
+  
+  GdkTexture *texture = gdk_texture_new_from_file(file, NULL);
+  if(!texture) {
+    g_object_unref(info);
+    return 0;
+  }
+  
+  // 128px x 128px
+  if(gdk_texture_get_width(texture) > 128 || gdk_texture_get_height(texture) > 128) {
+    g_object_unref(info);
+    g_object_unref(texture);
+    return false;
+  }
+
+  const char *type = g_file_info_get_content_type(info);
+  if(strcmp(type, "image/png") != 0 && strcmp(type, "image/jpeg") != 0) {
+    g_object_unref(info); 
+    return false;
+  }
+  
+  g_object_unref(info);
+  g_object_unref(texture);
+  
+  return true;
+}
+
 /**
   * @brief Removes dynamic pages from the GtkStack.
   *

@@ -18,7 +18,7 @@ void initializeDashboard(GtkWidget *stack, ST_APPLICATION *application) {
   gtk_widget_set_hexpand(search_entry, true);
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
 
-  initializeUserMenu(rigth_top_box, application);
+  initializeUserMenu(rigth_top_box, application, "dashboard");
 
   GtkWidget *rigth_main_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_append(GTK_BOX(rigth_box), rigth_main_box);
