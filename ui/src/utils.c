@@ -188,67 +188,27 @@ bool validationTypeSizeDimensions(GFile *file) {
   *
   */
 void clearStackPages(GtkWidget *stack) {
-  GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), "AddClients");
-  if(child) {
-    gtk_stack_remove(GTK_STACK(stack), child);
-  }
-   
-  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "EditClients");
-  if(child) {
-    gtk_stack_remove(GTK_STACK(stack), child);
-  }
 
-  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ToggleClients");
-  if(child) {
-    gtk_stack_remove(GTK_STACK(stack), child);
-  }
- 
-  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ViewClients");
-  if(child) {
-    gtk_stack_remove(GTK_STACK(stack), child);
-  }
-  
-  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "AddDoctors");
-  if(child) {
-    gtk_stack_remove(GTK_STACK(stack), child);
-  }
-   
-  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "EditDoctors");
-  if(child) {
-    gtk_stack_remove(GTK_STACK(stack), child);
-  }
+  const char *strings[] = {
+    "AddClients",
+    "EditClients",
+    "ToggleClients",
+    "ViewClients",
+    "AddDoctors",
+    "EditDoctors",
+    "ToggleDoctors",
+    "ViewDoctors",
+    "AddAppointments",
+    "EditAppointments",
+    "ToggleAppointments",
+    "ViewAppointments",
+    "userInterface"
+  };
 
-  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ToggleDoctors");
-  if(child) {
-    gtk_stack_remove(GTK_STACK(stack), child);
-  }
- 
-  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ViewDoctors");
-  if(child) {
-    gtk_stack_remove(GTK_STACK(stack), child);
-  }
-  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "AddAppointments");
-  if(child) {
-    gtk_stack_remove(GTK_STACK(stack), child);
-  }
-   
-  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "EditAppointments");
-  if(child) {
-    gtk_stack_remove(GTK_STACK(stack), child);
-  }
-
-  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ToggleAppointments");
-  if(child) {
-    gtk_stack_remove(GTK_STACK(stack), child);
-  }
- 
-  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "ViewAppointments");
-  if(child) {
-    gtk_stack_remove(GTK_STACK(stack), child);
-  }
-
-  child = gtk_stack_get_child_by_name(GTK_STACK(stack), "userInterface");
-  if(child) {
-    gtk_stack_remove(GTK_STACK(stack), child);
+  for (int i = 0; i < 13; i++) {
+    GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
+    if(child) {
+      gtk_stack_remove(GTK_STACK(stack), child);
+    }
   }
 }

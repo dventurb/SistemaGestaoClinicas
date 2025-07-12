@@ -10,7 +10,7 @@ void createMainWindow(GtkApplication *app, gpointer data) {
   
   g_object_set_data(G_OBJECT(window), "app", app);
   
-  GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
   gtk_window_set_child(GTK_WINDOW(window), main_box);
 
   GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
