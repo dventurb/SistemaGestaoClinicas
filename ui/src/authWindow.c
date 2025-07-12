@@ -335,6 +335,13 @@ static void clickedButtonRegister(GtkButton *button, gpointer data) {
 
   GtkWidget *left_box = gtk_widget_get_parent(GTK_WIDGET(button));
   
+  if(numberOf(staff, TYPE_STAFF) >= MAX_FUNCIONARIOS) {
+    GtkWidget *label = g_object_get_data(G_OBJECT(left_box), "label-error");
+    gtk_label_set_text(GTK_LABEL(label), "Maximum number of staff reached.");
+    gtk_widget_set_visible(label, true);
+    return;
+  }
+  
   GtkWidget *entry = g_object_get_data(G_OBJECT(left_box), "Name");
   GtkEntryBuffer *buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
   const char *name = gtk_entry_buffer_get_text(buffer);

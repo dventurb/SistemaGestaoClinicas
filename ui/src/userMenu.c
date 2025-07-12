@@ -37,6 +37,8 @@ void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application, const char 
   GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(box), GTK_TYPE_STACK);
   if(!stack) return;
   
+  if(!current) return;
+
   GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), current);
   if(!child) return;
 

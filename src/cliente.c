@@ -204,7 +204,7 @@ void atualizarFicheiroCliente(ST_CLIENTE *clientes){
     printf("Erro.\n");
     return;
   }
-  for (int i = 0; i < numeroClientes(clientes); i++){
+  for (int i = 0; i < numberOf(clientes, TYPE_CLIENTS); i++){
    fprintf(ficheiro, "%u,%s,%lu,%s,%s,%02u,%02u,%04u,%s,%9lu,%9lu,%s\n", clientes[i].ID, clientes[i].nome, clientes[i].morada.codigo_postal, clientes[i].morada.rua, clientes[i].morada.cidade, clientes[i].data_nascimento.dia, clientes[i].data_nascimento.mes, clientes[i].data_nascimento.ano, clientes[i].email, clientes[i].NIF, clientes[i].SNS, clientes[i].estado ? "Ativo" : "Inativo");
   }
   fclose(ficheiro);

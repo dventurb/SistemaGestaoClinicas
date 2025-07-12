@@ -190,6 +190,8 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   ST_APPLICATION *application = (ST_APPLICATION *)data;
 
   ST_CLIENTE *clients = application->clients;
+
+  if(numberOf(clients, TYPE_CLIENTS) >= MAX_CLIENTES) return;
   
   GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
   if(!stack) {
@@ -209,7 +211,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_set_hexpand(spacer, true);
   gtk_box_append(GTK_BOX(rigth_top_box), spacer);
   
-  initializeUserMenu(rigth_top_box, application, "clients");
+  initializeUserMenu(rigth_top_box, application, NULL);
   
   spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 30);
@@ -387,7 +389,7 @@ static void clickedButtonEdit(GtkButton *button, gpointer data) {
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
   g_signal_connect(search_entry, "activate", G_CALLBACK(activateSearchEditClient), clients);
   
-  initializeUserMenu(rigth_top_box, application, "clients");  
+  initializeUserMenu(rigth_top_box, application, NULL);  
 
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 30);
@@ -564,7 +566,7 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
   g_signal_connect(search_entry, "activate", G_CALLBACK(activateSearchToggleClient), clients);
   
-  initializeUserMenu(rigth_top_box, application, "clients");
+  initializeUserMenu(rigth_top_box, application, NULL);
   
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 30);
@@ -702,7 +704,7 @@ static void clickedButtonView(GtkButton *button, gpointer data) {
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
   g_signal_connect(search_entry, "search-changed", G_CALLBACK(changedSearchViewClient), clients);
   
-  initializeUserMenu(rigth_top_box, application, "clients");
+  initializeUserMenu(rigth_top_box, application, NULL);
 
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_set_size_request(spacer, -1, 15);
