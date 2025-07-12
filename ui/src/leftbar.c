@@ -14,29 +14,33 @@ void initializeLeftBar(GtkWidget *left_box, GtkWidget *stack, ST_APPLICATION *ap
 
   ST_BUTTON button;
   createButtonWithImageLabel(&button, DASHBOARD_ICON_PATH, "DASHBOARD", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);
-  gtk_widget_add_css_class(button.button, "leftbar-button");
+  gtk_widget_add_css_class(button.button, "leftbar-button-selected");
   gtk_widget_add_css_class(button.label, "leftbar-button-label");
   gtk_box_append(GTK_BOX(left_box), button.button);
   g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonDashboard), stack);
+  g_object_set_data(G_OBJECT(stack), "dashboard", button.button);
 
   createButtonWithImageLabel(&button, CLIENT_ICON_PATH, "CLIENTS", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);
   gtk_widget_add_css_class(button.button, "leftbar-button");
   gtk_widget_add_css_class(button.label, "leftbar-button-label");
   gtk_box_append(GTK_BOX(left_box), button.button);
   g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonClients), stack);
-
+  g_object_set_data(G_OBJECT(stack), "clients", button.button);
+  
   createButtonWithImageLabel(&button, DOCTOR_ICON_PATH, "DOCTORS", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);
   gtk_widget_add_css_class(button.button, "leftbar-button");
   gtk_widget_add_css_class(button.label, "leftbar-button-label");
   gtk_box_append(GTK_BOX(left_box), button.button);
   g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonDoctors), stack);
+  g_object_set_data(G_OBJECT(stack), "doctors", button.button);
   
   createButtonWithImageLabel(&button, APPOINTMENT_ICON_PATH, "APPOINTMENTS", BUTTON_ORIENTATION_HORIZONTAL, BUTTON_POSITION_FIRST_IMAGE);
   gtk_widget_add_css_class(button.button, "leftbar-button");
   gtk_widget_add_css_class(button.label, "leftbar-button-label");
   gtk_box_append(GTK_BOX(left_box), button.button);
   g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonAppointments), stack);
-
+  g_object_set_data(G_OBJECT(stack), "appointments", button.button);
+  
   spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_vexpand(spacer, true);
   gtk_box_append(GTK_BOX(left_box), spacer);
@@ -46,10 +50,10 @@ void initializeLeftBar(GtkWidget *left_box, GtkWidget *stack, ST_APPLICATION *ap
   gtk_widget_add_css_class(button.label, "leftbar-button-label");
   gtk_box_append(GTK_BOX(left_box), button.button);
   g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonSettings), stack);
+  g_object_set_data(G_OBJECT(stack), "settings", button.button);
 }
 
 void clickedButtonDashboard(GtkButton *button, gpointer data) {
-  (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)data;
   
   ST_APPLICATION *application = g_object_get_data(G_OBJECT(stack), "application");
@@ -63,6 +67,13 @@ void clickedButtonDashboard(GtkButton *button, gpointer data) {
     "appointments"
   };
   
+  // Reset CSS Style from the leftbar buttons.
+  for (int i = 0; i < 4; i++) {
+    GtkWidget *button = g_object_get_data(G_OBJECT(stack), strings[i]);
+    gtk_widget_remove_css_class(button, "leftbar-button-selected");
+    gtk_widget_add_css_class(button, "leftbar-button");
+  }
+
   // Update the Image of UserMenu in every Stack page.
   for (int i = 0; i < 4; i++) {
     GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
@@ -72,12 +83,14 @@ void clickedButtonDashboard(GtkButton *button, gpointer data) {
       gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
     }
   }
-
+  
+  // Add Selected-Button Style to the current button.
+  gtk_widget_add_css_class(GTK_WIDGET(button), "leftbar-button-selected");
+  
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "dashboard");
 }
 
 void clickedButtonClients(GtkButton *button, gpointer data) {
-  (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)data;
 
   ST_APPLICATION *application = g_object_get_data(G_OBJECT(stack), "application");
@@ -90,6 +103,13 @@ void clickedButtonClients(GtkButton *button, gpointer data) {
     "doctors", 
     "appointments"
   };
+  
+  // Reset CSS Style from the leftbar buttons.
+  for (int i = 0; i < 4; i++) {
+    GtkWidget *button = g_object_get_data(G_OBJECT(stack), strings[i]);
+    gtk_widget_remove_css_class(button, "leftbar-button-selected");
+    gtk_widget_add_css_class(button, "leftbar-button");
+  }
   
   // Update the Image of UserMenu in every Stack page.
   for (int i = 0; i < 4; i++) {
@@ -102,11 +122,13 @@ void clickedButtonClients(GtkButton *button, gpointer data) {
     }
   }
   
+  // Add Selected-Button Style to the current button.
+  gtk_widget_add_css_class(GTK_WIDGET(button), "leftbar-button-selected");
+  
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
 }
 
 void clickedButtonDoctors(GtkButton *button, gpointer data) {
-  (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)data;
 
   ST_APPLICATION *application = g_object_get_data(G_OBJECT(stack), "application");
@@ -118,6 +140,13 @@ void clickedButtonDoctors(GtkButton *button, gpointer data) {
     "appointments"
   };
   
+  // Reset CSS Style from the leftbar buttons.
+  for (int i = 0; i < 4; i++) {
+    GtkWidget *button = g_object_get_data(G_OBJECT(stack), strings[i]);
+    gtk_widget_remove_css_class(button, "leftbar-button-selected");
+    gtk_widget_add_css_class(button, "leftbar-button");
+  }
+  
   // Update the Image of UserMenu in every Stack page.
   for (int i = 0; i < 4; i++) {
     GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
@@ -128,12 +157,14 @@ void clickedButtonDoctors(GtkButton *button, gpointer data) {
       gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
     }
   }
-
+ 
+  // Add Selected-Button Style to the current button.
+  gtk_widget_add_css_class(GTK_WIDGET(button), "leftbar-button-selected");
+  
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "doctors");
 }
 
 void clickedButtonAppointments(GtkButton *button, gpointer data) {
-  (void)button; // unused parameter 
   GtkWidget *stack = (GtkWidget *)data;
 
   ST_APPLICATION *application = g_object_get_data(G_OBJECT(stack), "application");
@@ -147,6 +178,13 @@ void clickedButtonAppointments(GtkButton *button, gpointer data) {
     "appointments"
   };
   
+  // Reset CSS Style from the leftbar buttons.
+  for (int i = 0; i < 4; i++) {
+    GtkWidget *button = g_object_get_data(G_OBJECT(stack), strings[i]);
+    gtk_widget_remove_css_class(button, "leftbar-button-selected");
+    gtk_widget_add_css_class(button, "leftbar-button");
+  }
+  
   // Update the Image of UserMenu in every Stack page.
   for (int i = 0; i < 4; i++) {
     GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
@@ -157,6 +195,9 @@ void clickedButtonAppointments(GtkButton *button, gpointer data) {
       gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
     }
   }
+  
+  // Add Selected-Button Style to the current button.
+  gtk_widget_add_css_class(GTK_WIDGET(button), "leftbar-button-selected");
   
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "appointments");
 }
