@@ -68,7 +68,7 @@ void clickedButtonDashboard(GtkButton *button, gpointer data) {
     GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
   
     GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
-    if(image) {
+    if(GTK_IS_IMAGE(image)) {
       gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
     }
   }
@@ -94,9 +94,10 @@ void clickedButtonClients(GtkButton *button, gpointer data) {
   // Update the Image of UserMenu in every Stack page.
   for (int i = 0; i < 4; i++) {
     GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
+    if(!child) break;
   
     GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
-    if(image) {
+    if(GTK_IS_IMAGE(image)) {
       gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
     }
   }
@@ -120,9 +121,10 @@ void clickedButtonDoctors(GtkButton *button, gpointer data) {
   // Update the Image of UserMenu in every Stack page.
   for (int i = 0; i < 4; i++) {
     GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
-  
+    if(!child) break;
+
     GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
-    if(image) {
+    if(GTK_IS_IMAGE(image)) {
       gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
     }
   }
@@ -148,9 +150,10 @@ void clickedButtonAppointments(GtkButton *button, gpointer data) {
   // Update the Image of UserMenu in every Stack page.
   for (int i = 0; i < 4; i++) {
     GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), strings[i]);
-  
+    if(!child) break;
+
     GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
-    if(image) {
+    if(GTK_IS_IMAGE(image)) {
       gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
     }
   }

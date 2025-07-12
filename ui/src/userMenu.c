@@ -38,6 +38,7 @@ void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application, const char 
   if(!stack) return;
   
   GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), current);
+  if(!child) return;
 
   g_object_set_data(G_OBJECT(child), "Image", button.image);
 }
