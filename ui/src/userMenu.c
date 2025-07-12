@@ -6,6 +6,7 @@ static void clickedButtonLogout(GtkButton *button, gpointer data);
 static void clickedButtonBack(GtkButton *button, gpointer data);
 static void clickedButtonUploudImage(GtkButton *button, gpointer data);
 static void clickedButtonDeleteImage(GtkButton *button, gpointer data);
+static void clickedButtonSubmitAdd(GtkButton *button, gpointer data);
 
 static void choosePathImage(GObject *source, GAsyncResult *res, gpointer data);
 
@@ -42,6 +43,7 @@ void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application, const char 
   GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), current);
   if(!child) return;
 
+  g_object_set_data(G_OBJECT(child), "Label", button.label);
   g_object_set_data(G_OBJECT(child), "Image", button.image);
 }
 
@@ -61,6 +63,12 @@ void initializeUserInterface(GtkWidget *stack, ST_APPLICATION *application, cons
   ST_FUNCIONARIO *user = application->staff;
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
+  
+  GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), "userInterface");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "userInterface");
 
   g_object_set_data(G_OBJECT(rigth_box), "application", application);
@@ -195,7 +203,7 @@ void initializeUserInterface(GtkWidget *stack, ST_APPLICATION *application, cons
   gtk_widget_set_halign(btn.button, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(rigth_box), btn.button);
-  //g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitAdd), application);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitAdd), application);
 }
 
 static void clickedButtonLogout(GtkButton *button, gpointer data) {
@@ -237,6 +245,9 @@ static void clickedButtonBack(GtkButton *button, gpointer data) {
   
     GtkWidget *image = g_object_get_data(G_OBJECT(child), "Image");
     gtk_image_set_from_file(GTK_IMAGE(image), application->staff->pathToImage);
+    
+    GtkWidget *label = g_object_get_data(G_OBJECT(child), "Label");
+    gtk_label_set_text(GTK_LABEL(label), application->staff->nome);
   }
   
   GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), "userInterface");
@@ -308,6 +319,63 @@ static void clickedButtonDeleteImage(GtkButton *button, gpointer data) {
 
   GtkWidget *image = g_object_get_data(G_OBJECT(rigth_box), "Image");
   gtk_image_set_from_file(GTK_IMAGE(image), user->pathToImage);
+}
+
+static void clickedButtonSubmitAdd(GtkButton *button, gpointer data) {
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+  
+  ST_FUNCIONARIO *user = application->staff;
+
+  GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(button));
+
+  GtkWidget *entry = g_object_get_data(G_OBJECT(rigth_box), "Name");
+  GtkEntryBuffer *buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+  const char *name = gtk_entry_buffer_get_text(buffer);
+
+  entry = g_object_get_data(G_OBJECT(rigth_box), "Username");
+  buffer = gtk_entry_get_buffer(GTK_ENTRY(entry));
+  const char *username = gtk_entry_buffer_get_text(buffer);
+  
+  entry = g_object_get_data(G_OBJECT(rigth_box), "Password");
+  const char *password = gtk_editable_get_text(GTK_EDITABLE(entry));
+  
+  ST_FUNCIONARIO staff[MAX_FUNCIONARIOS] = {0};
+  loadUserFile(staff);
+  
+  if(!usernameValidate(staff, username) && strcmp(user->username, username) != 0) {
+    GtkWidget *label = g_object_get_data(G_OBJECT(rigth_box), "label-error");
+    gtk_label_set_text(GTK_LABEL(label), "Username not available.\n\t\tPlease try another.");
+    gtk_widget_set_visible(label, true);
+    return;
+  }
+
+  if(strlen(password) > 0 && strlen(password) < 5) {
+    GtkWidget *label = g_object_get_data(G_OBJECT(rigth_box), "label-error");
+    gtk_label_set_text(GTK_LABEL(label), "Password not available.\n\t\tPlease try another.");
+    gtk_widget_set_visible(label, true);
+    return;
+  }
+  
+  strncpy(staff[user->ID - 1].nome, name, STRING_MAX - 1);
+  staff[user->ID - 1].nome[STRING_MAX - 1] = '\0';
+
+  strncpy(staff[user->ID - 1].username, username, STRING_MAX - 1);
+  staff[user->ID - 1].username[STRING_MAX - 1] = '\0';
+
+  if(strlen(password) >= 5) {
+    if(encryptPassword(&staff[user->ID - 1], password)) {
+      strncpy(user->password, staff[user->ID - 1].password, PASSWORD_MAX - 1);
+      user->password[PASSWORD_MAX - 1] = '\0';
+    }
+  }
+
+  strncpy(user->nome, name, STRING_MAX - 1);
+  user->nome[STRING_MAX - 1] = '\0';
+  
+  strncpy(user->username, username, STRING_MAX - 1);
+  user->username[STRING_MAX - 1] = '\0';
+  
+  updateUserFile(staff);
 }
 
 static void choosePathImage(GObject *source, GAsyncResult *res, gpointer data) {
