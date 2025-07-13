@@ -30,6 +30,7 @@ void initializeUIDoctors(GtkWidget *stack, ST_APPLICATION *application) {
   ST_MEDICO *doctors = application->doctors;
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "doctors");
   
   g_object_set_data(G_OBJECT(rigth_box), "application", application);
@@ -190,6 +191,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "AddDoctors");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "AddDoctors");
 
@@ -317,6 +319,7 @@ static void clickedButtonEdit(GtkButton *button, gpointer data) {
   }
   
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "EditDoctors");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "EditDoctors");
  
@@ -445,6 +448,7 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "ToggleDoctors");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "ToggleDoctors");
  
@@ -571,6 +575,7 @@ static void clickedButtonView(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "ViewDoctors");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "ViewDoctors");
  

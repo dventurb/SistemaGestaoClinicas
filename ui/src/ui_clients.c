@@ -31,6 +31,7 @@ void initializeUIClients(GtkWidget *stack, ST_APPLICATION *application) {
   ST_CLIENTE *clients = application->clients;
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "clients");
 
   g_object_set_data(G_OBJECT(rigth_box), "application", application);
@@ -199,6 +200,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "AddClients");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "AddClients");
 
@@ -374,6 +376,7 @@ static void clickedButtonEdit(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "EditClients");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "EditClients");
  
@@ -551,6 +554,7 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "ToggleClients");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "ToggleClients");
  
@@ -689,6 +693,7 @@ static void clickedButtonView(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "ViewClients");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "ViewClients");
  

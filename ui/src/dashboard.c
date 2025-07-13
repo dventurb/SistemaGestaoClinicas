@@ -5,6 +5,7 @@ void initializeDashboard(GtkWidget *stack, ST_APPLICATION *application) {
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "dashboard");
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "dashboard");
 
   GtkWidget *rigth_top_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);

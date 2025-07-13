@@ -35,6 +35,7 @@ static void changedDropdownStartHour(GtkDropDown *dropdown, GParamSpec *pspec, g
  */
 void initializeUIAppointments(GtkWidget *stack, ST_APPLICATION *application) {
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "appointments");
   
   GtkWidget *rigth_top_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -209,6 +210,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "AddAppointments");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "AddAppointments");
 
@@ -416,6 +418,7 @@ static void clickedButtonEdit(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "EditAppointments");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "EditAppointments");
 
@@ -627,6 +630,7 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "ToggleAppointments");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "ToggleAppointments");
  
@@ -787,6 +791,7 @@ static void clickedButtonView(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "ViewAppointments");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "ViewAppointments");
  

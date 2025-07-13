@@ -21,6 +21,7 @@ void initializeUserMenu(GtkWidget *box, ST_APPLICATION *application, const char 
   ST_FUNCIONARIO *user = application->staff; // Current user 
  
   GtkWidget *user_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+  gtk_widget_add_css_class(user_box, "user-box");
   gtk_box_append(GTK_BOX(box), user_box);
 
   ST_BUTTON button;
@@ -63,6 +64,7 @@ void initializeUserInterface(GtkWidget *stack, ST_APPLICATION *application, cons
   ST_FUNCIONARIO *user = application->staff;
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
+  gtk_widget_add_css_class(rigth_box, "box");
   
   GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), "userInterface");
   if(child) {

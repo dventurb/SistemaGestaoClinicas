@@ -26,6 +26,7 @@ void createAuthWindow(GtkApplication *app, gpointer data) {
   g_object_set_data(G_OBJECT(window), "app", app);
 
   GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_widget_add_css_class(main_box, "box");
   gtk_window_set_child(GTK_WINDOW(window), main_box);
 
   GtkWidget *stack = gtk_stack_new();
@@ -91,6 +92,7 @@ void createLoginForm(ST_APPLICATION *application, GtkWidget *stack) {
   GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
   gtk_widget_set_halign(left_box, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(left_box, true);
+  gtk_widget_add_css_class(left_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), left_box, "login");
 
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -190,6 +192,7 @@ void createRegisterForm(ST_APPLICATION *application, GtkWidget *stack) {
   GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
   gtk_widget_set_halign(left_box, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(left_box, true);
+  gtk_widget_add_css_class(left_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), left_box, "register");
 
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
