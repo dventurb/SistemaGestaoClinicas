@@ -26,6 +26,11 @@
 #define USER_IMAGE_3_PATH "assets/images/users/3.png"
 #define USER_IMAGE_4_PATH "assets/images/users/4.png"
 
+#define DOCTOR_CARD_PATH "assets/icons/core/card_doctor.png"
+#define CLIENT_CARD_PATH "assets/icons/core/card_client.png"
+#define APPOINTMENT_CARD_PATH "assets/icons/core/card_appointment.png"
+#define SPECIALTY_CARD_PATH "assets/icons/core/card_specialty.png"
+
 #define MONTHLY_REPORT_COVER "assets/images/reports/report_cover.png"
 
 #endif

@@ -50,6 +50,102 @@ void createButtonWithImageLabel(ST_BUTTON *button, const char *pathToImage, cons
   }
 }
 
+GtkWidget *createAnalyticCard(CARD_COLOR color, const char *pathToImage, const char *title, const char *info, const char *subtitle)  {
+  GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+  gtk_widget_set_size_request(box, 200, 200);
+  
+  GtkWidget *image_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  gtk_widget_set_halign(image_box, GTK_ALIGN_START);
+  gtk_widget_set_hexpand(image_box, false);
+  gtk_widget_set_size_request(image_box, 40, 40);
+  gtk_box_append(GTK_BOX(box), image_box);
+
+  if(pathToImage) {
+    GtkWidget *image = gtk_image_new_from_file(pathToImage);
+    gtk_widget_set_size_request(image, 30, 30);
+    gtk_widget_set_margin_top(image, 5);
+    gtk_widget_set_valign(image, GTK_ALIGN_CENTER);
+    gtk_box_append(GTK_BOX(image_box), image);
+  }
+  
+  if(title) {
+    GtkWidget *label = gtk_label_new(title);
+    gtk_widget_set_margin_top(label, 10);
+    gtk_widget_add_css_class(label, "box-card-title");
+    gtk_box_append(GTK_BOX(box), label);
+  }
+
+  if(info) {
+    GtkWidget *label = gtk_label_new(info);
+    gtk_widget_set_margin_top(label, 10);
+    gtk_widget_add_css_class(label, "box-card-info");
+    gtk_box_append(GTK_BOX(box), label);
+  }
+  
+  if(subtitle) {
+    GtkWidget *label = gtk_label_new(subtitle);
+    gtk_widget_set_margin_top(label, 10);
+    gtk_widget_add_css_class(label, "box-card-subtitle");
+    gtk_box_append(GTK_BOX(box), label);
+  }
+
+  const char **css_style = getCardColorClass(color);
+  if(css_style) {
+    gtk_widget_add_css_class(box, css_style[0]);
+    gtk_widget_add_css_class(image_box, css_style[1]);
+
+    for(int i = 0; i < 2; i++) {
+      free((void *)css_style[i]);
+      css_style[i] = NULL;
+    }
+  }
+  free(css_style);
+  css_style = NULL;
+
+  return box;
+}
+
+const char **getCardColorClass(CARD_COLOR color) {
+  const char **strings = malloc( 2 * sizeof(char *));
+  if(!strings) return NULL;
+
+  switch (color) {
+    case CARD_COLOR_BLUE: 
+      strings[0] = strdup("box-blue");
+      strings[1] = strdup("box-image-blue");
+      break;
+    case CARD_COLOR_GREEN: 
+      strings[0] = strdup("box-green");
+      strings[1] = strdup("box-image-green");
+      break;
+    case CARD_COLOR_ORANGE: 
+      strings[0] = strdup("box-orange");
+      strings[1] = strdup("box-image-orange");
+      break;
+    case CARD_COLOR_RED:    
+      strings[0] = strdup("box-red");
+      strings[1] = strdup("box-image-red");
+      break;
+    case CARD_COLOR_PURPLE: 
+      strings[0] = strdup("box-purple");
+      strings[1] = strdup("box-image-purple");
+      break;
+    case CARD_COLOR_YELLOW: 
+      strings[0] = strdup("box-yellow");
+      strings[1] = strdup("box-image-yellow");
+      break;
+    case CARD_COLOR_CYAN:   
+      strings[0] = strdup("box-cyan");
+      strings[1] = strdup("box-image-cyan");
+      break;
+    default: 
+      strings[0] = strdup("box-blue");
+      strings[1] = strdup("box-image-blue");
+      break;
+  }
+  return strings;
+}
+
 /**
   * @brief Detects the type of input used for search the client.
   *
@@ -127,7 +223,7 @@ SEARCH_TYPE detectSearchType(const char *input) {
 }
 
 GtkStringList *loadSpecialty() {
-  GtkStringList *list = gtk_string_list_new(NULL);
+GtkStringList *list = gtk_string_list_new(NULL);
 
   FILE *file = fopen("data/especialidade.txt", "r");
   if(!file) {
@@ -212,3 +308,5 @@ void clearStackPages(GtkWidget *stack) {
     }
   }
 }
+
+

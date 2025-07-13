@@ -7,5 +7,6 @@
 #include "userMenu.h"
 
 void initializeDashboard(GtkWidget *stack, ST_APPLICATION *application);
+void addCardsToGrid(GtkWidget *grid, ST_APPLICATION *application);
 
 #endif
