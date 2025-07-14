@@ -1,6 +1,6 @@
 .box-card-title {
   font-weight: 700;
-  font-size: 1.02rem;
+  font-size: 1.00rem;
   margin-bottom: 4px;
   color: #333;
 }
@@ -15,6 +15,13 @@
   font-size: 0.9rem;
   color: #666;
   font-style: italic;
+}
+
+.box-white {
+  background-color: #FFFFFF;
+  padding: 4px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .box-blue {

@@ -1,7 +1,7 @@
 #include "dashboard.h"
 
 void initializeDashboard(GtkWidget *stack, ST_APPLICATION *application) {
-  ST_CLIENTE *clients = application->clients;
+  ST_CONSULTA *appointments = application->appointments;
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "dashboard");
@@ -22,12 +22,60 @@ void initializeDashboard(GtkWidget *stack, ST_APPLICATION *application) {
   initializeUserMenu(rigth_top_box, application, "dashboard");
  
   GtkWidget *grid = gtk_grid_new();
-  gtk_grid_set_column_spacing(GTK_GRID(grid), 15);
-  gtk_grid_set_row_spacing(GTK_GRID(grid), 5);
+  gtk_grid_set_column_spacing(GTK_GRID(grid), 20);
+  gtk_grid_set_row_spacing(GTK_GRID(grid), 30);
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
   gtk_box_append(GTK_BOX(rigth_box), grid);
   
   addCardsToGrid(grid, application);
+
+  GtkChart *chart; 
+  chart = GTK_CHART(gtk_chart_new());
+  gtk_chart_set_type(chart, GTK_CHART_TYPE_PIE);
+  gtk_chart_set_font(GTK_CHART(chart), "Sans");
+  gtk_chart_set_font_size(GTK_CHART(chart), 14);
+  
+  GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+  gtk_widget_set_size_request(box, 150, 150);
+  gtk_widget_add_css_class(box, "box-white");
+  gtk_grid_attach(GTK_GRID(grid), box, 0, 1, 2, 2);
+
+  int counter = 0;
+  for(int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
+    if(appointments[i].estado == Agendado) {
+      counter++;
+    }
+  }
+
+  char scheduled[30];
+  snprintf(scheduled, sizeof(scheduled), "Scheduled: %d", counter);
+  gtk_chart_add_slice(GTK_CHART(chart), (double)counter, scheduled, "#F1C40F");
+  
+  counter = 0;
+  for(int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
+    if(appointments[i].estado == Realizado) {
+      counter++;
+    }
+  }
+
+  char completed[30];
+  snprintf(completed, sizeof(completed), "Completed: %d", counter);
+  gtk_chart_add_slice(GTK_CHART(chart), (double)counter, completed, "#2ECC71");
+
+  counter = 0;
+  for(int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
+    if(appointments[i].estado == Cancelado) {
+      counter++;
+    }
+  }
+
+  char canceled[30];
+  snprintf(canceled, sizeof(canceled), "Canceled: %d", counter);
+  gtk_chart_add_slice(GTK_CHART(chart), (double)counter, canceled, "#E74C3C");
+  
+  gtk_widget_set_size_request(GTK_WIDGET(chart), 180, 180);
+
+  gtk_box_append(GTK_BOX(box), GTK_WIDGET(chart));
 }
 
 void addCardsToGrid(GtkWidget *grid, ST_APPLICATION *application) {
