@@ -5,6 +5,7 @@
  void dataAtual(ST_DATA *data_hora_atual){
    time_t t = time(NULL);
    struct tm tm = *localtime(&t);
+   data_hora_atual->semana = tm.tm_wday + 1;
    data_hora_atual->hora = tm.tm_hour;
    data_hora_atual->dia = tm.tm_mday;
    data_hora_atual->mes = tm.tm_mon + 1;
@@ -561,7 +562,6 @@ void createReportPDF(ST_APPLICATION *application) {
   *
 */
 void createTablePDF(ST_CONSULTA *appointments, ST_MEDICO *doctors, HPDF_Doc *pdf, HPDF_Page *page, float *ypos) {
-
   int rows = 0; 
 
   for (int i = 0; i < numberOf(doctors, TYPE_DOCTORS); i++) {
@@ -582,9 +582,10 @@ void createTablePDF(ST_CONSULTA *appointments, ST_MEDICO *doctors, HPDF_Doc *pdf
   
   hpdftbl_t tbl;
   if(rows > 30) {
-    tbl = hpdftbl_create(30, 3);
+    tbl = hpdftbl_create_title(30, 3, NULL);
+
   }else {
-    tbl = hpdftbl_create(rows + 1, 3);
+    tbl = hpdftbl_create_title(rows, 3, NULL);
   }
   
   hpdftbl_set_colwidth_percent(tbl, 0, 33);

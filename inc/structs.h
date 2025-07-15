@@ -34,6 +34,7 @@ typedef struct {
 }ST_MORADA;
 
 typedef struct {
+  unsigned int semana;
   unsigned int hora;
   unsigned int dia;
   unsigned int mes;

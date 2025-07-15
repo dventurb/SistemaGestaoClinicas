@@ -84,7 +84,7 @@ void initializeUIAppointments(GtkWidget *stack, ST_APPLICATION *application) {
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled), grid);
 
   //TODO: Not in the  correct place. 
-  createReportPDF(application);
+ // createReportPDF(application);
 }
 
 /** 

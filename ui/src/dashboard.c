@@ -25,6 +25,7 @@ void initializeDashboard(GtkWidget *stack, ST_APPLICATION *application) {
   gtk_grid_set_column_spacing(GTK_GRID(grid), 20);
   gtk_grid_set_row_spacing(GTK_GRID(grid), 30);
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
+  gtk_widget_set_margin_bottom(grid, 30);
   gtk_box_append(GTK_BOX(rigth_box), grid);
   
   addCardsToGrid(grid, application);
@@ -36,9 +37,9 @@ void initializeDashboard(GtkWidget *stack, ST_APPLICATION *application) {
   gtk_chart_set_font_size(GTK_CHART(chart), 14);
   
   GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
-  gtk_widget_set_size_request(box, 150, 150);
+  gtk_widget_set_size_request(box, 150, 350);
   gtk_widget_add_css_class(box, "box-white");
-  gtk_grid_attach(GTK_GRID(grid), box, 0, 1, 2, 2);
+  gtk_grid_attach(GTK_GRID(grid), box, 0, 1, 2, 4);
 
   int counter = 0;
   for(int i = 0; i < numberOf(appointments, TYPE_APPOINTMENTS); i++) {
@@ -73,8 +74,73 @@ void initializeDashboard(GtkWidget *stack, ST_APPLICATION *application) {
   snprintf(canceled, sizeof(canceled), "Canceled: %d", counter);
   gtk_chart_add_slice(GTK_CHART(chart), (double)counter, canceled, "#E74C3C");
   
-  gtk_widget_set_size_request(GTK_WIDGET(chart), 180, 180);
+  gtk_widget_set_margin_top(GTK_WIDGET(chart), 60);
+  gtk_widget_set_size_request(GTK_WIDGET(chart), 180, 240);
 
+  gtk_box_append(GTK_BOX(box), GTK_WIDGET(chart));
+
+  chart = GTK_CHART(gtk_chart_new());
+  gtk_chart_set_type(chart, GTK_CHART_TYPE_COLUMN);
+  gtk_chart_set_font(GTK_CHART(chart), "Sans");
+  gtk_chart_set_font_size(GTK_CHART(chart), 14);
+  
+  ST_DATA date;
+  dataAtual(&date);
+  
+  struct tm tm = {0};
+  tm.tm_mday = date.dia;
+  tm.tm_mon = date.mes - 1;
+  tm.tm_year = date.ano - 1900;
+  mktime(&tm);
+  
+  // Get the first day of the week
+  while(tm.tm_wday != 0) {
+    tm.tm_mday -= 1;
+    mktime(&tm); // For example the date: 01-01-2025 will turn into 31-12-2024.
+  }
+  
+  const char *colors[] = {
+    "#3498DB",
+    "#2ECC71",
+    "#F1C40F",
+    "#E67E22",
+    "#E74C3C",
+    "#9B59B6",
+    "#95A5A6"
+  };
+
+  const char *week[] = {
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+  };
+
+  for(int i = 0; i < 7; i++) {
+    mktime(&tm);
+    
+    char data[11];
+    snprintf(data, sizeof(data), "%02u-%02u-%04u", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
+    
+    ST_CONSULTA *appointments_scheduled = NULL;
+    int counter = procurarConsultasData(appointments, &appointments_scheduled, data);
+    gtk_chart_add_column(GTK_CHART(chart), (double)counter, week[i], colors[i]);
+
+    tm.tm_mday += 1;
+  }
+  
+  box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+  //gtk_widget_set_size_request(box, 200, 350);
+  gtk_widget_add_css_class(box, "box-white");
+  gtk_grid_attach(GTK_GRID(grid), box, 2, 1, 2, 4);
+  
+  //gtk_widget_set_hexpand(GTK_WIDGET(chart), true);
+  gtk_widget_set_vexpand(GTK_WIDGET(chart), true);
+  gtk_widget_set_size_request(GTK_WIDGET(chart), 200, 200);
+  gtk_widget_set_margin_bottom(GTK_WIDGET(chart), 50);
   gtk_box_append(GTK_BOX(box), GTK_WIDGET(chart));
 }
 

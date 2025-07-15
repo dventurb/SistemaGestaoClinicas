@@ -325,7 +325,7 @@ void carregarFicheiroConsulta(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_M
     }else if(strcmp(token, "Agendado") == 0){
       consultas[i].estado = Agendado;
     }else if(strcmp(token, "Realizado") == 0){
-    consultas[i].estado = Realizado;
+      consultas[i].estado = Realizado;
     }
 
     ST_DATA date;
@@ -344,7 +344,6 @@ void carregarFicheiroConsulta(ST_CONSULTA *consultas, ST_CLIENTE *clientes, ST_M
   }
 
   atualizarFicheiroConsulta(consultas);
-
   fclose(ficheiro);
 }
 
