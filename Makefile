@@ -5,7 +5,7 @@ LDFLAGS = $(shell pkg-config --libs gtk4) -lcrypt -lhpdf lib/libhpdftbl.a -lm
 
 SRC = $(wildcard src/*.c) $(wildcard ui/src/*.c) $(wildcard ui/lib/*.c)
 OBJ = $(SRC:.c=.o)
-BIN = executavel
+BIN = hospital-management
 
 all: $(BIN)
 
