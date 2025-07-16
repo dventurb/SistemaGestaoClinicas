@@ -1,0 +1,6 @@
+1,Tiago Leitão,4990444,Freixo,Ponte de Lima,13,02,1999,tiago.leitao@gmail.com,211303534,112025732,Ativo
+2,Abel Do Carmo,4950332,Abreu,Monção,01,04,1990,abel.do.carmo@gmail.com,208726659,113403655,Ativo
+3,Manuel Garcia ,4900222,Viana do Castelo,Viana do Castelo,01,05,1997,manuelgarcia@gmail.com,216229235,131843833,Ativo
+4,Afonso Pereira,4400222,Vila Nova de Gaia,Vila Nova de Gaia,20,03,2001,afonso.sapereira@hotmail.com,218467087,118337002,Ativo
+5,Martim Barbosa,4100122,Porto,Porto,11,02,1998,martimbarbosa@yahoo.com,216405998,184479533,Ativo
+6,Lourenço Oliveira,2200221,Abrantes,Abrantes,03,02,2001,lourencooliveira@gmail.com,231664214,221464212,Ativo

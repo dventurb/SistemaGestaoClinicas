@@ -1,11 +1,11 @@
 CC = gcc
 
-CFLAGS = $(shell pkg-config --cflags gtk4) -Iinc -Iui/inc -Iui/lib -Wall -Wextra -g
-LDFLAGS = $(shell pkg-config --libs gtk4)
+CFLAGS = $(shell pkg-config --cflags gtk4) -Iinc -Iui/inc -Iui/lib -I./lib -Wall -Wextra -g
+LDFLAGS = $(shell pkg-config --libs gtk4) -lcrypt -lhpdf lib/libhpdftbl.a -lm
 
 SRC = $(wildcard src/*.c) $(wildcard ui/src/*.c) $(wildcard ui/lib/*.c)
 OBJ = $(SRC:.c=.o)
-BIN = executavel
+BIN = hospital-management
 
 all: $(BIN)
 

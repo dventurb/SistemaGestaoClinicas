@@ -2,35 +2,26 @@
 #include "auxiliares.h"
 
 // FUNÇÕES AUXILIARES
-void clear(void){
-  #ifdef _WIN32
-    system("cls");
-  #else 
-    system("clear");
-  #endif
-}
-
-void delay(int num){
-  #ifdef _WIN32
-    Sleep(num * 1000);
-  #else
-    sleep(num);
-  #endif
-}
-
-void limparBuffer(void){
-  int c;
-  while((c = getchar()) != '\n' && c != EOF);
-}
-
  void dataAtual(ST_DATA *data_hora_atual){
    time_t t = time(NULL);
    struct tm tm = *localtime(&t);
+   data_hora_atual->semana = tm.tm_wday + 1;
    data_hora_atual->hora = tm.tm_hour;
    data_hora_atual->dia = tm.tm_mday;
    data_hora_atual->mes = tm.tm_mon + 1;
    data_hora_atual->ano = tm.tm_year + 1900; 
  }
+
+const char *getMonthString(int month) {
+  const char *strings[] = {
+    "January", "February", "March",
+    "April", "May", "June", 
+    "July", "August","September",
+    "October", "November", "December"
+  };
+  
+  return strings[month - 1]; // Index 0 it's January
+}
 
  bool obterMorada(ST_CLIENTE *cliente, long unsigned int codigo_postal){
    FILE *ficheiro;
@@ -119,165 +110,6 @@ const char *obterCidade(int cod_distrito, int cod_concelho) {
   return NULL;
 }
 
-void obterEspecialidade(ST_MEDICO *medico){
-  FILE *ficheiro;
-  char linha[20], especialidade[20];
-  int opcao = 1, tecla;
-  ficheiro = fopen("data/especialidade.txt", "r");
-  if (ficheiro == NULL){
-    printf("Erro\n");
-    return;
-  }
-  clear();
-  do { 
-    clear();
-    printf("%s%sObter uma lista das especialidades\n", (opcao == 1) ? GREEN "▶" : "", RESET);
-    printf("%s%sInserir a especialidade do médico\n", (opcao == 2) ? GREEN "▶" : "", RESET);
-    tecla = getKey();
-    if(tecla == 10){ 
-      switch (opcao){
-        case 1:
-          listarEspecialidades();
-          break;
-        case 2:
-          clear();
-          int especialidade_valida = 0;
-          do{ 
-            printf("Especialidade: ");
-            fgets(especialidade, sizeof(especialidade), stdin);
-            especialidade[strcspn(especialidade, "\n")] = '\0';
-            especialidade[0] = toupper(especialidade[0]);
-            rewind(ficheiro);
-            while (fgets(linha, sizeof(linha), ficheiro)){
-              linha[strcspn(linha, "\n")] = '\0';
-              if(strncmp(especialidade, linha, 5) == 0){
-                strcpy(medico->especialidade, linha);
-                especialidade_valida = 1;
-                break;
-              }
-            }
-            if (!especialidade_valida){
-              printf("Especialidade não é válida.\a\n");
-            }
-          }while(especialidade_valida != 1);
-          break;
-      }
-    }
-    navegarMenu(&opcao, tecla, 2);
-  }while((opcao != 2) || tecla != 10);
-  fclose(ficheiro);
-  return;
-}
-
-void listarEspecialidades(void){
-  FILE *ficheiro;
-  char linha[20];
-  ficheiro = fopen("data/especialidade.txt", "r");
-  if(ficheiro == NULL){
-    printf("Erro.\n");
-    return;
-  }
-  clear();
-  printf("Lista das Especialidades Disponíveis:\n\n");
-  while(fgets(linha, sizeof(linha), ficheiro)){
-    printf("%s", linha);
-  }
-  fclose(ficheiro);
-  pressionarEnter();
-  return;
-}
-
-void pressionarEnter(void){
-  printf("\nPressionar Enter para sair.\n");
-  while (getchar() != '\n');
-}
-
-void navegarMenu(int *opcao, int tecla, int n){
-  #ifdef _WIN32
-    if(tecla == 224){
-      tecla = getKey();
-      if (tecla == 72){        // Tecla seta de cima
-        *opcao = (*opcao == 1) ? 1 : (*opcao - 1);
-      }else if (tecla == 80){  // Tecla seta de baixo
-        *opcao = (*opcao == n) ? n : (*opcao + 1);
-      }
-    }
-#else 
-    if(tecla == 27){
-      if(getKey() == 91){
-        tecla = getKey();
-        if(tecla == 65){       // Tecla seta de cima
-          *opcao = (*opcao == 1) ? 1 : (*opcao - 1);
-        }else if(tecla == 66){  // Tecla seta de baixo
-          *opcao = (*opcao == n) ? n : (*opcao + 1); 
-        }
-      }
-    }
-#endif
-}
-
-void selecionarOpcao(int *opcao, int tecla){
-  #ifdef _WIN32
-    if(tecla == 224){
-      tecla = getKey();
-      if(tecla == 75){
-        *opcao = (*opcao == 1) ? 1 : (*opcao - 1);
-      }else if(tecla == 77){
-        *opcao = (*opcao == 2) ? 2 : (*opcao + 1);
-      }
-    }
-  #else
-    if(tecla == 27){
-      if(getKey() == 91){
-        tecla = getKey();
-        if(tecla == 68){
-          *opcao = (*opcao == 1) ? 1 : (*opcao - 1);
-        }else if (tecla == 67){
-          *opcao = (*opcao == 2) ? 2 : (*opcao + 1);
-        }
-      }
-    }
-#endif
-}
-
-int getKey(void){
-  #ifdef _WIN32
-    int ch;
-    ch = _getch();
-    if (ch == 13){   // Enter em sistemas Windows
-      return 10;
-    }else{
-      return ch;
-    }
-  #else
-    struct termios old, new;  // old - Configurações antigas; new - Configurações novas
-    int ch;
-    tcgetattr(STDIN_FILENO, &old);
-    new = old;
-    new.c_lflag &= ~(ECHO | ICANON);  // Desativar exibição do stdin e necessidade do Enter
-    tcsetattr(STDIN_FILENO, TCSANOW, &new);
-    ch = getchar();
-    tcsetattr(STDIN_FILENO, TCSANOW, &old);
-    return ch;
-  #endif
-}
-
-void ativarDesativarCursor(int n){
-#ifdef _WIN32
-  HANDLE hConsole = GetStdHandle(STD_INPUT_HANDLE);
-  CONSOLE_CURSOR_INFO cursorInfo;
-  GetConsoleCursorInfo(hConsole, &cursorInfo);
-  cursorInfo.bVisible = (n != 0);
-  setConsoleCursorInfo(hConsole, &cursorInfo);
-#else 
-  if(n == 0){
-    printf("\e[?25l");
-  }else {
-    printf("\e[?25h");
-  }
-#endif
-}
-
 /** 
  * @brief Returns the total number of elements in a given data.
  *
@@ -306,6 +138,12 @@ int numberOf(void *data, TYPE_STRUCT type) {
     case TYPE_APPOINTMENTS:
       ST_CONSULTA *appointments = (ST_CONSULTA *)data;
       while (appointments[i].ID != 0) {
+        i++;
+      }
+      return i;
+    case TYPE_STAFF:
+      ST_FUNCIONARIO *staff = (ST_FUNCIONARIO *)data;
+      while(staff[i].ID != 0) {
         i++;
       }
       return i;
@@ -523,7 +361,291 @@ bool validarLicenseNumber(const char *license_number, ST_MEDICO *doctors) {
   return true;
 }
 
+/** 
+  * @brief Generates a PDF report for the appointments.
+  *
+  * This function creates a PDF report with information
+  * about the appointments and doctors. 
+  * 
+  * @param application    Pointer to the ST_APPLICATION struct.
+  *
+  *
+*/
+void createReportPDF(ST_APPLICATION *application) {
+  ST_CONSULTA *appointments = application->appointments;
+  ST_MEDICO *doctors = application->doctors;
 
+  HPDF_Doc pdf = HPDF_New(NULL, NULL);
+
+  HPDF_Page cover = HPDF_AddPage(pdf);
+  HPDF_Image image = HPDF_LoadPngImageFromFile(pdf, MONTHLY_REPORT_COVER);
+
+  HPDF_REAL img_width = HPDF_Image_GetWidth(image);
+  HPDF_REAL img_height = HPDF_Image_GetHeight(image);
+
+  HPDF_Page_SetWidth(cover, img_width);
+  HPDF_Page_SetHeight(cover, img_height);
+
+  HPDF_Page_DrawImage(cover, image, 0, 0, img_width, img_height);
+  
+  HPDF_Font font = HPDF_GetFont(pdf, "Helvetica", NULL);
+
+  HPDF_Page page = HPDF_AddPage(pdf);
+  HPDF_Page_BeginText(page);
+  HPDF_Page_SetFontAndSize(page, font, 20);
+  
+  const char *title = "Hospital Management Monthly Report";
+  
+  HPDF_Page_TextRect(page, 50, 750, 550, 720, title, HPDF_TALIGN_LEFT, NULL);
+  HPDF_Page_EndText(page);
+
+  HPDF_Page_BeginText(page);
+  HPDF_Page_SetFontAndSize(page, font, 18);
+
+  const char *subtitle_1 = "Overview";
+  
+  HPDF_Page_TextRect(page, 50, 710, 550, 690, subtitle_1, HPDF_TALIGN_LEFT, NULL);
+  HPDF_Page_EndText(page);
+
+  HPDF_Page_BeginText(page);
+  HPDF_Page_SetFontAndSize(page, font, 12);
+
+  ST_DATA date;
+  dataAtual(&date);
+  const char *month = getMonthString(date.mes);
+
+  char text[512];
+
+  snprintf(text, sizeof(text), "This report provides a comprehensive overview of the hospital operations for the %s %u, "
+           "focusing on the appointments managed by our doctors. Detailed insights into the "
+           "appointment counts for each doctor and their respective specialities are provided "
+           "to ensure a clear understanding of team performance.", month, date.ano);
+
+  HPDF_Page_TextRect(page, 50, 680, 550, 620, text, HPDF_TALIGN_JUSTIFY, NULL);
+  HPDF_Page_EndText(page);
+
+  HPDF_Page_BeginText(page);
+  HPDF_Page_SetFontAndSize(page, font, 18);
+
+  const char *subtitle_2 = "Appointments Summary";
+  
+  HPDF_Page_TextRect(page, 50, 610, 550, 590, subtitle_2, HPDF_TALIGN_LEFT, NULL);
+  HPDF_Page_EndText(page);
+  
+  HPDF_Page_BeginText(page);
+  HPDF_Page_SetFontAndSize(page, font, 12);
+  
+  ST_CONSULTA *appointments_found = NULL;
+  int counter = obterListaConsultasMesAtual(appointments, &appointments_found);
+  appointments_found[counter].ID = 0; // Terminator
+
+  snprintf(text, sizeof(text), "The total number of appointments scheduled for this month was %d, "
+           "with a breakdown into individual doctor’s contributions outlined below.", counter);
+
+  HPDF_Page_TextRect(page, 50, 580, 550, 520, text, HPDF_TALIGN_JUSTIFY, NULL);
+  HPDF_Page_EndText(page);
+
+  HPDF_Page_BeginText(page);
+  HPDF_Page_SetFontAndSize(page, font, 16);
+
+  const char *subtitle_3 = "Appointments by Doctor";
+  
+  HPDF_Page_TextRect(page, 50, 510, 550, 490, subtitle_3, HPDF_TALIGN_LEFT, NULL);
+  HPDF_Page_EndText(page);
+  
+  float ypos = 480;
+
+  createTablePDF(appointments_found, doctors, &pdf, &page, &ypos);
+  ypos -= 20;
+  
+  // To low for the new subtitle
+  if(ypos < 80) {
+    page = HPDF_AddPage(pdf);
+    ypos = 750;
+  }
+  
+  HPDF_Page_BeginText(page);
+  HPDF_Page_SetFontAndSize(page, font, 18);
+  
+  const char *subtitle_4 = "Speciality Insights";
+
+  HPDF_Page_TextRect(page, 50, ypos, 550, ypos - 20, subtitle_4, HPDF_TALIGN_LEFT, NULL);
+  HPDF_Page_EndText(page);
+
+  ypos -= 30;
+
+  if(ypos < 60) {
+    page = HPDF_AddPage(pdf);
+    ypos = 750;
+  }
+
+  HPDF_Page_BeginText(page);
+  HPDF_Page_SetFontAndSize(page, font, 12);
+
+  snprintf(text, sizeof(text), "The specialities in our hospital are diverse, each contributing significantly to our" 
+           "monthly operations. Below is a summary of appointments by speciality:");
+  
+  HPDF_Page_TextRect(page, 50, ypos, 550, ypos - 40, text, HPDF_TALIGN_JUSTIFY, NULL);
+  HPDF_Page_EndText(page);
+  
+  ypos -= 40;
+  
+  GtkStringList *list = loadSpecialty();
+  for(unsigned int i = 0; i < g_list_model_get_n_items(G_LIST_MODEL(list)); i++) {
+    counter = obterNumeroConsultasEspecialidade(appointments_found, gtk_string_list_get_string(list, i));
+    if(counter > 0) {
+      
+      if(ypos < 40) {
+        page = HPDF_AddPage(pdf);
+        ypos = 750;
+      }
+
+      snprintf(text, sizeof(text), "· %s: %d appointments", gtk_string_list_get_string(list, i), counter);
+      
+      ypos -= 20;
+      
+      HPDF_Page_BeginText(page);
+      HPDF_Page_SetFontAndSize(page, font, 12);
+      HPDF_Page_TextRect(page, 60, ypos, 550, ypos - 15, text, HPDF_TALIGN_LEFT, NULL);
+      HPDF_Page_EndText(page);
+
+      ypos -= 40;
+    }
+  }
+
+    if(ypos < 80) {
+      page = HPDF_AddPage(pdf);
+      ypos = 750;
+    }
+
+    HPDF_Page_BeginText(page);
+    HPDF_Page_SetFontAndSize(page, font, 18);
+  
+    const char *subtitle_5 = "Conclusion";
+
+    HPDF_Page_TextRect(page, 50, ypos, 550, ypos - 20, subtitle_5, HPDF_TALIGN_LEFT, NULL);
+    HPDF_Page_EndText(page);
+    
+    ypos -= 30;
+    
+    HPDF_Page_BeginText(page);
+    HPDF_Page_SetFontAndSize(page, font, 12);
+    
+    snprintf(text, sizeof(text), "%s %u illustrates a robust schedule and effective planning by the hospital " 
+             "management team across various specialities. Attention to the individual performances"
+            "of doctors and departments can guide future strategic initiatives to optimize operations further.", month, date.ano);
+    
+    HPDF_Page_TextRect(page, 50, ypos, 550, ypos - 100, text, HPDF_TALIGN_JUSTIFY, NULL);
+    HPDF_Page_EndText(page);
+
+    g_object_unref(list);
+    free(appointments_found);
+
+    char filename[30];
+    snprintf(filename, sizeof(filename), "%s_%d_report.pdf", month, date.ano);
+    
+    HPDF_SaveToFile(pdf, filename);
+    HPDF_Free(pdf);
+  }
+
+/** 
+  * @brief Creates a table of doctors and their appointments in PDF.
+  *
+  * This function creates a table within the given PDF page.
+  * 
+  * @param appointments   Pointer to the ST_CONSULTA struct.
+  * @param doctors        Pointer to the ST_MEDICO struct.
+  * @param pdf            Pointer to the PDF document.
+  * @param page           Pointer to the current page (HPDF_Page).
+  * @param ypos           Pointer to the current vertical position.
+  *
+  *
+*/
+void createTablePDF(ST_CONSULTA *appointments, ST_MEDICO *doctors, HPDF_Doc *pdf, HPDF_Page *page, float *ypos) {
+  int rows = 0; 
+
+  for (int i = 0; i < numberOf(doctors, TYPE_DOCTORS); i++) {
+    int counter = obterNumeroConsultasMedico(appointments, doctors[i]);
+    if(counter > 0) {
+      rows++;
+    }
+  }
+
+  if(rows == 0) return;
+  
+  bool first_page = true; // Max 30 rows on first page and y position start in 480
+
+  HPDF_REAL xpos = hpdftbl_cm2dpi(2);
+  
+  HPDF_REAL width = hpdftbl_cm2dpi(A4PAGE_WIDTH_CM - 4); // 2cm in each side 
+  HPDF_REAL height = 0; 
+  
+  hpdftbl_t tbl;
+  if(rows > 30) {
+    tbl = hpdftbl_create_title(30, 3, NULL);
+
+  }else {
+    tbl = hpdftbl_create_title(rows, 3, NULL);
+  }
+  
+  hpdftbl_set_colwidth_percent(tbl, 0, 33);
+  hpdftbl_set_colwidth_percent(tbl, 1, 33);
+  hpdftbl_set_colwidth_percent(tbl, 2, 34);
+  
+  hpdftbl_use_header(tbl, true);
+
+  hpdftbl_set_cell(tbl, 0, 0, NULL, "Doctor Name");
+  hpdftbl_set_cell(tbl, 0, 1, NULL, "Speciality");
+  hpdftbl_set_cell(tbl, 0, 2, NULL, "Appointments Made");
+
+  int current_row = 1;
+  int processed_rows = 0;
+
+  for (int i = 0; i < numberOf(doctors, TYPE_DOCTORS); i++) {
+    int counter = obterNumeroConsultasMedico(appointments, doctors[i]);
+    int max_rows = first_page ? 30 : 50;
+    if(counter > 0) {
+      char name[105];
+      snprintf(name, sizeof(name), "Dr. %s", doctors[i].nome);
+      hpdftbl_set_cell(tbl, current_row, 0, NULL,  name);
+
+      hpdftbl_set_cell(tbl, current_row, 1, NULL, doctors[i].especialidade);
+
+      char buffer[16];
+      snprintf(buffer, sizeof(buffer), "%d", counter);
+      hpdftbl_set_cell(tbl, current_row, 2, NULL, buffer);
+
+      current_row++;
+      processed_rows++;
+
+      if(current_row >= max_rows && processed_rows < rows) {
+        hpdftbl_stroke(*pdf, *page, tbl, xpos, *ypos, width, height);
+
+        *page = HPDF_AddPage(*pdf);
+        *ypos = 750;
+        
+        int remainer = rows - processed_rows;
+        int next_page_rows = remainer > 50 ? 50 : remainer;
+
+        tbl = hpdftbl_create(next_page_rows, 3);
+
+        hpdftbl_set_colwidth_percent(tbl, 0, 33);
+        hpdftbl_set_colwidth_percent(tbl, 1, 33);
+        hpdftbl_set_colwidth_percent(tbl, 2, 34);
+  
+        hpdftbl_use_header(tbl, false);
+
+        first_page = false;
+        current_row = 0;
+      }
+    }
+  }
+
+  if(current_row > 0 && processed_rows > 0) {
+    hpdftbl_stroke(*pdf, *page, tbl, xpos, *ypos, width, height);
+    *ypos -= current_row * 20; 
+  }
+}
 
 /** 
   * @brief Converts the first letter of each word in uppercase.
@@ -550,4 +672,19 @@ const char *convertToUppercase(const char *input) {
     }
   }
   return upper;
+}
+
+void generateSalt(char *string, size_t length) {
+  const char alphanum[] =
+  "0123456789"
+  "!@#$%^&*"
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  "abcdefghijklmnopqrstuvwxyz";
+
+  int len = sizeof(alphanum) - 1;
+  
+  for (size_t i = 0; i < length - 1; i++) {
+    string[i] = alphanum[rand() % len];
+  }
+  string[length - 1] = '\0';
 }

@@ -4,7 +4,11 @@
 #include <gtk/gtk.h>
 #include "gtkchart.h"
 #include "cliente.h"
+#include "userMenu.h"
 
-void initializeDashboard(GtkWidget *stack, ST_CLIENTE *clients);
+void initializeDashboard(GtkWidget *stack, ST_APPLICATION *application);
+void addCardsToGrid(GtkWidget *grid, ST_APPLICATION *application);
+void addPieChartToGrid(GtkWidget *grid, ST_APPLICATION *application);
+void addBarChartToGrid(GtkWidget *grid, ST_APPLICATION *application);
 
 #endif

@@ -6,23 +6,25 @@ void createMainWindow(GtkApplication *app, gpointer data) {
   GtkWidget *window = gtk_application_window_new(app);
   gtk_window_set_title(GTK_WINDOW(window), "Hospital Management");
   gtk_window_set_default_size(GTK_WINDOW(window), 1100, 700);
-  gtk_widget_add_css_class(window, "window");
   
-  GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  g_object_set_data(G_OBJECT(window), "app", app);
+  
+  GtkWidget *main_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
   gtk_window_set_child(GTK_WINDOW(window), main_box);
 
   GtkWidget *left_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  gtk_widget_add_css_class(left_box, "leftbar-box");
   gtk_box_append(GTK_BOX(main_box), left_box);
  
   GtkWidget *stack = gtk_stack_new();
   gtk_stack_set_transition_type(GTK_STACK(stack), GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT);
   gtk_box_append(GTK_BOX(main_box), stack);
   
-  initializeLeftBar(left_box, stack);
+  initializeLeftBar(left_box, stack, application);
   
-  initializeDashboard(stack, application->clients);
-  initializeUIClients(stack, application->clients);
-  initializeUIDoctors(stack, application->doctors);
+  initializeDashboard(stack, application);
+  initializeUIClients(stack, application);
+  initializeUIDoctors(stack, application);
   initializeUIAppointments(stack, application);
 
   GtkCssProvider *provider = gtk_css_provider_new();

@@ -1,3 +1,9 @@
+.leftbar-box {
+  background-color: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  padding: 16px;
+}
+
 .leftbar-button {
   background-color: transparent;
   border: none;
@@ -5,10 +11,13 @@
   padding: 10px;
 }
 
-.leftbar-button:selected, 
-.leftbar-button:checked,
-.leftbar-button:active {
-  background-color: #B2E0D4;
+.leftbar-button-selected,
+.leftbar-button:hover,
+.leftbar-button:checked {
+  background-color: #B2E0D4; 
+  border: none;
+  border-radius: 0;
+  padding: 10px;
 }
 
 .leftbar-button-label {

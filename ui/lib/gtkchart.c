@@ -39,6 +39,20 @@ struct chart_point_t
     double y;
 };
 
+struct chart_slice_t 
+{
+  double value;
+  GdkRGBA color;
+  gchar *label;
+};
+
+struct chart_column_t
+{
+  double value;
+  GdkRGBA color;
+  gchar *label;
+};
+
 struct _GtkChart
 {
     GtkWidget parent_instance;
@@ -55,12 +69,16 @@ struct _GtkChart
     int width;
     void *user_data;
     GSList *point_list;
+    GSList *slice_list;
+    GSList *column_list;
     GtkSnapshot *snapshot;
     GdkRGBA text_color;
     GdkRGBA line_color;
     GdkRGBA grid_color;
     GdkRGBA axis_color;
     gchar *font_name;
+    int ticks;
+    int font_size;
 };
 
 struct _GtkChartClass
@@ -89,6 +107,9 @@ static void gtk_chart_init(GtkChart *self)
     self->grid_color.alpha = -1.0;
     self->axis_color.alpha = -1.0;
     self->font_name = NULL;
+    self->font_size = 12;
+    self->ticks = 5;
+
 
     // Automatically use GTK font
     GtkSettings *widget_settings = gtk_widget_get_settings(&self->parent_instance);
@@ -139,6 +160,9 @@ static void gtk_chart_dispose (GObject *object)
 
     g_slist_free_full(g_steal_pointer(&self->point_list), g_free);
     g_slist_free(self->point_list);
+
+    g_slist_free_full(g_steal_pointer(&self->slice_list), g_free);
+    g_slist_free(self->slice_list);
 
     G_OBJECT_CLASS (gtk_chart_parent_class)->dispose (object);
 }
@@ -362,7 +386,7 @@ static void chart_draw_line_or_scatter(GtkChart *self,
     // Calc scales
     float x_scale = (w - 2 * 0.1 * w) / self->x_max;
     float y_scale = (h - 2 * 0.2 * h) / self->y_max;
-
+  
     // Draw data points from list
     GSList *l;
     for (l = self->point_list; l != NULL; l = l->next)
@@ -401,6 +425,7 @@ static void chart_draw_line_or_scatter(GtkChart *self,
                 break;
         }
     }
+
 
     cairo_destroy (cr);
 }
@@ -639,6 +664,187 @@ static void chart_draw_gauge_angular(GtkChart *self,
     cairo_destroy (cr);
 }
 
+static void chart_draw_pie(GtkChart *self, 
+                           GtkSnapshot *snapshot, 
+                           float h,
+                           float w)
+{
+
+  // Set up Cairo region
+  cairo_t *cr = gtk_snapshot_append_cairo(snapshot, &GRAPHENE_RECT_INIT(0, 0, w, h));
+
+  cairo_set_antialias (cr, CAIRO_ANTIALIAS_FAST);
+  
+  // center of chart 
+  double cx = w / 2.0;
+  double cy = h / 2.0;
+
+  double radius = MIN(w, h) / 2.5; // margin 
+
+  double total = 0.0;
+  GSList *l;
+  for(l = self->slice_list; l != NULL; l = l->next) 
+  {  
+    struct chart_slice_t *slice = l->data;
+    total += slice->value;
+  }
+
+  if(total <= 0.0)
+  {
+    cairo_destroy(cr);
+    return;
+  }
+  
+  double start_angle = 0.0;
+  
+  for (l = self->slice_list; l != NULL; l = l->next)
+  {
+    struct chart_slice_t *slice = l->data;
+    
+    // angle of the slice proportional to its value
+    double slice_angle = (slice->value / total) * 2.0 * G_PI;
+                  
+    cairo_set_source_rgba(cr, slice->color.red, slice->color.green, slice->color.blue, slice->color.alpha);
+    
+    cairo_move_to(cr, cx, cy);
+    cairo_arc(cr, cx, cy, radius, start_angle, start_angle + slice_angle);
+    cairo_close_path(cr);
+    cairo_fill(cr);
+  
+    if(slice->label != NULL) {
+      cairo_text_extents_t extents;
+
+      double middle = start_angle + slice_angle / 2.0;
+      double distance = radius + 20; // Position outside of the slide radius
+
+      double lx = cx + cos(middle) * distance;
+      double ly = cy + sin(middle) * distance;
+
+      cairo_set_source_rgba(cr, slice->color.red, slice->color.green, slice->color.blue, slice->color.alpha);
+      cairo_select_font_face(cr, self->font_name, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+      cairo_set_font_size(cr, self->font_size);
+      cairo_text_extents(cr, slice->label, &extents);
+      
+      // Adjust x position to avoid bad position in the slides
+      if(middle > G_PI / 2 && middle < 3 * G_PI / 2) 
+      {
+        lx -= extents.width;
+      }
+
+      cairo_move_to(cr, lx, ly);
+      cairo_show_text(cr, slice->label);
+    }
+
+    start_angle += slice_angle;
+  }
+  cairo_destroy(cr);
+}
+
+static void chart_draw_column(GtkChart *self,
+                              GtkSnapshot *snapshot,
+                              float h,
+                              float w) 
+{
+  // Set up Cairo region
+  cairo_t *cr = gtk_snapshot_append_cairo(snapshot, &GRAPHENE_RECT_INIT(0, 0, w, h + 40));
+
+  cairo_set_antialias (cr, CAIRO_ANTIALIAS_FAST);
+  
+  int n_total = g_slist_length(self->column_list);
+  if(n_total == 0) {
+    cairo_destroy(cr);
+    return;
+  }
+  
+  float spacing = (w * 0.05) * (n_total + 1);
+  float column_width = (w - spacing) / n_total;
+
+  double max_value = 0.0;
+  GSList *l;
+  for(l = self->column_list; l != NULL; l = l->next) 
+  {  
+    struct chart_column_t *column = l->data;
+    if (column->value > max_value) {
+      max_value = column->value;
+    }
+  }
+
+  if(max_value <= 0.0)
+  {
+    cairo_destroy(cr);
+    return;
+  }
+  
+  float y_scale = (h - (0.1 * h) - (0.1 * h)) / max_value;
+  int i = 0;
+
+  double ticks = max_value / self->ticks;
+  
+  for(int i = 0; i <= self->ticks; i++) 
+  {
+    double value = i * ticks;
+    float y_tick = h - 0.1 * h - value * y_scale;
+
+    char label[64];
+    snprintf(label, sizeof(label), "%.0f", value);
+    
+    // Draw Ticks Value
+    cairo_set_source_rgba(cr, 0.6, 0.6, 0.6, 0.8);
+    cairo_select_font_face(cr, self->font_name, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_set_font_size(cr, self->font_size);
+
+    cairo_move_to(cr, 5, y_tick);
+    cairo_show_text(cr, label);
+  
+    // Draw line horizontal
+    cairo_set_source_rgba(cr, 0.6, 0.6, 0.6, 0.3);
+    cairo_move_to(cr, 30, y_tick);
+    cairo_line_to(cr, w, y_tick);
+    cairo_stroke(cr);
+  }
+  
+  for (l = self->column_list; l != NULL; l = l->next)
+  {
+    struct chart_column_t *column = l->data;
+    
+                 
+    float column_height = column->value * y_scale;
+    
+    float x = (w * 0.05) + i * (column_width + (w * 0.05));
+    float y = h - (0.1 * h) - column_height;
+    i++;
+
+    // Draw Column
+    cairo_set_source_rgba(cr, column->color.red, column->color.green, column->color.blue, column->color.alpha);
+   
+    cairo_rectangle(cr, x, y, column_width, column_height);
+    cairo_fill(cr);
+  
+    if(column->label != NULL) {
+      cairo_text_extents_t extents;
+
+      // Draw Label
+      cairo_set_source_rgba(cr, 0.6, 0.6, 0.6, 0.8);
+      cairo_select_font_face(cr, self->font_name, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+      cairo_set_font_size(cr, self->font_size);
+      cairo_text_extents(cr, column->label, &extents);
+      
+      float label_x = x + column_width / 2;
+      float label_y = h - (w * 0.03) + 20;
+  
+      cairo_save(cr);
+      cairo_translate(cr, label_x, label_y);
+      cairo_rotate(cr, -M_PI / 3); // 60rads
+
+      cairo_move_to(cr, -extents.width / 2, -extents.height);
+      cairo_show_text(cr, column->label);
+
+      cairo_restore(cr);
+    }
+  }
+  cairo_destroy(cr);
+}
+
 static void chart_draw_unknown_type(GtkChart *self,
                                     GtkSnapshot *snapshot,
                                     float h,
@@ -719,6 +925,14 @@ static void gtk_chart_snapshot (GtkWidget   *widget,
 
         case GTK_CHART_TYPE_GAUGE_ANGULAR:
             chart_draw_gauge_angular(self, snapshot, height, width);
+            break;
+       
+        case GTK_CHART_TYPE_PIE:
+            chart_draw_pie(self, snapshot, height, width);
+            break;
+
+        case GTK_CHART_TYPE_COLUMN:
+            chart_draw_column(self, snapshot, height, width);
             break;
 
         default:
@@ -846,6 +1060,42 @@ EXPORT void gtk_chart_plot_point(GtkChart *chart, double x, double y)
     }
 }
 
+EXPORT void gtk_chart_add_slice(GtkChart *chart, double value, const char *label, const char *color) 
+{
+  // Allocate memory for new slice
+  struct chart_slice_t *slice = g_new0(struct chart_slice_t, 1);
+  slice->value = value;
+  gdk_rgba_parse(&slice->color, color);
+  if(label != NULL)  slice->label = g_strdup(label);
+
+  // Add slice to list to be drawn
+  chart->slice_list = g_slist_append(chart->slice_list, slice);
+
+  // Queue draw of widget 
+  if (GTK_IS_WIDGET(chart))
+  {
+    gtk_widget_queue_draw(GTK_WIDGET(chart));
+  }
+}
+
+EXPORT void gtk_chart_add_column(GtkChart *chart, double value, const char *label, const char *color)
+{
+  // Allocate memory for new column
+  struct chart_column_t *column = g_new0(struct chart_column_t, 1);
+  column->value = value;
+  gdk_rgba_parse(&column->color, color);
+  if(label != NULL)  column->label = g_strdup(label);
+
+  // Add column to list to be drawn
+  chart->column_list = g_slist_append(chart->column_list, column);
+
+  // Queue draw of widget 
+  if (GTK_IS_WIDGET(chart))
+  {
+    gtk_widget_queue_draw(GTK_WIDGET(chart));
+  }
+}
+
 EXPORT void gtk_chart_set_value(GtkChart *chart, double value)
 {
     chart->value = value;
@@ -955,4 +1205,146 @@ EXPORT void gtk_chart_set_font(GtkChart *chart, const char *name)
     }
 
     chart->font_name = g_strdup(name);
+}
+
+EXPORT void gtk_chart_set_font_size(GtkChart *chart, int size)
+{
+    g_assert_nonnull(chart);
+
+    chart->font_size = size;
+}
+
+EXPORT void gtk_chart_set_slice_value(GtkChart *chart, int index, double value)
+{
+  g_assert_nonnull(chart);
+  if(index < 0) return;
+
+  GSList *l = chart->slice_list;
+  int i = 0;
+
+  while(l != NULL && i < index) 
+  {
+    l = l->next;
+    i++;
+  }
+
+  if(l == NULL) return;
+  
+  struct chart_slice_t *slice = l->data;
+  slice->value = value;
+}
+
+EXPORT bool gtk_chart_set_slice_color(GtkChart *chart, int index, const char *color) 
+{
+  g_assert_nonnull(chart);
+  g_assert_nonnull(color);
+  if(index < 0) return false;
+
+  GSList *l = chart->slice_list;
+  int i = 0;
+
+  while(l != NULL && i < index) 
+  {
+    l = l->next;
+    i++;
+  }
+
+  if(l == NULL) return false;
+
+  struct chart_slice_t *slice = l->data;
+  return gdk_rgba_parse(&slice->color, color);
+}
+
+EXPORT void gtk_chart_set_slice_label(GtkChart *chart, int index, const char *label) 
+{
+  g_assert_nonnull(chart);
+  g_assert_nonnull(label);
+  if(index < 0) return;
+
+  GSList *l = chart->slice_list;
+  int i = 0;
+
+  while(l != NULL && i < index) 
+  {
+    l = l->next;
+    i++;
+  }
+
+  if(l == NULL) return;
+
+  struct chart_slice_t *slice = l->data;
+  
+  g_free(slice->label);
+  slice->label = g_strdup(label);
+}
+
+EXPORT void gtk_chart_set_column_value(GtkChart *chart, int index, double value)
+{
+  g_assert_nonnull(chart);
+  if(index < 0) return;
+
+  GSList *l = chart->column_list;
+  int i = 0;
+
+  while(l != NULL && i < index) 
+  {
+    l = l->next;
+    i++;
+  }
+
+  if(l == NULL) return;
+  
+  struct chart_column_t *column = l->data;
+  column->value = value;
+}
+
+EXPORT void gtk_chart_set_column_ticks(GtkChart *chart, int ticks)
+{
+  g_assert_nonnull(chart);
+
+  chart->ticks = ticks;
+}
+
+EXPORT bool gtk_chart_set_column_color(GtkChart *chart, int index, const char *color)
+{
+  g_assert_nonnull(chart);
+  g_assert_nonnull(color);
+  if(index < 0) return false;
+
+  GSList *l = chart->column_list;
+  int i = 0;
+
+  while(l != NULL && i < index) 
+  {
+    l = l->next;
+    i++;
+  }
+
+  if(l == NULL) return false;
+
+  struct chart_column_t *column = l->data;
+  return gdk_rgba_parse(&column->color, color);
+}
+
+EXPORT void gtk_chart_set_column_label(GtkChart *chart, int index, const char *label)
+{
+  g_assert_nonnull(chart);
+  g_assert_nonnull(label);
+  if(index < 0) return;
+
+  GSList *l = chart->column_list;
+  int i = 0;
+
+  while(l != NULL && i < index) 
+  {
+    l = l->next;
+    i++;
+  }
+
+  if(l == NULL) return;
+
+  struct chart_column_t *column = l->data;
+  
+  g_free(column->label);
+  column->label = g_strdup(label);
 }

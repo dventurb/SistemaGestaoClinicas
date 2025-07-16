@@ -7,9 +7,10 @@
 #include "utils.h"
 #include "structs.h"
 #include "cliente.h"
+#include "userMenu.h"
 
-void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients);
-void addClientButtonsToGrid(GtkWidget *grid, ST_CLIENTE *clients);
+void initializeUIClients(GtkWidget *stack, ST_APPLICATION *application);
+void addClientButtonsToGrid(GtkWidget *grid, ST_APPLICATION *application);
 GtkWidget *createClientTable(ST_CLIENTE *clients, int n_clients);
 
 #endif

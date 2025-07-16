@@ -27,9 +27,14 @@ static void toggledButton(GtkToggleButton *toggle, gpointer data);
  *  @param clients    Pointer to the ST_CLIENTE struct.
  *
  */
-void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients) {
+void initializeUIClients(GtkWidget *stack, ST_APPLICATION *application) {
+  ST_CLIENTE *clients = application->clients;
+
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "clients");
+
+  g_object_set_data(G_OBJECT(rigth_box), "application", application);
 
   GtkWidget *rigth_top_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_add_css_class(rigth_top_box, "rigth_top_box");
@@ -42,7 +47,9 @@ void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients) {
   gtk_widget_set_hexpand(search_entry, true);
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
   g_signal_connect(search_entry, "search-changed", G_CALLBACK(changedSearchClient), clients);
- 
+  
+  initializeUserMenu(rigth_top_box, application, "clients");
+  
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 10);
   gtk_box_append(GTK_BOX(rigth_box), spacer);
@@ -59,7 +66,7 @@ void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients) {
   gtk_widget_set_halign(grid, GTK_ALIGN_CENTER);
   gtk_box_append(GTK_BOX(rigth_box), grid);
 
-  addClientButtonsToGrid(grid, clients);
+  addClientButtonsToGrid(grid, application);
 
   GtkWidget *scrolled = gtk_scrolled_window_new();
   gtk_widget_set_vexpand(scrolled, true);
@@ -80,10 +87,10 @@ void initializeUIClients(GtkWidget *stack, ST_CLIENTE *clients) {
  * This function helps reduce code duplication and encapsulates the creation and configuration of buttons.
  *
  * @param GtkWidget    GtkGrid widget where the buttons will be placed.
- * @param clients      Pointer to the ST_CLIENTE struct. 
+ * @param application  Pointer to the ST_APPLICATION struct. 
  *
  */
-void addClientButtonsToGrid(GtkWidget *grid, ST_CLIENTE *clients) {
+void addClientButtonsToGrid(GtkWidget *grid, ST_APPLICATION *application) {
   ST_BUTTON button;
   
   const char *labels[] = {
@@ -107,16 +114,16 @@ void addClientButtonsToGrid(GtkWidget *grid, ST_CLIENTE *clients) {
 
     switch(i) {
       case 0:
-        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonAdd), clients);
+        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonAdd), application);
         break;
       case 1:
-        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonEdit), clients);
+        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonEdit), application);
         break;
       case 2:
-        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonToggle), clients);
+        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonToggle), application);
         break;
       case 3:
-        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonView), clients);
+        g_signal_connect(button.button, "clicked", G_CALLBACK(clickedButtonView), application);
         break;
     }
   }
@@ -181,7 +188,11 @@ GtkWidget *createClientTable(ST_CLIENTE *clients, int n_clients) {
 }
 
 static void clickedButtonAdd(GtkButton *button, gpointer data) {
-  ST_CLIENTE *clients = (ST_CLIENTE *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
+  ST_CLIENTE *clients = application->clients;
+
+  if(numberOf(clients, TYPE_CLIENTS) >= MAX_CLIENTES) return;
   
   GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
   if(!stack) {
@@ -189,6 +200,7 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "AddClients");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "AddClients");
 
@@ -196,8 +208,14 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_add_css_class(rigth_top_box, "rigth_top_box");
   gtk_widget_set_size_request(rigth_top_box, -1, 60);
   gtk_box_append(GTK_BOX(rigth_box), rigth_top_box);
- 
-  GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  
+  GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_widget_set_hexpand(spacer, true);
+  gtk_box_append(GTK_BOX(rigth_top_box), spacer);
+  
+  initializeUserMenu(rigth_top_box, application, NULL);
+  
+  spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 30);
   gtk_box_append(GTK_BOX(rigth_box), spacer);
 
@@ -344,11 +362,13 @@ static void clickedButtonAdd(GtkButton *button, gpointer data) {
   gtk_widget_set_halign(btn.button, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(rigth_box), btn.button);
-  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitAdd), clients);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitAdd), application);
 }
 
 static void clickedButtonEdit(GtkButton *button, gpointer data) {
-  ST_CLIENTE *clients = (ST_CLIENTE *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
+  ST_CLIENTE *clients = application->clients;
 
   GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
   if(!stack) {
@@ -356,6 +376,7 @@ static void clickedButtonEdit(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "EditClients");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "EditClients");
  
@@ -371,6 +392,8 @@ static void clickedButtonEdit(GtkButton *button, gpointer data) {
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
   g_signal_connect(search_entry, "activate", G_CALLBACK(activateSearchEditClient), clients);
   
+  initializeUserMenu(rigth_top_box, application, NULL);  
+
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 30);
   gtk_box_append(GTK_BOX(rigth_box), spacer);
@@ -517,11 +540,13 @@ static void clickedButtonEdit(GtkButton *button, gpointer data) {
   gtk_widget_set_halign(btn.button, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(rigth_box), btn.button);
-  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitEdit), clients);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitEdit), application);
 }
 
 static void clickedButtonToggle(GtkButton *button, gpointer data) {
-  ST_CLIENTE *clients = (ST_CLIENTE *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
+  ST_CLIENTE *clients = application->clients;
 
   GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
   if(!stack) {
@@ -529,6 +554,7 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "ToggleClients");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "ToggleClients");
  
@@ -543,6 +569,8 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
   gtk_widget_set_hexpand(search_entry, true);
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
   g_signal_connect(search_entry, "activate", G_CALLBACK(activateSearchToggleClient), clients);
+  
+  initializeUserMenu(rigth_top_box, application, NULL);
   
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_size_request(spacer, -1, 30);
@@ -651,11 +679,13 @@ static void clickedButtonToggle(GtkButton *button, gpointer data) {
   gtk_widget_set_halign(btn.button, GTK_ALIGN_CENTER);
   gtk_widget_set_hexpand(btn.button, false);
   gtk_box_append(GTK_BOX(rigth_box), btn.button);
-  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitToggle), clients);
+  g_signal_connect(btn.button, "clicked", G_CALLBACK(clickedButtonSubmitToggle), application);
 }
 
 static void clickedButtonView(GtkButton *button, gpointer data) {
-  ST_CLIENTE *clients = (ST_CLIENTE *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
+  ST_CLIENTE *clients = application->clients;
 
   GtkWidget *stack = gtk_widget_get_ancestor(GTK_WIDGET(button), GTK_TYPE_STACK);
   if(!stack) {
@@ -663,6 +693,7 @@ static void clickedButtonView(GtkButton *button, gpointer data) {
   }
 
   GtkWidget *rigth_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+  gtk_widget_add_css_class(rigth_box, "box");
   gtk_stack_add_named(GTK_STACK(stack), rigth_box, "ViewClients");
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "ViewClients");
  
@@ -678,6 +709,8 @@ static void clickedButtonView(GtkButton *button, gpointer data) {
   gtk_box_append(GTK_BOX(rigth_top_box), search_entry);
   g_signal_connect(search_entry, "search-changed", G_CALLBACK(changedSearchViewClient), clients);
   
+  initializeUserMenu(rigth_top_box, application, NULL);
+
   GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_widget_set_size_request(spacer, -1, 15);
   gtk_widget_set_halign(spacer, GTK_ALIGN_CENTER);
@@ -908,7 +941,9 @@ static void changedEntryPostalCode(GtkEntry *entry, gpointer data) {
 }
 
 static void clickedButtonSubmitAdd(GtkButton *button, gpointer data) {
-  ST_CLIENTE *clients = (ST_CLIENTE *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+  
+  ST_CLIENTE *clients = application->clients;
 
   GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(button));
   
@@ -1022,7 +1057,8 @@ static void clickedButtonSubmitAdd(GtkButton *button, gpointer data) {
   gtk_stack_remove(GTK_STACK(stack), child);
   
   // Reinitialize with the updated clients list.
-  initializeUIClients(stack, clients);
+  initializeUIClients(stack, application);
+
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
 }
 
@@ -1124,7 +1160,9 @@ static void activateSearchEditClient(GtkSearchEntry *search_entry, gpointer data
 
 
 static void clickedButtonSubmitEdit(GtkButton *button, gpointer data) {
-  ST_CLIENTE *clients = (ST_CLIENTE *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+  
+  ST_CLIENTE *clients = application->clients;
 
   GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(button));
 
@@ -1245,7 +1283,7 @@ static void clickedButtonSubmitEdit(GtkButton *button, gpointer data) {
   gtk_stack_remove(GTK_STACK(stack), child);
   
   // Reinitialize with the updated clients list.
-  initializeUIClients(stack, clients);
+  initializeUIClients(stack, application);
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
 }
 
@@ -1340,7 +1378,9 @@ static void activateSearchToggleClient(GtkSearchEntry *search_entry, gpointer da
 }
 
 static void clickedButtonSubmitToggle(GtkButton *button, gpointer data) {
-  ST_CLIENTE *clients = (ST_CLIENTE *)data;
+  ST_APPLICATION *application = (ST_APPLICATION *)data;
+
+  ST_CLIENTE *clients = application->clients;
 
   GtkWidget *rigth_box = gtk_widget_get_parent(GTK_WIDGET(button));
 
@@ -1370,8 +1410,7 @@ static void clickedButtonSubmitToggle(GtkButton *button, gpointer data) {
   child = gtk_stack_get_child_by_name(GTK_STACK(stack), "clients");
   gtk_stack_remove(GTK_STACK(stack), child);
   
-  // Reinitialize with the updated clients list.
-  initializeUIClients(stack, clients);
+  initializeUIClients(stack, application);
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "clients");
 }
 
@@ -1437,6 +1476,7 @@ static void changedSearchViewClient(GtkSearchEntry *search_entry, gpointer data)
       break;
     case SEARCH_BY_POSTAL_CODE:
       counter = procurarClientesCodigoPostal(clients, &clients_found, input);
+      break;
     default:
       break;
   }

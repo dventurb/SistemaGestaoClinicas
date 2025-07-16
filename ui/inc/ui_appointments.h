@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "structs.h"
 #include "consulta.h"
+#include "userMenu.h"
 
 void initializeUIAppointments(GtkWidget *stack, ST_APPLICATION *application);
 void addAppointmentButtonsToGrid(GtkWidget *grid, ST_APPLICATION *application);
