@@ -8,5 +8,7 @@
 
 void initializeDashboard(GtkWidget *stack, ST_APPLICATION *application);
 void addCardsToGrid(GtkWidget *grid, ST_APPLICATION *application);
+void addPieChartToGrid(GtkWidget *grid, ST_APPLICATION *application);
+void addBarChartToGrid(GtkWidget *grid, ST_APPLICATION *application);
 
 #endif

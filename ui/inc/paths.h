@@ -31,6 +31,9 @@
 #define APPOINTMENT_CARD_PATH "assets/icons/core/card_appointment.png"
 #define SPECIALTY_CARD_PATH "assets/icons/core/card_specialty.png"
 
+#define PIE_CHART_PATH "assets/icons/core/pie_chart.png"
+#define BAR_CHART_PATH "assets/icons/core/bar_chart.png"
+
 #define MONTHLY_REPORT_COVER "assets/images/reports/report_cover.png"
 
 #endif
