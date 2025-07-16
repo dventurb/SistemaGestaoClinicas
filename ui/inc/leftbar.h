@@ -4,6 +4,7 @@
 #include <gtk/gtk.h>
 #include "utils.h"
 #include "paths.h"
+#include "dashboard.h"
 
 void initializeLeftBar(GtkWidget *left_box, GtkWidget *stack, ST_APPLICATION *application);
 void clickedButtonDashboard(GtkButton *button, gpointer user_data);

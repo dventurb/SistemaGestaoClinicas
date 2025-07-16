@@ -92,6 +92,15 @@ void clickedButtonDashboard(GtkButton *button, gpointer data) {
   // Add Selected-Button Style to the current button.
   gtk_widget_add_css_class(GTK_WIDGET(button), "leftbar-button-selected");
   
+  // Remove the Dashboard page.
+  GtkWidget *child = gtk_stack_get_child_by_name(GTK_STACK(stack), "dashboard");
+  if(child) {
+    gtk_stack_remove(GTK_STACK(stack), child);
+  }
+  
+  // Create again the Dashboard to update the information.
+  initializeDashboard(stack, application);
+  
   gtk_stack_set_visible_child_name(GTK_STACK(stack), "dashboard");
 }
 
