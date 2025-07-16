@@ -78,6 +78,16 @@ int procurarConsultasMedico(ST_CONSULTA *appointments, ST_CONSULTA **appointment
       }
     }
   }
+
+  ST_CONSULTA *temp = realloc(*appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
+  if(!temp) {
+    free(*appointments_found);
+    *appointments_found = NULL;
+    return 0;
+  }
+  *appointments_found = temp;
+  (*appointments_found)[counter].ID = 0; // Add a terminator with ID = 0
+  
   return counter;
 }
 
@@ -101,6 +111,16 @@ int procurarConsultasData(ST_CONSULTA *appointments, ST_CONSULTA **appointments_
       counter++;
     }
   }
+  
+  ST_CONSULTA *temp = realloc(*appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
+  if(!temp) {
+    free(*appointments_found);
+    *appointments_found = NULL;
+    return 0;
+  }
+  *appointments_found = temp;
+  (*appointments_found)[counter].ID = 0; // Add a terminator with ID = 0
+
   return counter;
 }
 
@@ -121,6 +141,16 @@ int obterListaConsultasAgendadas(ST_CONSULTA *appointments, ST_CONSULTA **appoin
       counter++;
     }
   }
+ 
+  ST_CONSULTA *temp = realloc(*appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
+  if(!temp) {
+    free(*appointments_found);
+    *appointments_found = NULL;
+    return 0;
+  }
+  *appointments_found = temp;
+  (*appointments_found)[counter].ID = 0; // Add a terminator with ID = 0
+  
   return counter;
 }
 
@@ -146,6 +176,16 @@ int obterListaConsultasMesAtual(ST_CONSULTA *appointments, ST_CONSULTA **appoint
       }
     }
   }
+
+  ST_CONSULTA *temp = realloc(*appointments_found, (counter + 1) * sizeof(ST_CONSULTA));
+  if(!temp) {
+    free(*appointments_found);
+    *appointments_found = NULL;
+    return 0;
+  }
+  *appointments_found = temp;
+  (*appointments_found)[counter].ID = 0; // Add a terminator with ID = 0
+  
   return counter;
 }
 

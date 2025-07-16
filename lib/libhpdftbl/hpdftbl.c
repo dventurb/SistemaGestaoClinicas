@@ -322,28 +322,16 @@ hpdftbl_create(size_t rows, size_t cols) {
  */
 hpdftbl_t
 hpdftbl_create_title(size_t rows, size_t cols, char *title) {
-
-assert(rows > 0 && cols > 0 && cols < 1000 && rows < 1000);
-    printf(">>> Criando tabela %zu x %zu\n", rows, cols);
-    printf(">>> sizeof(struct hpdftbl)       = %zu bytes\n", sizeof(struct hpdftbl));
-    printf(">>> sizeof(hpdftbl_cell_t)       = %zu bytes\n", sizeof(hpdftbl_cell_t));
-    printf(">>> sizeof(float)                = %zu bytes\n", sizeof(float));
-    printf(">>> Total células                = %zu\n", rows * cols);
-    printf(">>> Memória esperada para células: %zu bytes\n", rows * cols * sizeof(hpdftbl_cell_t));
-    printf(">>> Memória esperada para largura: %zu bytes\n", cols * sizeof(float));
     // Initializing to zero means default color is black
     hpdftbl_t t = calloc(1, sizeof(struct hpdftbl));
     if (t == NULL) {
-        fprintf(stderr, "!!! Falha ao alocar hpdftbl\n");
         return NULL;
     }
 
     t->anchor_is_top_left = TRUE;
 
     t->cells = calloc(cols * rows, sizeof(hpdftbl_cell_t));
-    printf("Alocando %zu células (%zu bytes)\n", cols * rows, cols * rows * sizeof(hpdftbl_cell_t));
     if (t->cells == NULL) {
-        fprintf(stderr, "!!! Falha ao alocar células\n");
         _HPDFTBL_SET_ERR(t, -5, -1, -1);
         free(t);
         return NULL;
@@ -364,7 +352,6 @@ assert(rows > 0 && cols > 0 && cols < 1000 && rows < 1000);
     // Setup common column widths
     t->col_width_percent = calloc(cols, sizeof(float));
     if (t->col_width_percent == NULL) {
-        fprintf(stderr, "!!! Falha ao alocar col_width_percent\n");
         free(t->cells);
         _HPDFTBL_SET_ERR(t, -5, -1, -1);
         free(t);
@@ -378,8 +365,6 @@ assert(rows > 0 && cols > 0 && cols < 1000 && rows < 1000);
     }
 
     if (title) {
-        t->title_txt = strdup(title ? title : "");
-fprintf(stderr, "!!! Falha ao duplicar título\n");
         if (t->title_txt == NULL) {
             free(t->col_width_percent);
             free(t->cells);
@@ -392,7 +377,6 @@ fprintf(stderr, "!!! Falha ao duplicar título\n");
     hpdftbl_theme_t *theme = hpdftbl_get_default_theme();
     hpdftbl_apply_theme(t, theme);
     hpdftbl_destroy_theme(theme);
-    printf(">>> Tabela criada com sucesso\n");
     return t;
 }
 

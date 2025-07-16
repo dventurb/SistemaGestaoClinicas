@@ -1,9 +1,9 @@
 CC = gcc
 
-CFLAGS = $(shell pkg-config --cflags gtk4) -Iinc -Iui/inc -Iui/lib -I./lib -Wall -Wextra -g
-LDFLAGS = $(shell pkg-config --libs gtk4) -lcrypt -lhpdf lib/libhpdftbl.a -lm
+CFLAGS = $(shell pkg-config --cflags gtk4) -Iinc -Iui/inc -Iui/lib/gtkchart -Ilib/libhpdftbl -Wall -Wextra -g
+LDFLAGS = $(shell pkg-config --libs gtk4) -lcrypt -lhpdf -lm
 
-SRC = $(wildcard src/*.c) $(wildcard ui/src/*.c) $(wildcard ui/lib/*.c)
+SRC = $(wildcard src/*.c) $(wildcard ui/src/*.c) $(wildcard ui/lib/gtkchart/*.c)  $(wildcard lib/libhpdftbl/*.c)
 OBJ = $(SRC:.c=.o)
 BIN = hospital-management
 
@@ -19,7 +19,7 @@ clean:
 ifeq ($(OS),Windows_NT)
 	del /f $(OBJ)\*.o $(BIN)
 else
-	rm -f src/*.o ui/src/*.o  ui/lib/*.o $(BIN)
+	rm -f src/*.o ui/src/*.o  ui/lib/gtkchart/*.o  lib/libhpdftbl/*.o $(BIN)
 endif
 
 rebuild: clean all

@@ -1,1 +1,2 @@
 1,Rui Jorge,rui,$5$@r5u9g&13j48F1A$yEcFZaYIHdxH7K8fCvj7LO9RiypsPsfph74vsjn1KI6,assets/images/users/2.png
+2,Daniel,daniel,$5$o#firBP5CxSe0B^$6lEVa9ata8URTodldyEOHXGig3HOnYhn5WQExJsf9S1,assets/images/users/3.png

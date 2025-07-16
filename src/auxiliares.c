@@ -488,7 +488,7 @@ void createReportPDF(ST_APPLICATION *application) {
   HPDF_Page_TextRect(page, 50, ypos, 550, ypos - 40, text, HPDF_TALIGN_JUSTIFY, NULL);
   HPDF_Page_EndText(page);
   
-  ypos -= 40;
+  ypos -= 50;
   
   GtkStringList *list = loadSpecialty();
   for(unsigned int i = 0; i < g_list_model_get_n_items(G_LIST_MODEL(list)); i++) {
@@ -502,14 +502,12 @@ void createReportPDF(ST_APPLICATION *application) {
 
       snprintf(text, sizeof(text), "· %s: %d appointments", gtk_string_list_get_string(list, i), counter);
       
-      ypos -= 20;
-      
       HPDF_Page_BeginText(page);
       HPDF_Page_SetFontAndSize(page, font, 12);
       HPDF_Page_TextRect(page, 60, ypos, 550, ypos - 15, text, HPDF_TALIGN_LEFT, NULL);
       HPDF_Page_EndText(page);
 
-      ypos -= 40;
+      ypos -= 20;
     }
   }
 
@@ -522,6 +520,8 @@ void createReportPDF(ST_APPLICATION *application) {
     HPDF_Page_SetFontAndSize(page, font, 18);
   
     const char *subtitle_5 = "Conclusion";
+    
+    ypos -= 30;
 
     HPDF_Page_TextRect(page, 50, ypos, 550, ypos - 20, subtitle_5, HPDF_TALIGN_LEFT, NULL);
     HPDF_Page_EndText(page);
@@ -582,10 +582,10 @@ void createTablePDF(ST_CONSULTA *appointments, ST_MEDICO *doctors, HPDF_Doc *pdf
   
   hpdftbl_t tbl;
   if(rows > 30) {
-    tbl = hpdftbl_create_title(30, 3, NULL);
+    tbl = hpdftbl_create(30, 3);
 
   }else {
-    tbl = hpdftbl_create_title(rows, 3, NULL);
+    tbl = hpdftbl_create(rows + 1, 3);
   }
   
   hpdftbl_set_colwidth_percent(tbl, 0, 33);

@@ -4,3 +4,4 @@
 4,João Amaral Lima,joaoamaraldolima@outlook.pt,332301,Clínica Geral,Disponível
 5,Alexandre Correia,alexandre.correia@gmail.com,233401,Cardiologia,Disponível
 6,Ricardo Paulo Sousa,ricardosousa@hotmail.com,224003,Clínica Geral,Disponível
+7,Alberto Marujo Da Cruz,dr.alberomarujo@sapo.pt,342113,Ginecologia,Disponível

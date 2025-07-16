@@ -4,3 +4,4 @@
 4,Afonso Pereira,4400222,Vila Nova de Gaia,Vila Nova de Gaia,20,03,2001,afonso.sapereira@hotmail.com,218467087,118337002,Ativo
 5,Martim Barbosa,4100122,Porto,Porto,11,02,1998,martimbarbosa@yahoo.com,216405998,184479533,Ativo
 6,Lourenço Oliveira,2200221,Abrantes,Abrantes,03,02,2001,lourencooliveira@gmail.com,231664214,221464212,Ativo
+7,Alice Afonso,4450222,Matosinhos,Matosinhos,12,12,2001,maria.alice.afonso@gmail.com,208659757,102259744,Ativo
