@@ -46,15 +46,15 @@ make
 
 ## Dependencies
 - **GTK 4** (`libgtk-4-dev`) 
-- **GTKChart** (included in `ui/lib/gtkchart.c` and `ui/lib/gtkchart.h`)
+- **GTKChart** (included in `ui/lib/gtkchart/`)
 - **libharu** (`libhpdf-dev`)
-- **hpdftbl** (included in `lib/hpdftbl.h` and `lib/hpdftbl.c`)
+- **hpdftbl** (included in `lib/hpdftbl/`)
 - **crypt** (`libxcrypt-dev`)
 - **Build tools**: `gcc`, `make`, `pkg-config`
 
 ## Features 
 - Modern user interface with **GTK 4**.
-- Manage **clients**, **doctrs**, and **appointments**. 
+- Manage **clients**, **doctors**, and **appointments**. 
 - Generate **PDF reports** using `libharu` and `hpdftbl`.
 - Visualize data with **Pie Chart** and **Bar Chart**.
 - Password with **SHA-256** and salt generation for unique hashes.
