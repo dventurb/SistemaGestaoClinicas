@@ -32,15 +32,6 @@
 #ifndef hpdftbl_H
 #define    hpdftbl_H
 
-#ifdef    __cplusplus
-// in case we have C++ code, we should use its' types and logic
-#include <algorithm>
-typedef std::_Bool _Bool;
-#endif
-
-#ifdef    __cplusplus
-extern "C" {
-#endif
 
 #ifndef TRUE
 /** @brief Boolean truth value */
@@ -117,39 +108,11 @@ extern char hpdftbl_err_extrainfo[];
 
 
 
-#ifdef __cplusplus
-/**
- * @brief Utility macro to create a HPDF color constant from integer RGB values
- */
-#define _TO_HPDF_RGB(r, g, b) \
-    { r / 255.0f, g / 255.0f, b / 255.0f }
-#else
 /**
  * @brief Utility macro to create a HPDF color constant from integer RGB values
  */
 #define HPDF_RGB_CONVERT(r, g, b) \
     (HPDF_RGBColor) { r / 255.0f, g / 255.0f, b / 255.0f }
-#endif
-
-#ifdef __cplusplus
-
-#define HPDF_COLOR_DARK_RED      { 0.6f, 0.0f, 0.0f }
-#define HPDF_COLOR_RED           { 1.0f, 0.0f, 0.0f }
-#define HPDF_COLOR_LIGHT_GREEN   { 0.9f, 1.0f, 0.9f }
-#define HPDF_COLOR_GREEN         { 0.4f, 0.9f, 0.4f }
-#define HPDF_COLOR_DARK_GREEN    { 0.05f, 0.37f, 0.02f }
-#define HPDF_COLOR_DARK_GRAY     { 0.2f, 0.2f, 0.2f }
-#define HPDF_COLOR_LIGHT_GRAY    { 0.9f, 0.9f, 0.9f }
-#define HPDF_COLOR_XLIGHT_GRAY   { 0.95f, 0.95f, 0.95f }
-#define HPDF_COLOR_GRAY          { 0.5f, 0.5f, 0.5f }
-#define HPDF_COLOR_SILVER        { 0.75f, 0.75f, 0.75f }
-#define HPDF_COLOR_LIGHT_BLUE    { 1.0f, 1.0f, 0.9f }
-#define HPDF_COLOR_BLUE          { 0.0f, 0.0f, 1.0f }
-#define HPDF_COLOR_DARK_BLUE     { 0.0f, 0.0f, 0.6f }
-#define HPDF_COLOR_WHITE         { 1.0f, 1.0f, 1.0f }
-#define HPDF_COLOR_BLACK         { 0.0f, 0.0f, 0.0f }
-
-#else
 
 #define HPDF_COLOR_DARK_RED      (HPDF_RGBColor) { 0.6f, 0.0f, 0.0f }
 #define HPDF_COLOR_RED           (HPDF_RGBColor) { 1.0f, 0.0f, 0.0f }
@@ -166,8 +129,6 @@ extern char hpdftbl_err_extrainfo[];
 #define HPDF_COLOR_DARK_BLUE     (HPDF_RGBColor) { 0.0f, 0.0f, 0.6f }
 #define HPDF_COLOR_WHITE         (HPDF_RGBColor) { 1.0f, 1.0f, 1.0f }
 #define HPDF_COLOR_BLACK         (HPDF_RGBColor) { 0.0f, 0.0f, 0.0f }
-
-#endif
 
 #define HPDF_COLOR_ORANGE        HPDF_RGB_CONVERT(0xF5, 0xD0, 0x98);
 #define HPDF_COLOR_ALMOST_BLACK  HPDF_RGB_CONVERT(0x14, 0x14, 0x14);

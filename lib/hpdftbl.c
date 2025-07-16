@@ -227,11 +227,7 @@ hpdftbl_encoding_text_out(HPDF_Page page, HPDF_REAL xpos, HPDF_REAL ypos, char *
         return 0;
 
     const size_t out_len = 3 * strlen(text);
-#ifdef __cplusplus
-    char *output = static_cast<char*>(calloc(1, out_len));
-#else
     char *output = calloc(1, out_len);
-#endif
     if (-1 == do_encoding(text, output, out_len)) {
         _HPDFTBL_SET_ERR(NULL, -4, (int) xpos, (int) ypos);
         HPDF_Page_TextOut(page, xpos, ypos, "???");
@@ -336,11 +332,7 @@ assert(rows > 0 && cols > 0 && cols < 1000 && rows < 1000);
     printf(">>> Memória esperada para células: %zu bytes\n", rows * cols * sizeof(hpdftbl_cell_t));
     printf(">>> Memória esperada para largura: %zu bytes\n", cols * sizeof(float));
     // Initializing to zero means default color is black
-#ifdef __cplusplus
-    hpdftbl_t t = static_cast<hpdftbl_t>(calloc(1, sizeof(struct hpdftbl)));
-#else
     hpdftbl_t t = calloc(1, sizeof(struct hpdftbl));
-#endif
     if (t == NULL) {
         fprintf(stderr, "!!! Falha ao alocar hpdftbl\n");
         return NULL;
@@ -348,12 +340,8 @@ assert(rows > 0 && cols > 0 && cols < 1000 && rows < 1000);
 
     t->anchor_is_top_left = TRUE;
 
-#ifdef __cplusplus
-    t->cells = static_cast<hpdftbl_cell_t*>(calloc(cols*rows, sizeof(hpdftbl_cell_t)));
-#else
     t->cells = calloc(cols * rows, sizeof(hpdftbl_cell_t));
     printf("Alocando %zu células (%zu bytes)\n", cols * rows, cols * rows * sizeof(hpdftbl_cell_t));
-#endif
     if (t->cells == NULL) {
         fprintf(stderr, "!!! Falha ao alocar células\n");
         _HPDFTBL_SET_ERR(t, -5, -1, -1);
@@ -374,11 +362,7 @@ assert(rows > 0 && cols > 0 && cols < 1000 && rows < 1000);
     t->rows = rows;
 
     // Setup common column widths
-#ifdef __cplusplus
-    t->col_width_percent = static_cast<float*>(calloc(cols, sizeof(float)));
-#else
     t->col_width_percent = calloc(cols, sizeof(float));
-#endif
     if (t->col_width_percent == NULL) {
         fprintf(stderr, "!!! Falha ao alocar col_width_percent\n");
         free(t->cells);
@@ -1552,15 +1536,9 @@ table_cell_stroke(hpdftbl_t t, const size_t r, const size_t c) {
         set_fontc(t, t->content_style.font, t->content_style.fsize, t->content_style.color);
         // Check if cell has its own style which should override global setting but a defined
         // callback will override both
-#ifdef __cplusplus
-        hpdf_text_style_t cb_val = {	t->content_style.font, t->content_style.fsize,
-                                        t->content_style.color, t->content_style.background,
-                                        t->content_style.halign };
-#else
         hpdf_text_style_t cb_val = (hpdf_text_style_t) {t->content_style.font, t->content_style.fsize,
                                                         t->content_style.color, t->content_style.background,
                                                         t->content_style.halign};
-#endif
         if (cell->style_cb && cell->style_cb(t->tag, r, c, content, &cb_val)) {
             set_fontc(t, cb_val.font, cb_val.fsize, cb_val.color);
             halign = cb_val.halign;
@@ -1754,14 +1732,9 @@ hpdftbl_stroke(HPDF_Doc pdf,
 
             // Only cells which are not covered by a parent spanning cell will be stroked
             if (cell->parent_cell == NULL) {
-#ifdef __cplusplus
-                hpdf_text_style_t style = {	t->content_style.font, t->content_style.fsize,
-                                                t->content_style.color, t->content_style.background, t->content_style.halign};
-#else
                 hpdf_text_style_t style = (hpdf_text_style_t) {t->content_style.font, t->content_style.fsize,
                                                                t->content_style.color, t->content_style.background,
                                                                t->content_style.halign};
-#endif
                 if (cell->style_cb) {
                     if (cell->style_cb(t->tag, r, c, NULL, &style)) {
                         HPDF_Page_SetRGBFill(page, style.background.r, style.background.g, style.background.b);
