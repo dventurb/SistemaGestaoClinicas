@@ -97,10 +97,10 @@ void addDoctorButtonsToGrid(GtkWidget *grid, ST_APPLICATION *application) {
   };
 
   const char *paths[] = {
-    ADD_CLIENT_PATH, 
-    EDIT_CLIENT_PATH, 
-    TOGGLE_CLIENT_PATH, 
-    VIEW_CLIENT_PATH
+    ADD_DOCTOR_PATH, 
+    EDIT_DOCTOR_PATH, 
+    TOGGLE_DOCTOR_PATH, 
+    VIEW_DOCTOR_PATH
   };
   
   for (int i = 0; i <= 3; i++) {

@@ -104,10 +104,10 @@ void addAppointmentButtonsToGrid(GtkWidget *grid, ST_APPLICATION *application) {
   };
 
   const char *paths[] = {
-    ADD_CLIENT_PATH, 
-    EDIT_CLIENT_PATH, 
-    TOGGLE_CLIENT_PATH, 
-    VIEW_CLIENT_PATH
+    ADD_APPOINTMENT_PATH, 
+    EDIT_APPOINTMENT_PATH, 
+    TOGGLE_APPOINTMENT_PATH, 
+    VIEW_APPOINTMENT_PATH
   };
   
   for (int i = 0; i < 4; i++) {

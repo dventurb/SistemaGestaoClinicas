@@ -16,6 +16,16 @@
 #define TOGGLE_CLIENT_PATH "assets/icons/actions/toggle-client.png"
 #define VIEW_CLIENT_PATH "assets/icons/actions/view-client.png"
 
+#define ADD_DOCTOR_PATH "assets/icons/actions/add-doctor.png"
+#define EDIT_DOCTOR_PATH "assets/icons/actions/edit-doctor.png"
+#define TOGGLE_DOCTOR_PATH "assets/icons/actions/toggle-doctor.png"
+#define VIEW_DOCTOR_PATH "assets/icons/actions/view-doctor.png"
+
+#define ADD_APPOINTMENT_PATH "assets/icons/actions/add-appointment.png"
+#define EDIT_APPOINTMENT_PATH "assets/icons/actions/edit-appointment.png"
+#define TOGGLE_APPOINTMENT_PATH "assets/icons/actions/toggle-appointment.png"
+#define VIEW_APPOINTMENT_PATH "assets/icons/actions/view-appointment.png"
+
 #define BACK_ICON_PATH "assets/icons/actions/back.png"
 #define SUBMIT_PATH "assets/icons/actions/submit.png"
 #define DELETE_PATH "assets/icons/actions/delete.png"
