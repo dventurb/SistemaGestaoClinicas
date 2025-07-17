@@ -15,7 +15,7 @@
 <!--BADGES-->
 <p>
      <img src="https://img.shields.io/badge/platform-linux-lightgrey" />
-     <img src="https://img.shields.io/badge/GTK-4.0-blue" />
+     <img src="https://img.shields.io/badge/GTK-4.14-blue" />
 </p>
 
 <h3>
