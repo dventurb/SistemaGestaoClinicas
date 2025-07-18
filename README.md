@@ -40,11 +40,13 @@
 ```bash 
 git clone https://github.com/dventurb/hospital-management.git
 cd hospital-management
-make 
+chmod +x install.sh
+./install.sh
 ./hospital-management
 ```
 
 ## Dependencies
+All dependencies are automatically installed by the install script (install.sh).
 - **GTK 4** (`libgtk-4-dev`) 
 - **GTKChart** (included in `ui/lib/gtkchart/`)
 - **libharu** (`libhpdf-dev`)
